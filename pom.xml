@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.github.binmagic.saas</groupId>
+	<artifactId>velen</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>velen-saas-parent</name>
+
+	<modules>
+		<module>velen-saas-gateway</module>
+		<module>velen-saas-common</module>
+		<module>velen-saas-authority</module>
+	</modules>
+
+	<properties>
+		<discovery.version>6.0.1</discovery.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+
+
+		<lombok.version>1.18.12</lombok.version>
+		<junit.version>4.11</junit.version>
+
+		<spring.cloud.alibaba.dependencies.version>2.2.1.RELEASE</spring.cloud.alibaba.dependencies.version>
+		<spring.cloud.dependencies.version>Hoxton.SR3</spring.cloud.dependencies.version>
+		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
+		<spring.boot.admin.version>2.2.2</spring.boot.admin.version>
+
+		<jaeger.client.version>1.2.0</jaeger.client.version>
+		<opentracing.spring.cloud.version>0.5.3</opentracing.spring.cloud.version>
+		<opentracing.spring.jaeger.version>3.1.1</opentracing.spring.jaeger.version>
+		<opentracing.skywalking.version>7.0.0</opentracing.skywalking.version>
+
+		<java-jwt.version>3.10.2</java-jwt.version>
+		<querydsl-apt.version>4.3.1</querydsl-apt.version>
+		<javaee-api.version>8.0.1</javaee-api.version>
+		<hutool-all.version>5.3.3</hutool-all.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.github.binmagic.saas</groupId>
+				<artifactId>velen-saas-common</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.github.binmagic.saas</groupId>
+				<artifactId>velen-saas-gateway</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.auth0</groupId>
+				<artifactId>java-jwt</artifactId>
+				<version>${java-jwt.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring.cloud.dependencies.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.cloud</groupId>
+				<artifactId>spring-cloud-alibaba-dependencies</artifactId>
+				<version>${spring.cloud.alibaba.dependencies.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.jaegertracing</groupId>
+				<artifactId>jaeger-client</artifactId>
+				<version>${jaeger.client.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.opentracing.contrib</groupId>
+				<artifactId>opentracing-spring-cloud-starter</artifactId>
+				<version>${opentracing.spring.cloud.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.opentracing.contrib</groupId>
+				<artifactId>opentracing-spring-jaeger-starter</artifactId>
+				<version>${opentracing.spring.jaeger.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.skywalking</groupId>
+				<artifactId>apm-toolkit-opentracing</artifactId>
+				<version>${opentracing.skywalking.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.codecentric</groupId>
+				<artifactId>spring-boot-admin-dependencies</artifactId>
+				<version>${spring.boot.admin.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.querydsl</groupId>
+				<artifactId>querydsl-apt</artifactId>
+				<version>${querydsl-apt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.querydsl</groupId>
+				<artifactId>querydsl-jpa</artifactId>
+				<version>${querydsl-apt.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax</groupId>
+				<artifactId>javaee-api</artifactId>
+				<version>${javaee-api.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>cn.hutool</groupId>
+				<artifactId>hutool-all</artifactId>
+				<version>${hutool-all.version}</version>
+			</dependency>
+
+
+		</dependencies>
+	</dependencyManagement>
+
+
+	<dependencies>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>cn.hutool</groupId>
+			<artifactId>hutool-all</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<fork>true</fork>  <!-- 如果没有该生效标志，热部署的devtools不生效 -->
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>build-info</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

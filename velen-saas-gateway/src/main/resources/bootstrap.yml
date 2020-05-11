@@ -1,0 +1,48 @@
+middleware:
+  host: localhost
+nacos:
+  server-addr: ${middleware.host}:8848
+ribbon:
+  ConnectTimeout: 60000
+  ReadTimeout: 60000
+  maxAutoRetries: 3
+  maxAutoRetriesNextServer: 3
+  okToRetryOnAllOperations: true
+server:
+  port: 5001
+spring:
+  devtools:
+    restart:
+      enabled: true
+  application:
+    name: velen-saas-gateway
+  cloud:
+    gateway:
+      disconvery:
+        locator:
+          enable: false
+      routes:
+        -   id: velen-saas-admin
+            uri: lb://velen-saas-admin
+            predicates:
+              -  Path=/api/admin/**
+            filters:
+              -  StripPrefix=2
+    nacos:
+      discovery:
+        metadata:
+          group: velen-saas-gateway-group
+          version: 1.0
+        server-addr: ${middleware.host}:8848
+  redis:
+    database: 0
+    host: localhost
+    password: ''
+    port: 6379
+ignore:
+  token:
+    url:
+      - /api/admin/login
+      - /api/admin/user/register
+jwt:
+  token_secret: pXFb4i%*834gfdh96(3df&%18iodGq4ODQyMzc4lz7yI6ImF1dG
