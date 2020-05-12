@@ -1,5 +1,6 @@
 package com.github.binmagic.saas.velen.common.component.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.github.binmagic.saas.velen.common.constant.Constant;
 import com.github.binmagic.saas.velen.common.util.ReactiveRequestContextHolder;
 import reactor.core.publisher.Mono;
@@ -16,7 +17,10 @@ public abstract class BaseController
 	protected Mono<String> getCurrentUserName()
 	{
 		return ReactiveRequestContextHolder.getRequest()
-				.map(r -> r.getHeaders().getFirst(Constant.JWT_KEY_NAME));
+				.map(r -> {
+					String name = r.getHeaders().getFirst(Constant.JWT_KEY_NAME);
+					return StrUtil.isBlank(name) ? "" : name;
+				});
 	}
 
 

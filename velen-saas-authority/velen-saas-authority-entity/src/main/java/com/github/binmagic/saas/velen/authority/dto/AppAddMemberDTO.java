@@ -10,15 +10,9 @@ import lombok.experimental.Accessors;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 @Builder
-public class AppMemberInfoDTO
+public class AppAddMemberDTO
 {
+	private String account;
 
-	private String id;
-
-	private String memberId;
-
-	private String memberName;
-
-	private String memberRoleId;
-
+	private String role;
 }

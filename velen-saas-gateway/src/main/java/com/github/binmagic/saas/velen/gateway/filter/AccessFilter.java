@@ -1,12 +1,13 @@
-package com.github.binmagic.saas.velen.common.gateway.filter;
+package com.github.binmagic.saas.velen.gateway.filter;
 
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.URLUtil;
 import com.github.binmagic.saas.velen.authority.api.VerifyApi;
-import com.github.binmagic.saas.velen.common.config.IgnoreTokenConfig;
 import com.github.binmagic.saas.velen.common.config.JWTConfig;
 import com.github.binmagic.saas.velen.common.constant.Constant;
+import com.github.binmagic.saas.velen.gateway.config.AuthConfig;
+import com.github.binmagic.saas.velen.gateway.provider.AccessProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+
+
 @Component
 @Slf4j
 public class AccessFilter implements GlobalFilter, Ordered
@@ -38,45 +41,44 @@ public class AccessFilter implements GlobalFilter, Ordered
 	JWTConfig jwtConfig;
 
 	@Autowired
-	IgnoreTokenConfig ignoreTokenConfig;
+	AuthConfig authConfig;
 
+
+	@Autowired
+	AccessProvider accessProvider;
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain)
 	{
 		ServerHttpRequest request = exchange.getRequest();
-		ServerHttpResponse response = exchange.getResponse();
 		ServerHttpRequest.Builder mutate = request.mutate();
 
-		if(ignoreTokenConfig.isIgnoreToken(request.getPath().toString()))
+		String path = request.getURI().getPath();
+
+		if(authConfig.isSkip(path))
 		{
-			log.debug("access filter not execute");
 			return chain.filter(exchange);
 		}
 
-		JWTConfig.AuthInfo authInfo;
-		try
-		{
-			String token = getHeader(Constant.BEARER_HEADER_KEY, request);
+		String token = getHeader(Constant.BEARER_HEADER_KEY, request);
 
-			authInfo = jwtConfig.getAuthInfo(token);
-		}
-		catch(Exception e)
-		{
-			return Mono.error(e);
-		}
+		JWTConfig.AuthInfo authInfo = jwtConfig.getAuthInfo(token);
 
-		if(authInfo != null)
-		{
-			addHeader(mutate, Constant.JWT_KEY_USER_ID, authInfo.getUserId());
-			addHeader(mutate, Constant.JWT_KEY_NAME, authInfo.getName());
-			addHeader(mutate, Constant.JWT_KEY_ACCOUNT, authInfo.getAccount());
+		return accessProvider.getVerify(authInfo.getUserId(), path, request.getMethod().name())
+				.flatMap(flag -> {
+//					if(!flag){
+////						chain.fil
+//					}
 
-			MDC.put(Constant.JWT_KEY_USER_ID, String.valueOf(authInfo.getUserId()));
-		}
+					addHeader(mutate, Constant.JWT_KEY_USER_ID, authInfo.getUserId());
+					addHeader(mutate, Constant.JWT_KEY_NAME, authInfo.getName());
+					addHeader(mutate, Constant.JWT_KEY_ACCOUNT, authInfo.getAccount());
 
-		ServerHttpRequest build = mutate.build();
-		return chain.filter(exchange.mutate().request(build).build());
+					MDC.put(Constant.JWT_KEY_USER_ID, String.valueOf(authInfo.getUserId()));
+
+					ServerHttpRequest build = mutate.build();
+					return chain.filter(exchange.mutate().request(build).build());
+				});
 	}
 
 	private void addHeader(ServerHttpRequest.Builder mutate, String name, Object value)

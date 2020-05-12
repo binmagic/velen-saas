@@ -2,6 +2,8 @@ package com.github.binmagic.saas.velen.common.constant;
 
 public class Constant
 {
+	public static final String ROLE_MANAGER = "0";
+
 	public static final String JWT_KEY_USER_ID = "user_id";
 	public static final String JWT_KEY_NAME = "name";
 	public static final String JWT_KEY_TOKEN_TYPE = "token_type";

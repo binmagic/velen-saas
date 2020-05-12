@@ -22,6 +22,20 @@ export function getMemberInfo(id){
   })
 }
 
+export function addMember(id, data){
+  return request({
+    url: `/admin/app/${id}/member`,
+    method: 'post',
+    data
+  })
+}
+
+export function deleteMember(appId, id){
+  return request({
+    url: `/admin/app/${appId}/member/${id}`,
+    method: 'delete'
+  })
+}
 
 export function addApp(data) {
   return request({

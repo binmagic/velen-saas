@@ -9,4 +9,6 @@ import reactor.core.publisher.Flux;
 public interface AppMemberRepository extends BaseRepository<AppMember>
 {
 	Flux<AppMember> findByAppId(String appId);
+
+	Flux<AppMember> findByUserId(String userId);
 }

@@ -38,12 +38,12 @@
         >
           <el-table-column :label="$t('app.label.member')" align="center" :show-overflow-tooltip="true">
             <template slot-scope="{row}">
-              <span>{{ row.name }}</span>
+              <span>{{ row.memberName || row.memberId }}</span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('app.label.role')" align="center" :show-overflow-tooltip="true">
             <template slot-scope="{row}">
-              <el-select v-model="row.role" placeholder="请选择">
+              <el-select v-model="row.memberRoleId" placeholder="请选择">
                 <el-option
                   v-for="item in role"
                   :key="item.id"
@@ -55,7 +55,7 @@
           </el-table-column>
           <el-table-column label="#" align="center" class-name="small-padding fixed-width">
             <template slot-scope="{row}">
-              <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row)">
+              <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleInviteDelete(row)">
                 {{ $t('app.button.del') }}
               </el-button>
             </template>
@@ -63,9 +63,10 @@
         </el-table>
 
         <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-          <el-form ref="dataForm" :rules="rules" :model="temp">
+          <el-form ref="dataForm" :rules="rules" :model="inviteTemp">
             <el-form-item :label="$t('app.label.account')">
-              <el-input v-model="temp.account" />
+              <el-input v-model="inviteTemp.account" />
+              <el-button type="primary" icon="el-icon-share" @click="handleInvite" />
             </el-form-item>
           </el-form>
           <el-table
@@ -78,7 +79,7 @@
           >
             <el-table-column :label="$t('app.label.member')" align="center" :show-overflow-tooltip="true">
               <template slot-scope="{row}">
-                <span>{{ row.name }}</span>
+                <span>{{ row.account }}</span>
               </template>
             </el-table-column>
             <el-table-column :label="$t('app.label.role')" align="center" :show-overflow-tooltip="true">
@@ -95,14 +96,18 @@
             </el-table-column>
             <el-table-column label="#" align="center" class-name="small-padding fixed-width">
               <template slot-scope="{row}">
-                <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row)">
+                <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleTempInviteDelete(row)">
                   {{ $t('app.button.del') }}
                 </el-button>
               </template>
             </el-table-column>
           </el-table>
           <div slot="footer" class="dialog-footer">
-            <el-button v-if="inviteList.length > 0" type="primary" @click="dialogStatus==='create'?createData():updateData()">
+            <el-button
+              v-if="inviteList.length > 0"
+              type="primary"
+              @click="handleConfirmInvite"
+            >
               {{ $t('app.button.invite_confirm') }}
             </el-button>
           </div>
@@ -116,13 +121,15 @@
 </template>
 
 <script>
-import { getAppList, addApp, delApp, updateApp, getAppInfo, getMemberInfo } from '@/api/app'
+import { getAppInfo, getMemberInfo, updateApp, addMember, deleteMember} from '@/api/app'
+import { getRoleList } from '@/api/role'
 import waves from '@/directive/waves' // waves directive
 
 export default {
   directives: { waves },
   data() {
     return {
+      appId: this.$route.params.appId,
       list: [],
       listLoading: true,
       inviteList: [],
@@ -132,6 +139,9 @@ export default {
         id: '',
         name: '',
         desc: ''
+      },
+      inviteTemp: {
+        account: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -156,33 +166,61 @@ export default {
   },
   created() {
     this.fetchAppInfo()
+    this.fetchRole()
   },
   methods: {
+    fetchRole() {
+      getRoleList().then(resp => {
+        this.role = resp
+      })
+    },
     fetchAppInfo() {
-      getAppInfo(this.$route.params.appId).then(resp => {
+      getAppInfo(this.appId).then(resp => {
         this.temp = resp
       })
     },
     fetchMember() {
       this.memberListLoading = true
-      getMemberInfo(this.$route.params.appId).then(resp => {
+      getMemberInfo(this.appId).then(resp => {
         this.memberList = resp
         this.memberListLoading = false
       })
     },
     handleSwitch(tab, event) {
-      if(tab.name == 'member_info'){
+      if (tab.name == 'member_info') {
         this.fetchMember()
       }
     },
-    fetchData() {
-      this.listLoading = true
-      this.list = []
-      getAppList().then(response => {
-        this.list = response
-        setTimeout(() => {
-          this.listLoading = false
-        }, 0.5 * 1000)
+    handleInvite() {
+      this.inviteList.push({ account: this.inviteTemp.account })
+    },
+    handleTempInviteDelete(row) {
+      for (const index in this.inviteList) {
+        if (this.inviteList[index].account == row.account) {
+          delete this.inviteList[index]
+          return
+        }
+      }
+    },
+    handleInviteDelete(row){
+      deleteMember(this.appId, row.id).then(resp => {
+        this.$notify({
+          message: '删除成功',
+          type: 'success',
+          duration: 2000
+        })
+        this.fetchMember()
+      })
+    },
+    handleConfirmInvite(){
+      addMember(this.appId, this.inviteList).then(resp => {
+        this.dialogFormVisible = false
+        this.$notify({
+          message: '添加成功',
+          type: 'success',
+          duration: 2000
+        })
+        this.fetchMember()
       })
     },
     resetTemp() {
@@ -206,16 +244,6 @@ export default {
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
-      })
-    },
-    handleDelete(row) {
-      delApp(row.id).then(response => {
-        this.$notify({
-          message: '删除成功',
-          type: 'success',
-          duration: 2000
-        })
-        this.fetchData()
       })
     },
     createData() {

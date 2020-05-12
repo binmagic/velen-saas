@@ -1,4 +1,4 @@
-package com.github.binmagic.saas.velen.common.gateway.filter;
+package com.github.binmagic.saas.velen.gateway.filter;
 
 import cn.hutool.core.util.IdUtil;
 import com.github.binmagic.saas.velen.common.constant.Constant;

@@ -1,4 +1,4 @@
-package com.github.binmagic.saas.velen.common.gateway.config;
+package com.github.binmagic.saas.velen.gateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
