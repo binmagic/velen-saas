@@ -19,7 +19,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -66,10 +65,6 @@ public class AccessFilter implements GlobalFilter, Ordered
 
 		return accessProvider.getVerify(authInfo.getUserId(), path, request.getMethod().name())
 				.flatMap(flag -> {
-//					if(!flag){
-////						chain.fil
-//					}
-
 					addHeader(mutate, Constant.JWT_KEY_USER_ID, authInfo.getUserId());
 					addHeader(mutate, Constant.JWT_KEY_NAME, authInfo.getName());
 					addHeader(mutate, Constant.JWT_KEY_ACCOUNT, authInfo.getAccount());

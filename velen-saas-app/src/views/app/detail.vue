@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-tabs @tab-click="handleSwitch">
-      <el-tab-pane :label="$t('app.label.app_info')" name="app_info">
+    <el-tabs @tab-click="handleSwitch" value="app_info">
+      <el-tab-pane :label="$t('app.label.app_info')" name="app_info" >
         <el-form ref="dataForm" :rules="rules" :v-model="temp">
           <el-form-item :label="$t('app.label.name')">
             <el-input v-model="temp.name" />
