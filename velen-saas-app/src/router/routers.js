@@ -63,7 +63,6 @@ const routerApp = [{
 
 }]
 
-
 export const routerMap = [{
   path: '/404',
   meta: {
@@ -87,6 +86,7 @@ export const routerMap = [{
 {
   path: '/',
   component: Main,
+  meta: { title: '应用', icon: 'form', hideInMenu: true },
   redirect: '/apps',
   children: [
     {
@@ -99,7 +99,20 @@ export const routerMap = [{
       path: 'apps/:appId',
       name: '应用详情',
       component: () => import('@/views/app/detail'),
-      meta: { title: '应用详情', icon: 'form' ,hideInMenu: true}
+      meta: { title: '应用详情', icon: 'form', hideInMenu: true }
+    }
+  ]
+},
+{
+  path: '/dashboard',
+  component: Main,
+  meta: { title: '概览', icon: 'form' },
+  children: [
+    {
+      path: '/dashboard',
+      name: '概览',
+      component: () => import('@/views/dashboard/index'),
+      meta: { title: '概览', icon: 'form'}
     }
   ]
 },

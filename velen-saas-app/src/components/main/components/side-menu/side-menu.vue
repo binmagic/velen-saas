@@ -5,11 +5,11 @@
       <template v-for="item in menuList">
         <template v-if="item.children && item.children.length === 1">
           <side-menu-item v-if="showChildren(item)" :key="resolvePath(item.path)" :parent-item="item"></side-menu-item>
-          <el-menu-item v-else :index="resolvePath(item.children[0].path)"><common-icon :type="item.children[0].icon || ''"/><span>{{ showTitle(item.children[0]) }}</span></el-menu-item>
+          <el-menu-item v-else :index="resolvePath(item.children[0].path)"><span>{{ showTitle(item.children[0]) }}</span></el-menu-item>
         </template>
         <template v-else>
           <side-menu-item v-if="showChildren(item)" :key="resolvePath(item.path)" :parent-item="item"></side-menu-item>
-          <el-menu-item v-else :index="resolvePath(item.path)"><common-icon :type="item.icon || ''"/><span>{{ showTitle(item) }}</span></el-menu-item>
+          <el-menu-item v-else :index="resolvePath(item.path)"><span>{{ showTitle(item) }}</span></el-menu-item>
         </template>
       </template>
     </el-menu>

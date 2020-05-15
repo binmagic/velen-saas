@@ -1,9 +1,8 @@
 <template>
   <div class="app-manager-wrapper">
+    <span class="activeApp">{{activeApp}}</span>
     <el-dropdown>
-      <el-button type="primary">
-        {{activeApp}}<i class="el-icon-arrow-down el-icon--right"></i>
-      </el-button>
+      <i class="el-icon-arrow-down el-icon--right"></i>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item v-for="app of appList">{{app.name}}</el-dropdown-item>
       </el-dropdown-menu>
@@ -12,6 +11,7 @@
 </template>
 
 <script>
+import './app-manager.scss'
 export default {
   name: 'AppManager',
   props: {
