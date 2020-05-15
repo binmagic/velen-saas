@@ -14,7 +14,7 @@ export function getInfo(token) {
     url: '/admin/user/info',
     // url: '/user/info',
     method: 'get',
-    params: { token }
+    params: {token}
   })
 }
 
@@ -24,3 +24,11 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function authorization() {
+  return request({
+    url: '/account/authorization',
+    method: 'get'
+  })
+}
+

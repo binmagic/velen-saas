@@ -101,15 +101,17 @@ export default {
     fetchData() {
       this.listLoading = true
       this.list = []
-      getAppList().then(response => {
+      this.$store.dispatch('app/getAppList').then(response => {
         this.list = response
         setTimeout(() => {
           this.listLoading = false
         }, 0.5 * 1000)
+      }).catch(() => {
+        this.listLoading = false
       })
     },
     goDetail(row) {
-      this.$router.push({ path: `/app/detail/${row.id}` })
+      this.$router.push({ path: `/apps/${row.id}` })
     },
     resetTemp() {
       this.temp = {

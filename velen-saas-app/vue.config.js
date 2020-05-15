@@ -10,7 +10,7 @@ const name = defaultSettings.title || 'vue Admin Template' // page title
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
 // For example, Mac: sudo npm run
-const port = 9528 // dev port
+const port = 9529 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -53,7 +53,8 @@ module.exports = {
     name: name,
     resolve: {
       alias: {
-        '@': resolve('src')
+        '@': resolve('src'),
+        '_c': resolve('src/components')
       }
     }
   },
@@ -90,7 +91,7 @@ module.exports = {
       .end()
 
     config
-    // https://webpack.js.org/configuration/devtool/#development
+      // https://webpack.js.org/configuration/devtool/#development
       .when(process.env.NODE_ENV === 'development',
         config => config.devtool('cheap-source-map')
       )
@@ -102,7 +103,7 @@ module.exports = {
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
             .use('script-ext-html-webpack-plugin', [{
-            // `runtime` must same as runtimeChunk name. default is `runtime`
+              // `runtime` must same as runtimeChunk name. default is `runtime`
               inline: /runtime\..*\.js$/
             }])
             .end()

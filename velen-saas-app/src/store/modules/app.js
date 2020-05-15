@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-
+import { getAppList } from '@/api/app'
 const state = {
   sidebar: {
     opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
@@ -25,6 +25,9 @@ const mutations = {
   },
   TOGGLE_DEVICE: (state, device) => {
     state.device = device
+  },
+  SET_APP_LIST: (state, appList) => {
+    state.appList = appList
   }
 }
 
@@ -37,6 +40,16 @@ const actions = {
   },
   toggleDevice({ commit }, device) {
     commit('TOGGLE_DEVICE', device)
+  },
+  getAppList({ commit }) {
+    return new Promise((resolve, reject) => {
+      getAppList().then(data => {
+        commit('SET_APP_LIST', data)
+        resolve(data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
   }
 }
 

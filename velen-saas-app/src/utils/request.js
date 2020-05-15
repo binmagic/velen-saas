@@ -44,15 +44,15 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    if(response.status != 200){
-       Message({
-              message: response.data || response.status,
-              type: 'error',
-              duration: 5 * 1000
-            })
-       return Promise.reject(new Error(response.data || response.status))
-    }else{
-      return response.data;
+    if (response.status !== 200) {
+      Message({
+        message: response.data || response.status,
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(new Error(response.data || response.status))
+    } else {
+      return response.data
     }
   },
   error => {
