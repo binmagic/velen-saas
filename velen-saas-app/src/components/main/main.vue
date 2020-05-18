@@ -2,41 +2,47 @@
   <el-container class="main-container">
     <el-header class="main-header">
       <header-bar>
-        <user account="187****0825" role="数据分析师"></user>
+        <user account="187****0825" ></user>
+        <user-manager @on-select="turnToPage"></user-manager>
+        <logo @on-select="turnToPage"></logo>
       </header-bar>
     </el-header>
     <el-header class="nav-header" v-if="$route.path != '/apps'">
       <el-row>
         <el-col :span="4">
-          <app-manager class="app-manager" :app-list="appList" active-app="1212121"></app-manager>
+          <app-manager class="app-manager" :app-list="appList" :active-app="$route.params.id"></app-manager>
         </el-col>
         <el-col :span="20">
-          <side-menu ref="sideMenu" accordion :active-name="$route.name" :menu-list="menuList" @on-select="turnToPage">
-          </side-menu>
+          <header-navigation @on-select="turnToPage"></header-navigation>
+<!--          <side-menu ref="sideMenu" accordion :active-name="$route.name" :menu-list="menuList" @on-select="turnToPage">-->
+<!--          </side-menu>-->
         </el-col>
       </el-row>
     </el-header>
     <el-main class="main-content">
-        <h3>{{$route.name}}</h3>
+        <h3>{{$route.meta.title}}</h3>
         <router-view />
     </el-main>
   </el-container>
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import SideMenu from './components/side-menu'
 import AppManager from './components/app-manager'
+import Logo from './components/logo'
 import User from './components/user'
 import HeaderBar from './components/header-bar'
-
+import HeaderNavigation from './components/header-navigation'
+import UserManager from './components/user-manager'
 import './main.scss'
 export default {
   name: 'Main',
   components: {
-    SideMenu,
+    Logo,
     AppManager,
     User,
-    HeaderBar
+    HeaderBar,
+    HeaderNavigation,
+    UserManager
   },
   data() {
     return {
@@ -57,10 +63,10 @@ export default {
   methods: {
     turnToPage(route) {
       console.log(route)
-      let { path, params, query } = {}
-      if (typeof route === 'string') path = route
+      let { name, params, query } = {}
+      if (typeof route === 'string') name = route
       else {
-        path = route.name
+        name = route.name
         params = route.params
         query = route.query
       }
@@ -69,7 +75,7 @@ export default {
         return
       }
       this.$router.push({
-        path,
+        name,
         params,
         query
       })

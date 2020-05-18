@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 
 @Document
 @Data
-@Entity
 public class Menu extends BaseEntity<Menu>
 {
 	public static final Menu EMPTY = new Menu();

@@ -12,7 +12,6 @@ import javax.persistence.Entity;
 
 @Document
 @Data
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleFunction extends BaseEntity<RoleFunction>

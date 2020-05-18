@@ -12,7 +12,6 @@ import javax.persistence.Entity;
 
 @Document
 @Data
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleMenu extends BaseEntity<RoleMenu>

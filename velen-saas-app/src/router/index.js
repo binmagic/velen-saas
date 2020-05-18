@@ -32,6 +32,7 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
+      console.log("xxxsdsdsd")
       if (!store.state.router.hasGetRules) {
         store.dispatch('concatRoutes', 'all').then(routers => {
           router.addRoutes(routers)

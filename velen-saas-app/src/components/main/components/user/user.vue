@@ -1,12 +1,13 @@
 <template>
   <div class="user-avator-dropdown">
     <span style="font-size: 12px">{{ account }}</span>
-    <el-tag size="mini" style="color:white">{{ role }}</el-tag>
-    <el-dropdown>
+    <el-tag v-if="role != null" size="mini" style="color:white">{{ role }}</el-tag>
+    <el-dropdown @command="handleCommand">
       <i class="el-icon-arrow-down el-icon--right" />
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item>修改密码</el-dropdown-item>
-        <el-dropdown-item>退出登录</el-dropdown-item>
+        <el-dropdown-item command="menu-my_app">我的应用</el-dropdown-item>
+        <el-dropdown-item command="menu-edit_password">修改密码</el-dropdown-item>
+        <el-dropdown-item command="menu-logout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -18,14 +19,17 @@ export default {
   name: 'User',
   props: {
     role: {
-      type: String,
-      default: '分析师'
+      type: String
     },
     account: {
-      type: String,
-      default: '187****0825'
+      type: String
     },
     data() {
+
+    }
+  },
+  methods: {
+    handleCommand(name) {
 
     }
   }

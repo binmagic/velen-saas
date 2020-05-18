@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 
 @Document
 @Data
-@Entity
 public class Component extends BaseEntity<Component>
 {
 	public static final Component EMPTY = new Component();

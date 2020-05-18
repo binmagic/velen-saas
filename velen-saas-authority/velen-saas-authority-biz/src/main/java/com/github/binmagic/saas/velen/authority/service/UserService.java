@@ -1,6 +1,8 @@
 package com.github.binmagic.saas.velen.authority.service;
 
+import com.github.binmagic.saas.velen.authority.entity.RoleUser;
 import com.github.binmagic.saas.velen.authority.entity.User;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface UserService
@@ -11,6 +13,5 @@ public interface UserService
 
 	Mono<User> saveUser(User user);
 
-//	Mono<>
-
+	Flux<RoleUser> getUserRole(String userId);
 }

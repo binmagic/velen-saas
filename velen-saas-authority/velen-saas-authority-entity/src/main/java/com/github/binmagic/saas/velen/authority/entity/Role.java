@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Document
 @Data
-@Entity
 public class Role extends BaseEntity<Role>
 {
 	private String name;

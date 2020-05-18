@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Document
 @Data
-@Entity
 @Accessors(chain = true)
 public class App extends BaseEntity<App>
 {
@@ -30,6 +29,8 @@ public class App extends BaseEntity<App>
 	private String desc;
 
 	private String appKey;
+
+	private String ownerAccount;
 
 	private String ownerId;
 

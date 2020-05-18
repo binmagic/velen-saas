@@ -1,13 +1,7 @@
 package com.github.binmagic.saas.velen.authority.service.impl;
 
-import com.github.binmagic.saas.velen.authority.entity.Role;
-import com.github.binmagic.saas.velen.authority.entity.RoleComponent;
-import com.github.binmagic.saas.velen.authority.entity.RoleFunction;
-import com.github.binmagic.saas.velen.authority.entity.RoleMenu;
-import com.github.binmagic.saas.velen.authority.repository.RoleComponentRepository;
-import com.github.binmagic.saas.velen.authority.repository.RoleFunctionRepository;
-import com.github.binmagic.saas.velen.authority.repository.RoleMenuRepository;
-import com.github.binmagic.saas.velen.authority.repository.RoleRepository;
+import com.github.binmagic.saas.velen.authority.entity.*;
+import com.github.binmagic.saas.velen.authority.repository.*;
 import com.github.binmagic.saas.velen.authority.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +9,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +28,9 @@ public class RoleServiceImpl implements RoleService
 
 	@Autowired
 	RoleComponentRepository roleComponentRepository;
+
+	@Autowired
+	RoleResourceRepository roleResourceRepository;
 
 	@Override
 	public Flux<Role> getRoleList()
@@ -137,6 +135,18 @@ public class RoleServiceImpl implements RoleService
 			}
 		}
 		return Mono.when(monoList);
+	}
+
+	@Override
+	public Flux<RoleFunction> getRoleFunctions(List<String> ids)
+	{
+		return null;
+	}
+
+	@Override
+	public Flux<RoleResource> getRoleResources(List<String> ids)
+	{
+		return roleResourceRepository.findByRoleIdIn(ids);
 	}
 
 }

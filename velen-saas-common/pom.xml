@@ -41,7 +41,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.querydsl</groupId>
-			<artifactId>querydsl-jpa</artifactId>
+			<artifactId>querydsl-mongodb</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax</groupId>
@@ -62,7 +62,7 @@
 						</goals>
 						<configuration>
 							<outputDirectory>target/generated-sources/java</outputDirectory>
-							<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+							<processor>com.querydsl.apt.morphia.MorphiaAnnotationProcessor</processor>
 						</configuration>
 					</execution>
 				</executions>

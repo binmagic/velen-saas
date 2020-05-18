@@ -31,7 +31,7 @@
       </el-table-column>
       <el-table-column :label="$t('app.label.owner')" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.ownerName }}</span>
+          <span>{{ row.ownerName || row.ownerAccount }}</span>
         </template>
       </el-table-column>
       <el-table-column label="#" align="center" class-name="small-padding fixed-width">

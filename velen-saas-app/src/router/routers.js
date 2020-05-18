@@ -11,7 +11,8 @@ import Main from '@/components/main'
  *  beforeCloseName: (-) 设置该字段，则在关闭当前tab页时会去'@/router/before-close.js'里寻找该字段名对应的方法，作为关闭前的钩子函数
  * }
  */
-const routerSystem = [{
+
+export const routerSystem = [{
   path: '/authority',
   component: Main,
   name: '系统管理',
@@ -59,67 +60,71 @@ const routerSystem = [{
   ]
 }]
 
-const routerApp = [{
-
-}]
-
-export const routerMap = [{
-  path: '/404',
-  meta: {
-    title: '404',
-    icon: 'md-home',
-    hideInMenu: true
+export const routerApp = [
+  {
+    path: '/dashboard',
+    name: 'menu-dashboard',
+    component: Main,
+    meta: { title: '概览', icon: 'form' },
+    children: [
+      {
+        path: '/dashboard',
+        name: '概览',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: '概览', icon: 'form' }
+      }
+    ]
   },
-  component: () => import('@/views/404'),
-  hidden: true
-},
-{
-  path: '/login',
-  meta: {
-    title: 'Login - 登录',
-    icon: 'md-home',
-    hideInMenu: true
-  },
-  component: () => import('@/views/login/index'),
-  hidden: true
-},
-{
-  path: '/',
-  component: Main,
-  meta: { title: '应用', icon: 'form', hideInMenu: true },
-  redirect: '/apps',
-  children: [
-    {
-      path: '/apps',
-      name: '应用列表',
-      component: () => import('@/views/app/index'),
-      meta: { title: '应用列表', icon: 'form', hideInMenu: true }
+  {
+    path: '/more',
+    component: Main,
+    meta: { title: '更多', icon: 'form' },
+    children: [
+      {
+        path: '/dashboard',
+        name: '产品设置',
+        redirect: '/apps'
+      }
+    ]
+  }]
+
+export const routerMap = routerApp.concat(routerSystem)
+
+export const routes = [
+  {
+    path: '/login',
+    meta: {
+      title: 'Login - 登录',
+      icon: 'md-home',
+      hideInMenu: true
     },
-    {
-      path: 'apps/:appId',
-      name: '应用详情',
-      component: () => import('@/views/app/detail'),
-      meta: { title: '应用详情', icon: 'form', hideInMenu: true }
-    }
-  ]
-},
-{
-  path: '/dashboard',
-  component: Main,
-  meta: { title: '概览', icon: 'form' },
-  children: [
-    {
-      path: '/dashboard',
-      name: '概览',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '概览', icon: 'form'}
-    }
-  ]
-},
-// 404 page must be placed at the end !!!
-{ path: '*', meta: {
-  title: 'Login - 4040',
-  icon: 'md-home',
-  hideInMenu: true
-}, redirect: '/404' }
+    component: () => import('@/views/login/index'),
+    hidden: true
+  }, {
+    path: '/',
+    component: Main,
+    meta: { title: '应用', icon: 'form', hideInMenu: true },
+    redirect: '/apps',
+    children: [
+      {
+        path: '/apps',
+        component: () => import('@/views/app/index'),
+        meta: { title: '应用列表', icon: 'form', hideInMenu: true }
+      },
+      {
+        path: 'apps/:appId',
+        component: () => import('@/views/app/detail'),
+        meta: { title: '应用详情', icon: 'form', hideInMenu: true }
+      }
+    ]
+  },
+  // 404 page must be placed at the end !!!
+  {
+    path: '*',
+    meta: {
+      icon: 'md-home',
+      hideInMenu: true
+    },
+    component: () => import('@/views/404')
+  }
 ]

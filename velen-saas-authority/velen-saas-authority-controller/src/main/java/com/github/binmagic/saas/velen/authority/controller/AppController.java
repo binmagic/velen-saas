@@ -1,9 +1,6 @@
 package com.github.binmagic.saas.velen.authority.controller;
 
-import com.github.binmagic.saas.velen.authority.dto.AppAddMemberDTO;
-import com.github.binmagic.saas.velen.authority.dto.AppInfoDTO;
-import com.github.binmagic.saas.velen.authority.dto.AppMemberInfoDTO;
-import com.github.binmagic.saas.velen.authority.dto.AppSaveDTO;
+import com.github.binmagic.saas.velen.authority.dto.*;
 import com.github.binmagic.saas.velen.authority.entity.App;
 import com.github.binmagic.saas.velen.authority.service.AppService;
 import com.github.binmagic.saas.velen.common.component.controller.BaseController;
@@ -46,14 +43,27 @@ public class AppController extends BaseController
 				.flatMapMany(userId -> appService.findApp(userId));
 	}
 
+	@PutMapping
+	public Mono<App> updateAppInfo(@Validated @RequestBody AppUpdateDTO appUpdateDTO)
+	{
+		return appService.getApp(appUpdateDTO.getId())
+				.map(app -> {
+					BeanUtils.copyProperties(appUpdateDTO, app);
+					return app;
+				}).doOnNext(app -> {
+					appService.updateApp(app);
+				});
+	}
+
 	@PostMapping
 	public Mono<App> createApp(@Validated @RequestBody AppSaveDTO appSaveDTO)
 	{
-		return Mono.zip(getCurrentUserId(), getCurrentUserName())
+		return Mono.zip(getCurrentUserId(), getCurrentUserName(), getCurrentUserAccount())
 				.flatMap(tuple -> {
 					App app = new App();
 					app.setOwnerId(tuple.getT1());
 					app.setOwnerName(tuple.getT2());
+					app.setOwnerAccount(tuple.getT3());
 					BeanUtils.copyProperties(appSaveDTO, app);
 					return appService.createApp(app);
 				});

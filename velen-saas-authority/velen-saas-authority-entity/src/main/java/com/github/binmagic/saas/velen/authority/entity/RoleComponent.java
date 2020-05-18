@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 
 @Document
 @Data
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleComponent extends BaseEntity<RoleComponent>

@@ -2,6 +2,7 @@ package com.github.binmagic.saas.velen.authority.service;
 
 import com.github.binmagic.saas.velen.authority.entity.Menu;
 import com.github.binmagic.saas.velen.common.entity.Page;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface MenuService
@@ -13,4 +14,6 @@ public interface MenuService
 	Mono<Menu> updateMenu(Menu menu);
 
 	Mono<Void> deleteMenu(String id);
+
+
 }

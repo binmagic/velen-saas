@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 
 @Document
 @Data
-@Entity
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor

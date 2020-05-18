@@ -1,10 +1,7 @@
 package com.github.binmagic.saas.velen.authority.service;
 
 
-import com.github.binmagic.saas.velen.authority.entity.Role;
-import com.github.binmagic.saas.velen.authority.entity.RoleComponent;
-import com.github.binmagic.saas.velen.authority.entity.RoleFunction;
-import com.github.binmagic.saas.velen.authority.entity.RoleMenu;
+import com.github.binmagic.saas.velen.authority.entity.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -33,4 +30,8 @@ public interface RoleService
 	Mono<Void> saveMenuRoles(Map<String, Map<String, Boolean>> data);
 
 	Mono<Void> saveComponentRoles(Map<String, Map<String, Boolean>> data);
+
+	Flux<RoleFunction> getRoleFunctions(List<String> ids);
+
+	Flux<RoleResource> getRoleResources(List<String> ids);
 }

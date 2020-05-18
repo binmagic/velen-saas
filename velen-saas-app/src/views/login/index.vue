@@ -1,7 +1,6 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-
       <div class="title-container">
         <h3 class="title">Login Form</h3>
       </div>
@@ -54,7 +53,6 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-
 export default {
   name: 'Login',
   data() {

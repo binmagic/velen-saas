@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 
 @Document
 @Data
-@Entity
 public class User extends BaseEntity<User>
 {
 	private String account;
