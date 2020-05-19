@@ -20,5 +20,7 @@ public class AppInfoDTO
 
 	private String desc;
 
+	private String appKey;
+
 	private LocalDateTime createTime;
 }

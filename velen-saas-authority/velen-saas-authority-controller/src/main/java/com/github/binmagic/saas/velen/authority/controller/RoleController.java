@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @RestController
-@RequestMapping("role")
+@RequestMapping("/permission/role")
 public class RoleController extends BaseController
 {
 

@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @RestController
-@RequestMapping("app")
+@RequestMapping("/accounts/app")
 public class AppController extends BaseController
 {
 	@Autowired
@@ -24,10 +24,11 @@ public class AppController extends BaseController
 	public Mono<AppInfoDTO> getAppInfo(@PathVariable String appId)
 	{
 		return appService.getApp(appId)
-				.flatMap(app -> Mono.just(AppInfoDTO.builder()
-						.createTime(app.getCreateTime())
-						.name(app.getName())
-						.desc(app.getDesc()).build()));
+				.flatMap(app -> {
+					AppInfoDTO appInfoDTO = new AppInfoDTO();
+					BeanUtils.copyProperties(app, appInfoDTO);
+					return Mono.just(appInfoDTO);
+				});
 	}
 
 	@GetMapping("/{appId}/member")

@@ -2,14 +2,14 @@ import request from '@/utils/request'
 
 export function getRoleList() {
   return request({
-    url: '/admin/role',
+    url: '/permission/role',
     method: 'get'
   })
 }
 
 export function addRole(data) {
   return request({
-    url: '/admin/role',
+    url: '/permission/role',
     method: 'post',
     data
   })
@@ -17,14 +17,14 @@ export function addRole(data) {
 
 export function delRole(id) {
   return request({
-    url: `/admin/role/${id}`,
+    url: `/permission/role/${id}`,
     method: 'delete'
   })
 }
 
 export function updateRole(data) {
   return request({
-    url: '/admin/role',
+    url: '/permission/role',
     method: 'put',
     data
   })
@@ -40,7 +40,7 @@ export function getRoleFunction(data) {
 
 export function getRoleMenu(data) {
   return request({
-    url: '/admin/role/menu',
+    url: '/permission/role/menu',
     method: 'get',
     params: { menuIds: data }
   })
@@ -48,7 +48,7 @@ export function getRoleMenu(data) {
 
 export function getRoleComponent(data) {
   return request({
-    url: '/admin/role/component',
+    url: '/permission/role/component',
     method: 'get',
     params: { componentIds: data }
   })
@@ -56,7 +56,7 @@ export function getRoleComponent(data) {
 
 export function saveRoleMenu(data) {
   return request({
-    url: '/admin/role/menu',
+    url: '/permission/role/menu',
     method: 'post',
     data
   })
@@ -64,7 +64,7 @@ export function saveRoleMenu(data) {
 
 export function saveRoleFunction(data) {
   return request({
-    url: '/admin/role/function',
+    url: '/permission/role/function',
     method: 'post',
     data
   })
@@ -72,7 +72,7 @@ export function saveRoleFunction(data) {
 
 export function saveRoleComponent(data) {
   return request({
-    url: '/admin/role/component',
+    url: '/permission/role/component',
     method: 'post',
     data
   })

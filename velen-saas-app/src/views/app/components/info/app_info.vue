@@ -1,11 +1,20 @@
 <template>
   <div class="app-info">
-    <el-form ref="dataForm" :rules="rules" :v-model="temp">
+    <el-form hide-required-asterisk ref="dataForm" :rules="rules" :v-model="temp" label-position="left" label-width="150px">
       <el-form-item :label="$t('app.label.name')">
         <el-input v-model="temp.name" />
       </el-form-item>
       <el-form-item :label="$t('app.label.desc')">
         <el-input v-model="temp.desc" />
+      </el-form-item>
+      <el-form-item :label="$t('app.label.appId')">
+        <el-input v-model="temp.id" />
+      </el-form-item>
+      <el-form-item :label="$t('app.label.appKey')">
+        <el-input v-model="temp.appKey" />
+      </el-form-item>
+      <el-form-item :label="$t('app.label.owner')">
+        <el-input v-model="temp.owner" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -35,7 +44,9 @@ export default {
       temp: {
         id: '',
         name: '',
-        desc: ''
+        desc: '',
+        appKey: '',
+        owner: '',
       },
       loading: false
     }

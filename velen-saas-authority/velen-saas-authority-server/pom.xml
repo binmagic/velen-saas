@@ -98,6 +98,7 @@
 					<include>**/*.xml</include>
 					<include>**/*.json</include>
 					<include>**/*.properties</include>
+					<include>**/*.yml</include>
 				</includes>
 			</resource>
 			<resource>

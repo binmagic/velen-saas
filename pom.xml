@@ -15,6 +15,7 @@
 		<module>velen-saas-gateway</module>
 		<module>velen-saas-common</module>
 		<module>velen-saas-authority</module>
+		<module>velen-saas-config</module>
 	</modules>
 
 	<properties>

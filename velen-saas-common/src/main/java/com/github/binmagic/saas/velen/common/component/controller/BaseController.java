@@ -30,5 +30,9 @@ public abstract class BaseController
 				.map(r -> r.getHeaders().getFirst(Constant.JWT_KEY_ACCOUNT));
 	}
 
-
+	protected Mono<String> getCurrentAppId()
+	{
+		return ReactiveRequestContextHolder.getRequest()
+				.map(r -> r.getHeaders().getFirst(Constant.APP_ID));
+	}
 }

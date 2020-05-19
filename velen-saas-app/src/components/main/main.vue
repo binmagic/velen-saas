@@ -7,7 +7,7 @@
         <logo @on-select="turnToPage"></logo>
       </header-bar>
     </el-header>
-    <el-header class="nav-header" v-if="$route.path != '/apps'">
+    <el-header class="nav-header" v-if="$route.path != '/apps' && !$route.path.startsWith('/authority')">
       <el-row>
         <el-col :span="4">
           <app-manager class="app-manager" :app-list="appList" :active-app="$route.params.id"></app-manager>

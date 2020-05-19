@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("function")
+@RequestMapping("permission/function")
 public class FunctionController extends BaseController
 {
 

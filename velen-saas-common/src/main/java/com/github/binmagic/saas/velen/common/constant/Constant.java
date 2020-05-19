@@ -13,4 +13,5 @@ public class Constant
 	public static final String TRACE_ID_HEADER = "x-trace-header";
 	public static final String LOG_TRACE_ID = "trace";
 	public static final String BEARER_HEADER_KEY = "token";
+	public static final String APP_ID = "app";
 }

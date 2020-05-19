@@ -5,9 +5,9 @@
     <el-dropdown @command="handleCommand">
       <i class="el-icon-arrow-down el-icon--right" />
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item command="menu-my_app">我的应用</el-dropdown-item>
-        <el-dropdown-item command="menu-edit_password">修改密码</el-dropdown-item>
-        <el-dropdown-item command="menu-logout">退出登录</el-dropdown-item>
+        <el-dropdown-item command="my_app">我的应用</el-dropdown-item>
+        <el-dropdown-item command="edit_password">修改密码</el-dropdown-item>
+        <el-dropdown-item command="logout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -30,7 +30,13 @@ export default {
   },
   methods: {
     handleCommand(name) {
-
+      if (Object.is(name, 'my_app')) {
+        console.log('my_app click')
+      } else if (Object.is(name, 'edit_password')) {
+        console.log('edit_password click')
+      } else if (Object.is(name, 'logout')) {
+        console.log('logout click')
+      }
     }
   }
 }

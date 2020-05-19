@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/verify")
+@RequestMapping("/permission/verify")
 public class VerifyController extends BaseController
 {
 

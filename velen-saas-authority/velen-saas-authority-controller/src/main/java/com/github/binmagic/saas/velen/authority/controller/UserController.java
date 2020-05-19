@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping
+@RequestMapping("v1/accounts")
 public class UserController extends BaseController
 {
 

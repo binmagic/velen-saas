@@ -13,45 +13,36 @@ import Main from '@/components/main'
  */
 
 export const routerSystem = [{
-  path: '/authority',
+  path: '/#',
   component: Main,
-  name: '系统管理',
+  name: 'menu-user-manager',
   meta: {
     icon: 'ios-boat',
-    title: '权限管理'
+    title: '用户管理'
   },
   children: [
     {
-      path: '/function',
-      name: '权限列表',
-      component: () => import('@/views/authority/function'),
+      path: '/permission/function',
+      name: 'menu-function-list',
+      component: () => import('@/views/permission/function'),
       meta: {
         icon: 'ios-boat',
         title: '权限列表'
       }
     },
     {
-      path: '/menu',
-      name: '菜单列表',
-      component: () => import('@/views/authority/menu'),
+      path: '/permission/resource',
+      name: 'menu-resource-list',
+      component: () => import('@/views/permission/resource'),
       meta: {
         icon: 'ios-boat',
-        title: '菜单列表'
+        title: '资源列表'
       }
     },
     {
-      path: '/component',
-      name: '组件列表',
-      component: () => import('@/views/authority/component'),
-      meta: {
-        icon: 'ios-boat',
-        title: '组件列表'
-      }
-    },
-    {
-      path: '/role',
-      name: '角色列表',
-      component: () => import('@/views/authority/role'),
+      path: '/permission/role',
+      name: 'menu-role-list',
+      component: () => import('@/views/permission/role'),
       meta: {
         icon: 'ios-boat',
         title: '角色列表'
@@ -69,7 +60,7 @@ export const routerApp = [
     children: [
       {
         path: '/dashboard',
-        name: '概览',
+        name: 'menu-dashboard',
         component: () => import('@/views/dashboard/index'),
         meta: { title: '概览', icon: 'form' }
       }

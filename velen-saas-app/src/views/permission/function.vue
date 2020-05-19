@@ -19,12 +19,22 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column :label="$t('menu.label.name')" align="center" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('function.label.name')" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('menu.label.state')" align="center" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('function.label.method')" align="center" :show-overflow-tooltip="true">
+        <template slot-scope="{row}">
+          <span>{{ row.method }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('function.label.uri')" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.uri }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('function.label.state')" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
           <el-switch
             v-model="row.state"
@@ -33,13 +43,23 @@
           />
         </template>
       </el-table-column>
+      <el-table-column :label="$t('function.label.createTime')" align="center" :show-overflow-tooltip="true">
+        <template slot-scope="{row}">
+          <span>{{ row.createTime }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('function.label.updateTime')" align="center" :show-overflow-tooltip="true">
+        <template slot-scope="{row}">
+          <span>{{ row.updateTime }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="#" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            {{ $t('menu.button.edit') }}
+            {{ $t('function.button.edit') }}
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row)">
-            {{ $t('menu.button.del') }}
+            {{ $t('function.button.del') }}
           </el-button>
         </template>
       </el-table-column>
@@ -55,16 +75,27 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp">
-        <el-form-item :label="$t('menu.label.name')">
+        <el-form-item :label="$t('function.label.name')">
           <el-input v-model="temp.name" />
+        </el-form-item>
+        <el-form-item :label="$t('function.label.method')">
+          <el-select v-model="temp.method" placeholder="请选择">
+            <el-option value="GET"/>
+            <el-option value="POST"/>
+            <el-option value="PUT"/>
+            <el-option value="PATCH"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('function.label.uri')">
+          <el-input v-model="temp.uri" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          {{ $t('menu.button.cancel') }}
+          {{ $t('function.button.cancel') }}
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          {{ $t('menu.button.confirm') }}
+          {{ $t('function.button.confirm') }}
         </el-button>
       </div>
     </el-dialog>
@@ -72,7 +103,7 @@
 </template>
 
 <script>
-import { getMenuList, addMenu, delMenu, updateMenu } from '@/api/menu'
+import { getFunctionList, addFunction, delFunction, updateFunction } from '@/api/function'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import waves from '@/directive/waves' // waves directive
 
@@ -94,7 +125,6 @@ export default {
       temp: {
         id: '',
         name: '',
-        state: 1,
         method: '',
         uri: ''
       },
@@ -118,7 +148,7 @@ export default {
       this.listLoading = true
       this.list = []
 
-      getMenuList(this.listQuery).then(response => {
+      getFunctionList(this.listQuery).then(response => {
         this.list = response.items
         this.total = response.total
         setTimeout(() => {
@@ -128,8 +158,8 @@ export default {
     },
     resetTemp() {
       this.temp = {
+        id: '',
         name: '',
-        state: 1,
         method: '',
         uri: ''
       }
@@ -151,7 +181,7 @@ export default {
       })
     },
     handleDelete(row) {
-      delMenu(row.id).then(response => {
+      delFunction(row.id).then(response => {
         this.$notify({
           message: '删除成功',
           type: 'success',
@@ -163,7 +193,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          addMenu(this.temp).then(() => {
+          addFunction(this.temp).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               message: '创建成功',
@@ -179,7 +209,8 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          updateMenu(tempData).then(() => {
+          delete tempData['state']
+          updateFunction(tempData).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               message: '修改成功',

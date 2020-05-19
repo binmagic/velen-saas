@@ -2,7 +2,6 @@ package com.github.binmagic.saas.velen.authority.controller
 
 import com.github.binmagic.saas.velen.authority.dto.LoginParamDTO
 import com.github.binmagic.saas.velen.authority.dto.RegisterParamDTO
-import com.github.binmagic.saas.velen.authority.entity.Resource
 import com.github.binmagic.saas.velen.authority.entity.User
 import com.github.binmagic.saas.velen.authority.granter.TokenGranter
 import com.github.binmagic.saas.velen.authority.granter.TokenGranterBuilder
@@ -11,20 +10,20 @@ import com.github.binmagic.saas.velen.authority.service.RoleService
 import com.github.binmagic.saas.velen.authority.service.UserService
 import com.github.binmagic.saas.velen.common.component.controller.BaseController
 import com.github.binmagic.saas.velen.common.config.JWTConfig
-import com.github.binmagic.saas.velen.common.config.JWTConfig.AuthInfo
 import com.github.binmagic.saas.velen.common.config.JWTConfig.JWTAuthInfo
+import kotlinx.coroutines.Dispatchers.Unconfined
+import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
+import kotlinx.coroutines.reactor.mono
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.toMono
 
-@RequestMapping("v2")
+
+@RequestMapping("accounts")
 @RestController
 class UserV2Controller : BaseController() {
 
@@ -44,24 +43,24 @@ class UserV2Controller : BaseController() {
     lateinit var jwtConfig: JWTConfig
 
     @PostMapping("login")
-    suspend fun auth(@Validated @RequestBody loginParamDTO: LoginParamDTO): Mono<ResponseEntity<AuthInfo>> {
+    fun auth(@Validated @RequestBody loginParamDTO: LoginParamDTO)  = mono(Unconfined)  {
         val granter: TokenGranter = tokenGranterBuilder.getGranter(loginParamDTO.grantType)
-        val user = granter.grant(loginParamDTO).awaitFirstOrNull() ?: return ResponseEntity.notFound().build<AuthInfo>().toMono()
+        val user = granter.grant(loginParamDTO).awaitFirstOrNull() ?: throw NoSuchMethodException("grant fail")
         val jwtAuthInfo = JWTAuthInfo(user.account, user.id, user.name)
         val authInfo = jwtConfig.createAutoInfo(jwtAuthInfo, jwtConfig.tokenExpireTime)
-        return ResponseEntity.ok(authInfo).toMono()
+        ResponseEntity.ok(authInfo)
     }
 
 
     @PostMapping("register")
-    suspend fun register(@Validated @RequestBody registerParamDTO: RegisterParamDTO): Mono<Void> {
+    fun register(@Validated @RequestBody registerParamDTO: RegisterParamDTO) = mono(Unconfined) {
         val user = User()
         BeanUtils.copyProperties(registerParamDTO, user)
-        return userService.saveUser(user).then()
+        userService.saveUser(user).awaitSingle()
     }
 
     @GetMapping("authorization")
-    suspend fun authorization(): Flux<Resource> {
+    fun authorization() = mono(Unconfined) {
 
         val userId = currentUserId.awaitSingle()
 
@@ -81,7 +80,7 @@ class UserV2Controller : BaseController() {
             resourceIds.add(roleResource.resourceId)
         }
 
-        return resourceService.getResource(resourceIds)
+        resourceService.getResource(resourceIds)
     }
 
 

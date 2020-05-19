@@ -13,17 +13,17 @@ spring:
     restart:
       enabled: true
   application:
-    name: velen-saas-admin
+    name: velen-saas-authority
   cloud:
     nacos:
       discovery:
         metadata:
-          group: discovery-guide-group
+          group: velen-saas-group
           version: 1.0
         server-addr: ${middleware.host}:8848
   data:
     mongodb:
-      database: velen-saas-admin
+      database: velen-saas-authority
       host: localhost
       port: 27017
 

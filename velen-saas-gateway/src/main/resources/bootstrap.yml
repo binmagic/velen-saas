@@ -22,16 +22,28 @@ spring:
         locator:
           enable: false
       routes:
-        -   id: velen-saas-admin
-            uri: lb://velen-saas-admin
+        -   id: velen-saas-authority-accounts
+            uri: lb://velen-saas-authority
             predicates:
-              -  Path=/api/admin/**
+              -  Path=/api/accounts/**
             filters:
-              -  StripPrefix=2
+              -  StripPrefix=1
+        -   id: velen-saas-authority-permission
+            uri: lb://velen-saas-authority
+            predicates:
+              - Path=/api/permission/**
+            filters:
+              - StripPrefix=1
+        -   id: velen-saas-dashboard
+            uri: lb://velen-saas-config
+            predicates:
+              - Path=/api/dashboard/**
+            filters:
+              - StripPrefix=1
     nacos:
       discovery:
         metadata:
-          group: velen-saas-gateway-group
+          group: velen-saas-group
           version: 1.0
         server-addr: ${middleware.host}:8848
   redis:
@@ -42,7 +54,7 @@ spring:
 ignore:
   token:
     url:
-      - /api/admin/login
-      - /api/admin/user/register
+      - /api/accounts/login
+      - /api/accounts/register
 jwt:
   token_secret: pXFb4i%*834gfdh96(3df&%18iodGq4ODQyMzc4lz7yI6ImF1dG

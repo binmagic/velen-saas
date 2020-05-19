@@ -6,6 +6,6 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'com.github.binmagic.saas.velen.config.App'
 }
 </script>

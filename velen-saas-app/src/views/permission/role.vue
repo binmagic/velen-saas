@@ -150,8 +150,7 @@
 <script>
 import { addRole, delRole, getRoleList, updateRole, getRoleFunction, getRoleMenu, getRoleComponent, saveRoleFunction, saveRoleMenu, saveRoleComponent } from '@/api/role'
 import { getFunctionList } from '@/api/function'
-import { getMenuList } from '@/api/menu'
-import { getComponentList } from '@/api/component'
+import { getResourceList } from '@/api/resource'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import waves from '@/directive/waves' // waves directive
 
@@ -298,9 +297,9 @@ export default {
         }
       })
     },
-    fetchMenuList() {
+    fetchResourceList() {
       this.configListLoading = true
-      getMenuList(this.configListQuery).then(resp => {
+      getResourceList(this.configListQuery).then(resp => {
         this.configListTotal = resp.total
         this.configList = resp.items
         if (this.configListTotal > 0) {
@@ -314,33 +313,7 @@ export default {
           getRoleMenu(ids.join(',')).then(resp1 => {
             for (const index in resp1) {
               const data = resp1[index]
-              map[data.menuId][data.roleId] = true
-            }
-            this.configList = Object.values(map)
-            this.configListLoading = false
-          })
-        } else {
-          this.configListLoading = false
-        }
-      })
-    },
-    fetchComponentList() {
-      this.configListLoading = true
-      getComponentList(this.configListQuery).then(resp => {
-        this.configListTotal = resp.total
-        this.configList = resp.items
-        if (this.configListTotal > 0) {
-          const ids = []
-          const map = {}
-          for (const index in resp.items) {
-            ids.push(resp.items[index].id)
-            map[resp.items[index].id] = { id: resp.items[index].id, name: resp.items[index].name }
-          }
-
-          getRoleComponent(ids.join(',')).then(resp1 => {
-            for (const index in resp1) {
-              const data = resp1[index]
-              map[data.componentId][data.roleId] = true
+              map[data.resourceId][data.roleId] = true
             }
             this.configList = Object.values(map)
             this.configListLoading = false
@@ -352,12 +325,10 @@ export default {
     },
     fetchList(type) {
       type = type || this.configDialogStatus
-      if (type == 'function') {
+      if (Object.is(type, 'function')) {
         this.fetchFunctionList()
-      } else if (type == 'component') {
-        this.fetchComponentList()
-      } else if (type == 'menu') {
-        this.fetchMenuList()
+      } else if (Object.is(type, 'resource')) {
+        this.fetchResourceList()
       }
     },
     handleConfig(type) {
@@ -394,19 +365,9 @@ export default {
           })
           this.configListLoading = false
         })
-      } else if (this.configDialogStatus == 'component') {
+      } else if (this.configDialogStatus == 'resource') {
         this.configListLoading = true
-        saveRoleComponent(data).then(resp => {
-          this.$notify({
-            message: 'success',
-            type: 'success',
-            duration: 2000
-          })
-          this.configListLoading = false
-        })
-      } else if (this.configDialogStatus == 'menu') {
-        this.configListLoading = true
-        saveRoleMenu(data).then(resp => {
+        saveRoleResource(data).then(resp => {
           this.$notify({
             message: 'success',
             type: 'success',
