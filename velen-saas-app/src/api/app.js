@@ -2,37 +2,37 @@ import request from '@/utils/request'
 
 export function getAppList(query) {
   return request({
-    url: '/accounts/app',
+    url: '/accounts/app/my',
     method: 'get',
     params: query
   })
 }
 
-export function getAppInfo(id){
+export function getAppInfo() {
   return request({
-    url: `/accounts/app/${id}`,
+    url: `/accounts/app`,
     method: 'get'
   })
 }
 
-export function getMemberInfo(id){
+export function getMemberInfo() {
   return request({
-    url: `/accounts/app/${id}/member`,
+    url: `/accounts/app/member`,
     method: 'get'
   })
 }
 
-export function addMember(id, data){
+export function addMember(data) {
   return request({
-    url: `/accounts/app/${id}/member`,
+    url: `/accounts/app/member`,
     method: 'post',
     data
   })
 }
 
-export function deleteMember(appId, id){
+export function deleteMember(id) {
   return request({
-    url: `/accounts/app/${appId}/member/${id}`,
+    url: `/accounts/app/member/${id}`,
     method: 'delete'
   })
 }

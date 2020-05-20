@@ -74,7 +74,7 @@ export const routerApp = [
       {
         path: '/dashboard',
         name: '产品设置',
-        redirect: '/apps'
+        redirect: '/app'
       }
     ]
   }]
@@ -95,15 +95,15 @@ export const routes = [
     path: '/',
     component: Main,
     meta: { title: '应用', icon: 'form', hideInMenu: true },
-    redirect: '/apps',
+    redirect: '/app',
     children: [
       {
-        path: '/apps',
+        path: '/app',
         component: () => import('@/views/app/index'),
         meta: { title: '应用列表', icon: 'form', hideInMenu: true }
       },
       {
-        path: 'apps/:appId',
+        path: 'app/detail',
         component: () => import('@/views/app/detail'),
         meta: { title: '应用详情', icon: 'form', hideInMenu: true }
       }

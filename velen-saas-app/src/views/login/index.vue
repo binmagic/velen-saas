@@ -53,6 +53,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+import { mapActions } from 'vuex'
 export default {
   name: 'Login',
   data() {
@@ -94,6 +95,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions({ login: 'handleLogin' }),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -108,7 +110,7 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
+          this.login(this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {

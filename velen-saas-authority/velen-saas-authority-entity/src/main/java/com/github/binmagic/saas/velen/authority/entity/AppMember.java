@@ -19,8 +19,7 @@ public class AppMember extends BaseEntity<AppMember>
 
 	private String appId;
 
-	private String userId;
+	private String account;
 
-	private String roleId;
-
+	private String role;
 }

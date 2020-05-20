@@ -12,7 +12,6 @@ import path from "path";
       <el-menu-item index="3">用户分群</el-menu-item>
       <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">用户标签</a></el-menu-item>
       <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">书签</a></el-menu-item>
-      <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">书签</a></el-menu-item>
       <el-submenu index="2">
         <template slot="title">更多</template>
         <el-menu-item index="2-1">元数据</el-menu-item>

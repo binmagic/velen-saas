@@ -17,5 +17,10 @@
 			<groupId>com.github.binmagic.saas</groupId>
 			<artifactId>velen-saas-authority-entity</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+		</dependency>
 	</dependencies>
 </project>

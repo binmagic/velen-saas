@@ -11,19 +11,21 @@ const state = {
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
-
   },
   SET_NAME: (state, name) => {
     state.name = name
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_ACCESS: (state, access) => {
+    state.access = access
   }
 }
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
+  handleLogin({ commit }, userInfo) {
     const { account, password, grantType } = userInfo
     return new Promise((resolve, reject) => {
       login({ account: account.trim(), password: password, grantType: grantType }).then(data => {
@@ -53,7 +55,14 @@ const actions = {
       })
     })
   },
-
+  handleLogout({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      commit('SET_TOKEN', '')
+      commit('SET_ACCESS', [])
+      removeToken()
+      resolve()
+    })
+  },
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
@@ -79,7 +88,6 @@ const actions = {
 }
 
 export default {
-  namespaced: true,
   state,
   mutations,
   actions

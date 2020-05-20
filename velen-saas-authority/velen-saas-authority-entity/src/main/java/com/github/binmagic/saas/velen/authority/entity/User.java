@@ -24,6 +24,8 @@ public class User extends BaseEntity<User>
 
 	private String salt;
 
+	private boolean superuser;
+
 	private Integer state;
 
 	@CreatedDate

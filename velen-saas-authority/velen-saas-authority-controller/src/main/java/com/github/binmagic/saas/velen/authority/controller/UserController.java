@@ -36,7 +36,7 @@ public class UserController extends BaseController
 		TokenGranter granter = tokenGranterBuilder.getGranter(loginParamDTO.getGrantType());
 
 		return granter.grant(loginParamDTO).map(u -> {
-			JWTConfig.JWTAuthInfo jwtAuthInfo = new JWTConfig.JWTAuthInfo(u.getAccount(), u.getId(), u.getName());
+			JWTConfig.JWTAuthInfo jwtAuthInfo = new JWTConfig.JWTAuthInfo(u.getAccount(), u.getId(), u.getName(), u.isSuperuser());
 			JWTConfig.AuthInfo authInfo = jwtConfig.createAutoInfo(jwtAuthInfo
 					, jwtConfig.getTokenExpireTime());
 			return ResponseEntity.ok(authInfo);

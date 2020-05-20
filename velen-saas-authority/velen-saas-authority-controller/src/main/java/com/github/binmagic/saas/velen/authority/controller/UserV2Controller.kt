@@ -46,7 +46,7 @@ class UserV2Controller : BaseController() {
     fun auth(@Validated @RequestBody loginParamDTO: LoginParamDTO)  = mono(Unconfined)  {
         val granter: TokenGranter = tokenGranterBuilder.getGranter(loginParamDTO.grantType)
         val user = granter.grant(loginParamDTO).awaitFirstOrNull() ?: throw NoSuchMethodException("grant fail")
-        val jwtAuthInfo = JWTAuthInfo(user.account, user.id, user.name)
+        val jwtAuthInfo = JWTAuthInfo(user.account, user.id, user.name, user.isSuperuser)
         val authInfo = jwtConfig.createAutoInfo(jwtAuthInfo, jwtConfig.tokenExpireTime)
         ResponseEntity.ok(authInfo)
     }
@@ -56,6 +56,15 @@ class UserV2Controller : BaseController() {
     fun register(@Validated @RequestBody registerParamDTO: RegisterParamDTO) = mono(Unconfined) {
         val user = User()
         BeanUtils.copyProperties(registerParamDTO, user)
+        user.isSuperuser = true
+        userService.saveUser(user).awaitSingle()
+    }
+
+    @PostMapping("register1")
+    fun register1(@Validated @RequestBody registerParamDTO: RegisterParamDTO) = mono(Unconfined) {
+        val user = User()
+        BeanUtils.copyProperties(registerParamDTO, user)
+        user.isSuperuser = false
         userService.saveUser(user).awaitSingle()
     }
 

@@ -1,10 +1,7 @@
 package com.github.binmagic.saas.velen.authority.controller;
 
 
-import com.github.binmagic.saas.velen.authority.entity.Role;
-import com.github.binmagic.saas.velen.authority.entity.RoleComponent;
-import com.github.binmagic.saas.velen.authority.entity.RoleFunction;
-import com.github.binmagic.saas.velen.authority.entity.RoleMenu;
+import com.github.binmagic.saas.velen.authority.entity.*;
 import com.github.binmagic.saas.velen.authority.service.RoleService;
 import com.github.binmagic.saas.velen.common.component.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,17 +53,12 @@ public class RoleController extends BaseController
 		return roleService.getOwnerFunctionRoles(functionIds);
 	}
 
-	@GetMapping("/menu")
-	public Flux<RoleMenu> getOwnerMenuRoles(@RequestParam ArrayList<String> menuIds)
+	@GetMapping("/resource")
+	public Flux<RoleResource> getOwnerResourceRoles(@RequestParam ArrayList<String> menuIds)
 	{
-		return roleService.getOwnerMenuRoles(menuIds);
+		return roleService.getOwnerResourceRoles(menuIds);
 	}
 
-	@GetMapping("/component")
-	public Flux<RoleComponent> getOwnerComponentRoles(@RequestParam ArrayList<String> componentIds)
-	{
-		return roleService.getOwnerComponentRoles(componentIds);
-	}
 
 	@PostMapping("/function")
 	public Mono<Void> saveFunctionRoles(@RequestBody Map<String, Map<String, Boolean>> data)
@@ -75,16 +67,9 @@ public class RoleController extends BaseController
 	}
 
 	@PostMapping("/menu")
-	public Mono<Void> saveMenuRoles(@RequestBody Map<String, Map<String, Boolean>> data)
+	public Mono<Void> saveResourceRoles(@RequestBody Map<String, Map<String, Boolean>> data)
 	{
-		return roleService.saveMenuRoles(data);
+		return roleService.saveResourceRoles(data);
 	}
-
-	@PostMapping("/component")
-	public Mono<Void> saveComponentRoles(@RequestBody Map<String, Map<String, Boolean>> data)
-	{
-		return roleService.saveComponentRoles(data);
-	}
-
 
 }

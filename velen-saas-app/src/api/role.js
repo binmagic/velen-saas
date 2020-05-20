@@ -32,31 +32,23 @@ export function updateRole(data) {
 
 export function getRoleFunction(data) {
   return request({
-    url: '/admin/role/function',
+    url: '/permission/role/function',
     method: 'get',
     params: { functionIds: data }
   })
 }
 
-export function getRoleMenu(data) {
+export function getRoleResource(data) {
   return request({
-    url: '/permission/role/menu',
+    url: '/permission/role/resource',
     method: 'get',
-    params: { menuIds: data }
+    params: { resourceIds: data }
   })
 }
 
-export function getRoleComponent(data) {
+export function saveRoleResource(data) {
   return request({
-    url: '/permission/role/component',
-    method: 'get',
-    params: { componentIds: data }
-  })
-}
-
-export function saveRoleMenu(data) {
-  return request({
-    url: '/permission/role/menu',
+    url: '/permission/role/resource',
     method: 'post',
     data
   })
@@ -65,14 +57,6 @@ export function saveRoleMenu(data) {
 export function saveRoleFunction(data) {
   return request({
     url: '/permission/role/function',
-    method: 'post',
-    data
-  })
-}
-
-export function saveRoleComponent(data) {
-  return request({
-    url: '/permission/role/component',
     method: 'post',
     data
   })

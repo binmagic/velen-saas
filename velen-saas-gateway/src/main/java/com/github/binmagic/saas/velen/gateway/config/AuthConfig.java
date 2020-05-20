@@ -21,12 +21,14 @@ public class AuthConfig
 
 	private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
+	private final List<String> skipAccessUrl = new ArrayList<>();
+
 	/**
 	 * 自定义API集合
 	 */
-	private final List<String> skipUrl = new ArrayList<>();
+	private final List<String> skipAuthUrl = new ArrayList<>();
 
-	private static List<String> defaultSkipUrl = CollUtil.newArrayList(
+	private static List<String> defaultSkipAuthUrl = CollUtil.newArrayList(
 			"/error",
 			"/actuator/**",
 			"/**/login",
@@ -43,10 +45,15 @@ public class AuthConfig
 			"/**/swagger-resources/**"
 	);
 
-	public boolean isSkip(String path)
+	public boolean isSkipAuth(String path)
 	{
-		return defaultSkipUrl.stream().anyMatch((url) -> path.startsWith(url) || ANT_PATH_MATCHER.match(url, path))
-				|| skipUrl.stream().anyMatch((url) -> path.startsWith(url) || ANT_PATH_MATCHER.match(url, path));
+		return defaultSkipAuthUrl.stream().anyMatch((url) -> path.startsWith(url) || ANT_PATH_MATCHER.match(url, path))
+				|| skipAuthUrl.stream().anyMatch((url) -> path.startsWith(url) || ANT_PATH_MATCHER.match(url, path));
+	}
+
+	public boolean isSkipAccess(String path)
+	{
+		return skipAccessUrl.stream().anyMatch((url) -> path.startsWith(url) || ANT_PATH_MATCHER.match(url, path));
 	}
 
 }

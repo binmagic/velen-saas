@@ -27,9 +27,9 @@ public class AppServiceImpl implements AppService
 	@Autowired
 	AppMemberRepository appMemberRepository;
 
-	public Flux<App> findApp(String userId)
+	public Flux<App> findApp(String account)
 	{
-		return appMemberRepository.findByUserId(userId)
+		return appMemberRepository.findByAccount(account)
 				.collectList().flatMapMany(apps -> {
 					List<String> appIds = new ArrayList<>();
 					apps.forEach(app -> appIds.add(app.getAppId()));
@@ -47,14 +47,14 @@ public class AppServiceImpl implements AppService
 				.setCreateTime(now);
 
 		return appRepository.insert(app).flatMap(_app -> appMemberRepository
-				.insert(new AppMember(_app.getId(), app.getOwnerId(), Constant.ROLE_MANAGER))
+				.insert(new AppMember(_app.getId(), app.getOwner(), Constant.ROLE_MANAGER))
 				.thenReturn(_app));
 	}
 
 	@Override
-	public Mono<Void> submitToAuditor(String userId, String appId)
+	public Mono<Void> submitToAuditor(String appId)
 	{
-		return appRepository.findFirstByIdAndOwnerId(appId, userId)
+		return appRepository.findById(appId)
 				.flatMap(app -> {
 					app.setState(App.WAIT_CHECK);
 					return appRepository.save(app).then();
@@ -82,19 +82,26 @@ public class AppServiceImpl implements AppService
 	public Flux<AppMemberInfoDTO> getAppMember(String appId)
 	{
 		return appMemberRepository.findByAppId(appId)
-				.flatMap(appMember -> Mono.just(new AppMemberInfoDTO().setId(appMember.getId())
-						.setMemberId(appMember.getUserId()).setMemberName("").setMemberRoleId(appMember.getRoleId())));
+				.flatMapSequential(appMember -> Mono.just(new AppMemberInfoDTO().setId(appMember.getId())
+						.setAccount(appMember.getAccount()).setRole(appMember.getRole())));
 	}
 
 	@Override
-	public Mono<Void> addMember(String userId, String appId, List<AppAddMemberDTO> appAddMemberDTO)
+	public Mono<String> getAppMemberRole(String appId, String account)
 	{
-		return appRepository.findFirstByIdAndOwnerId(appId, userId)
+		return appMemberRepository.findFirstByAccountAndAppId(account, appId)
+				.flatMap(appMember -> Mono.just(appMember.getRole()));
+	}
+
+	@Override
+	public Mono<Void> addMember(String appId, List<AppAddMemberDTO> appAddMemberDTO)
+	{
+		return appRepository.findById(appId)
 				.flatMap(app -> {
 					List<Mono> monoList = new ArrayList<>(appAddMemberDTO.size());
 					appAddMemberDTO.stream().forEach(dto -> {
 						AppMember appMember = new AppMember().setAppId(app.getId())
-								.setRoleId(dto.getRole()).setUserId(dto.getAccount());
+								.setRole(dto.getRole()).setAccount(dto.getAccount());
 						monoList.add(appMemberRepository.insert(appMember));
 					});
 					return Flux.concat(monoList.toArray(new Mono[0])).then();

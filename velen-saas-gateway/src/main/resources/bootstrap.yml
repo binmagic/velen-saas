@@ -51,10 +51,12 @@ spring:
     host: localhost
     password: ''
     port: 6379
-ignore:
-  token:
-    url:
-      - /api/accounts/login
-      - /api/accounts/register
+auth:
+  skipAuthUrl:
+  - /api/accounts/login
+  - /api/accounts/register
+  - /api/accounts/register1
+  skipAccessUrl:
+  - /api/accounts/app/my
 jwt:
   token_secret: pXFb4i%*834gfdh96(3df&%18iodGq4ODQyMzc4lz7yI6ImF1dG

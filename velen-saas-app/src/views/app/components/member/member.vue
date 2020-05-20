@@ -21,17 +21,17 @@
     >
       <el-table-column :label="$t('app.label.member')" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.memberName || row.memberId }}</span>
+          <span>{{ row.account }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('app.label.role')" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <el-select v-model="row.memberRoleId" placeholder="请选择">
+          <el-select v-model="row.role" placeholder="请选择">
             <el-option
               v-for="item in role"
-              :key="item.id"
+              :key="item.name"
               :label="item.name"
-              :value="item.id"
+              :value="item.name"
             />
           </el-select>
         </template>
@@ -72,9 +72,9 @@
             <el-select v-model="row.role" placeholder="请选择">
               <el-option
                 v-for="item in role"
-                :key="item.id"
+                :key="item.name"
                 :label="item.name"
-                :value="item.id"
+                :value="item.name"
               />
             </el-select>
           </template>
@@ -82,7 +82,7 @@
         <el-table-column label="#" align="center" class-name="small-padding fixed-width">
           <template slot-scope="{row}">
             <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleTempInviteDelete(row)">
-              {{ $t('app.button.del') }}
+              {{ $t('app.member.button.del') }}
             </el-button>
           </template>
         </el-table-column>
@@ -105,10 +105,7 @@ import { getMemberInfo, addMember, deleteMember } from '@/api/app'
 export default {
   name: 'MemberInfo',
   props: {
-    appId: {
-      type: String,
-      default: ''
-    }
+
   },
   data() {
     return {
@@ -142,7 +139,7 @@ export default {
     },
     fetchMemberList() {
       this.memberListLoading = true
-      getMemberInfo(this.appId).then(resp => {
+      getMemberInfo().then(resp => {
         this.memberList = resp
         this.memberListLoading = false
       })
@@ -162,7 +159,7 @@ export default {
       }
     },
     handleInviteDelete(row){
-      deleteMember(this.appId, row.id).then(resp => {
+      deleteMember(row.id).then(resp => {
         this.$notify({
           message: '删除成功',
           type: 'success',
@@ -172,7 +169,7 @@ export default {
       })
     },
     handleConfirmInvite(){
-      addMember(this.appId, this.inviteList).then(resp => {
+      addMember(this.inviteList).then(resp => {
         this.dialogFormVisible = false
         this.$notify({
           message: '添加成功',

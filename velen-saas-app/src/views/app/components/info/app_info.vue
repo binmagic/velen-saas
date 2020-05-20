@@ -29,10 +29,7 @@ import { getAppInfo, updateApp } from '@/api/app'
 export default {
   name: 'AppInfo',
   props: {
-    appId: {
-      type: String,
-      default: ''
-    }
+
   },
   data() {
     return {
@@ -56,7 +53,7 @@ export default {
   },
   methods: {
     fetchAppInfo() {
-      getAppInfo(this.appId).then(resp => {
+      getAppInfo().then(resp => {
         this.temp = resp
       })
     },

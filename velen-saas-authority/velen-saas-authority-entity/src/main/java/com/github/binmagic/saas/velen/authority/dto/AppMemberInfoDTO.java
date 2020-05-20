@@ -15,10 +15,8 @@ public class AppMemberInfoDTO
 
 	private String id;
 
-	private String memberId;
+	private String account;
 
-	private String memberName;
-
-	private String memberRoleId;
+	private String role;
 
 }

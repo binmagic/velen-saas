@@ -38,6 +38,7 @@ public class JWTConfig
 		private String account;
 		private String userId;
 		private String name;
+		private boolean superuser;
 	}
 
 	@Data
@@ -55,6 +56,7 @@ public class JWTConfig
 		private String userId;
 		private long expire;
 		private Date expiration;
+		private boolean superuser;
 	}
 
 	@Data
@@ -76,8 +78,10 @@ public class JWTConfig
 		String userId = decodedJWT.getClaim(Constant.JWT_KEY_USER_ID).asString();
 		String account = decodedJWT.getClaim(Constant.JWT_KEY_ACCOUNT).asString();
 		String name = decodedJWT.getClaim(Constant.JWT_KEY_NAME).asString();
+		Boolean superuser = Boolean.parseBoolean(decodedJWT.getClaim(Constant.JWT_KEY_SUPERUSER).asString());
 		Date expiration = decodedJWT.getExpiresAt();
 		return (new AuthInfo()).setToken(token)
+				.setSuperuser(superuser)
 				.setExpire(expiration != null ? expiration.getTime() : 0L)
 				.setTokenType(tokenType).setUserId(userId).setAccount(account).setName(name);
 	}
@@ -94,8 +98,10 @@ public class JWTConfig
 		param.put(Constant.JWT_KEY_USER_ID, Convert.toStr(userInfo.getUserId(), "0"));
 		param.put(Constant.JWT_KEY_ACCOUNT, userInfo.getAccount());
 		param.put(Constant.JWT_KEY_NAME, userInfo.getName());
+		param.put(Constant.JWT_KEY_SUPERUSER, Convert.toStr(userInfo.isSuperuser()));
 		Token token = generate(param, expireMillis);
 		AuthInfo authInfo = new AuthInfo();
+		authInfo.setSuperuser(userInfo.isSuperuser());
 		authInfo.setAccount(userInfo.getAccount());
 		authInfo.setName(userInfo.getName());
 		authInfo.setUserId(userInfo.getUserId());

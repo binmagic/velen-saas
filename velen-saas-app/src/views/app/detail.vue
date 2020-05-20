@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <el-tabs value="app_info">
-      <el-tab-pane :label="$t('app.label.app_info')" name="app_info" >
-        <app-info :app-id="appId"></app-info>
+      <el-tab-pane :label="$t('app.label.app_info')" name="app_info">
+        <app-info :app-id="appId" />
       </el-tab-pane>
       <el-tab-pane :label="$t('app.label.member_info')" name="member_info">
-        <member-info :app-id="appId"></member-info>
+        <member-info :app-id="appId" />
       </el-tab-pane>
-      <el-tab-pane :label="$t('app.label.role_ability')" name="role_ability" >
-        <role-ability :app-id="appId"></role-ability>
+      <el-tab-pane :label="$t('app.label.role_ability')" name="role_ability">
+        <role-ability :app-id="appId" />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -18,6 +18,8 @@
 import MemberInfo from './components/member'
 import AppInfo from './components/info'
 import RoleAbility from './components/role_ability'
+import { mapActions } from 'vuex'
+
 export default {
   components: {
     MemberInfo,
@@ -26,8 +28,13 @@ export default {
   },
   data() {
     return {
-      appId: this.$route.params.appId
     }
+  },
+  methods: {
+    ...mapActions(['handleSelectApp'])
+  },
+  async created() {
+    await this.handleSelectApp(this.$route.query.app)
   }
 }
 </script>

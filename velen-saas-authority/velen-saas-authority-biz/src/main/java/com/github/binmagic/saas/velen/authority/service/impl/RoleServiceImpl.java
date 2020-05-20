@@ -1,17 +1,21 @@
 package com.github.binmagic.saas.velen.authority.service.impl;
 
-import com.github.binmagic.saas.velen.authority.entity.*;
+import com.github.binmagic.saas.velen.authority.entity.Role;
+import com.github.binmagic.saas.velen.authority.entity.RoleFunction;
+import com.github.binmagic.saas.velen.authority.entity.RoleResource;
 import com.github.binmagic.saas.velen.authority.repository.*;
 import com.github.binmagic.saas.velen.authority.service.RoleService;
+import com.github.binmagic.saas.velen.authority.service.VerifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @Service
 public class RoleServiceImpl implements RoleService
@@ -31,6 +35,9 @@ public class RoleServiceImpl implements RoleService
 
 	@Autowired
 	RoleResourceRepository roleResourceRepository;
+
+	@Autowired
+	VerifyService verifyService;
 
 	@Override
 	public Flux<Role> getRoleList()
@@ -63,27 +70,27 @@ public class RoleServiceImpl implements RoleService
 	}
 
 	@Override
-	public Flux<RoleMenu> getOwnerMenuRoles(List<String> menuIds)
+	public Flux<RoleResource> getOwnerResourceRoles(List<String> resourceIds)
 	{
-		return roleMenuRepository.findAllByMenuIdIn(menuIds);
-	}
-
-	@Override
-	public Flux<RoleComponent> getOwnerComponentRoles(List<String> componentIds)
-	{
-		return roleComponentRepository.findAllByComponentIdIn(componentIds);
+		return roleResourceRepository.findAllByResourceIdIn(resourceIds);
 	}
 
 	@Override
 	public Mono<Void> saveFunctionRoles(Map<String, Map<String, Boolean>> data)
 	{
 		List<Mono<Void>> monoList = new ArrayList<>();
+		Map<String, List<String>> functionIds = new HashMap<>();
 		for(Map.Entry<String, Map<String, Boolean>> entry : data.entrySet())
 		{
+			if(!functionIds.containsKey(entry.getKey()))
+			{
+				functionIds.put(entry.getKey(), new ArrayList<>());
+			}
 			for(Map.Entry<String, Boolean> _entry : entry.getValue().entrySet())
 			{
 				if(_entry.getValue())
 				{
+					functionIds.get(entry.getKey()).add(_entry.getKey());
 					monoList.add(roleFunctionRepository.save(new RoleFunction(_entry.getKey(), entry.getKey())).then());
 				}
 				else
@@ -92,32 +99,16 @@ public class RoleServiceImpl implements RoleService
 				}
 			}
 		}
-		return Mono.when(monoList);
-	}
-
-	@Override
-	public Mono<Void> saveMenuRoles(Map<String, Map<String, Boolean>> data)
-	{
-		List<Mono<Void>> monoList = new ArrayList<>();
-		for(Map.Entry<String, Map<String, Boolean>> entry : data.entrySet())
-		{
-			for(Map.Entry<String, Boolean> _entry : entry.getValue().entrySet())
+		return Mono.when(monoList).doOnNext(aVoid -> {
+			for(Map.Entry<String, List<String>> entry : functionIds.entrySet())
 			{
-				if(_entry.getValue())
-				{
-					monoList.add(roleMenuRepository.save(new RoleMenu(_entry.getKey(), entry.getKey())).then());
-				}
-				else
-				{
-					monoList.add(roleMenuRepository.deleteByRoleIdAndMenuId(_entry.getKey(), entry.getKey()));
-				}
+				verifyService.writeRoleVerify(entry.getKey(), entry.getValue());
 			}
-		}
-		return Mono.when(monoList);
+		});
 	}
 
 	@Override
-	public Mono<Void> saveComponentRoles(Map<String, Map<String, Boolean>> data)
+	public Mono<Void> saveResourceRoles(Map<String, Map<String, Boolean>> data)
 	{
 		List<Mono<Void>> monoList = new ArrayList<>();
 		for(Map.Entry<String, Map<String, Boolean>> entry : data.entrySet())
@@ -126,11 +117,11 @@ public class RoleServiceImpl implements RoleService
 			{
 				if(_entry.getValue())
 				{
-					monoList.add(roleComponentRepository.save(new RoleComponent(_entry.getKey(), entry.getKey())).then());
+					monoList.add(roleResourceRepository.save(new RoleResource(_entry.getKey(), entry.getKey())).then());
 				}
 				else
 				{
-					monoList.add(roleComponentRepository.deleteByRoleIdAndComponentId(_entry.getKey(), entry.getKey()));
+					monoList.add(roleResourceRepository.deleteByRoleIdAndResourceId(_entry.getKey(), entry.getKey()));
 				}
 			}
 		}

@@ -14,7 +14,7 @@
 </template>
 <script>
 import './user.scss'
-
+import { mapActions } from 'vuex'
 export default {
   name: 'User',
   props: {
@@ -29,13 +29,16 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['handleLogout']),
     handleCommand(name) {
-      if (Object.is(name, 'my_app')) {
-        console.log('my_app click')
-      } else if (Object.is(name, 'edit_password')) {
-        console.log('edit_password click')
-      } else if (Object.is(name, 'logout')) {
-        console.log('logout click')
+      switch (name) {
+        case 'logout':
+          this.handleLogout().then(() => {
+            this.$router.push({
+              name: 'login'
+            })
+          })
+          break
       }
     }
   }

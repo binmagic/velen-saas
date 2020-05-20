@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getResourceList(query) {
   return request({
-    url: '/admin/resource',
+    url: '/permission/resource',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function getResourceList(query) {
 
 export function addResource(data) {
   return request({
-    url: '/admin/resource',
+    url: '/permission/resource',
     method: 'post',
     data
   })
@@ -18,14 +18,14 @@ export function addResource(data) {
 
 export function delResource(id) {
   return request({
-    url: `/admin/resource/${id}`,
+    url: `/permission/resource/${id}`,
     method: 'delete'
   })
 }
 
 export function updateResource(data) {
   return request({
-    url: '/admin/resource',
+    url: '/permission/resource',
     method: 'put',
     data
   })

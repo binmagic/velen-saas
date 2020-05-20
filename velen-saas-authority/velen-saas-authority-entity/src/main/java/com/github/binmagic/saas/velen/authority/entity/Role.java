@@ -15,6 +15,8 @@ public class Role extends BaseEntity<Role>
 {
 	private String name;
 
+	private String cname;
+
 	private Integer state;
 
 	@CreatedDate

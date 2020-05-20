@@ -10,6 +10,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -59,8 +60,11 @@ public class FunctionServiceImpl implements FunctionService
 	@Override
 	public Mono<Function> createFunction(Function function)
 	{
+		LocalDateTime now = LocalDateTime.now();
+		function.setCreateTime(now);
+		function.setUpdateTime(now);
 		function.setState(Function.STATE_ENABLE);
-		return functionRepository.insert(function);
+		return functionRepository.insert (function);
 	}
 
 	@Override
@@ -76,4 +80,13 @@ public class FunctionServiceImpl implements FunctionService
 
 		return functionRepository.save(function);
 	}
+
+	@Override
+	public Flux<Function> getFunctionList(List<String> ids)
+	{
+
+		return null;
+	}
+
+
 }

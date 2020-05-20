@@ -31,7 +31,7 @@
       </el-table-column>
       <el-table-column :label="$t('app.label.owner')" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.ownerName || row.ownerAccount }}</span>
+          <span>{{ row.owner }}</span>
         </template>
       </el-table-column>
       <el-table-column label="#" align="center" class-name="small-padding fixed-width">
@@ -56,9 +56,6 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          {{ $t('app.button.cancel') }}
-        </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
           {{ $t('app.button.confirm') }}
         </el-button>
@@ -68,8 +65,9 @@
 </template>
 
 <script>
-import { getAppList, addApp, delApp, updateApp } from '@/api/app'
+import { addApp, delApp, updateApp } from '@/api/app'
 import waves from '@/directive/waves' // waves directive
+import { mapActions } from 'vuex'
 
 export default {
   directives: { waves },
@@ -98,10 +96,11 @@ export default {
     this.fetchData()
   },
   methods: {
+    ...mapActions(['getAppList']),
     fetchData() {
       this.listLoading = true
       this.list = []
-      this.$store.dispatch('app/getAppList').then(response => {
+      this.getAppList().then(response => {
         this.list = response
         setTimeout(() => {
           this.listLoading = false
@@ -111,7 +110,7 @@ export default {
       })
     },
     goDetail(row) {
-      this.$router.push({ path: `/apps/${row.id}` })
+      this.$router.push({ path: `/app/detail`, query: { 'app': row.id }})
     },
     resetTemp() {
       this.temp = {

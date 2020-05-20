@@ -23,7 +23,6 @@ public abstract class BaseController
 				});
 	}
 
-
 	protected Mono<String> getCurrentUserAccount()
 	{
 		return ReactiveRequestContextHolder.getRequest()
@@ -34,5 +33,12 @@ public abstract class BaseController
 	{
 		return ReactiveRequestContextHolder.getRequest()
 				.map(r -> r.getHeaders().getFirst(Constant.APP_ID));
+	}
+
+
+	protected Mono<Boolean> isSuperuser()
+	{
+		return ReactiveRequestContextHolder.getRequest()
+				.map(r -> Boolean.parseBoolean(r.getHeaders().getFirst(Constant.JWT_KEY_SUPERUSER)));
 	}
 }

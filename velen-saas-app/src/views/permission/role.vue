@@ -18,7 +18,7 @@
         icon="el-icon-edit"
         @click="handleConfig('function')"
       >
-        权限一览
+        {{$t('role.button.access_list')}}
       </el-button>
       <el-button
         class="filter-item"
@@ -26,19 +26,9 @@
         style="margin-bottom: 20px;"
         type="primary"
         icon="el-icon-edit"
-        @click="handleConfig('menu')"
+        @click="handleConfig('resource')"
       >
-        菜单一览
-      </el-button>
-      <el-button
-        class="filter-item"
-        plain
-        style="margin-bottom: 20px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleConfig('component')"
-      >
-        组件一览
+        {{$t('role.button.resource_list')}}
       </el-button>
     </div>
     <el-table
@@ -59,6 +49,11 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
+      <el-table-column :label="$t('role.label.cname')" align="center" :show-overflow-tooltip="true">
+        <template slot-scope="{row}">
+          <span>{{ row.cname }}</span>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('role.label.state')" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
           <el-switch
@@ -71,10 +66,10 @@
       <el-table-column label="#" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="handleDelete(row)">
-            {{ $t('function.button.edit') }}
+            {{ $t('role.button.edit') }}
           </el-button>
           <el-button size="mini" type="danger" @click="handleDelete(row)">
-            {{ $t('function.button.delete') }}
+            {{ $t('role.button.delete') }}
           </el-button>
         </template>
       </el-table-column>
@@ -131,16 +126,16 @@
         <el-form-item :label="$t('role.label.name')">
           <el-input v-model="temp.name" />
         </el-form-item>
-        <el-form-item :label="$t('role.label.state')">
-          <el-input v-model="temp.method" />
+        <el-form-item :label="$t('role.label.cname')">
+          <el-input v-model="temp.cname" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          {{ $t('function.button.cancel') }}
+          {{ $t('role.button.cancel') }}
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          {{ $t('function.button.confirm') }}
+          {{ $t('role.button.confirm') }}
         </el-button>
       </div>
     </el-dialog>
@@ -148,7 +143,7 @@
 </template>
 
 <script>
-import { addRole, delRole, getRoleList, updateRole, getRoleFunction, getRoleMenu, getRoleComponent, saveRoleFunction, saveRoleMenu, saveRoleComponent } from '@/api/role'
+import { addRole, delRole, getRoleList, updateRole, getRoleFunction, getRoleResource, saveRoleFunction, saveRoleResource } from '@/api/role'
 import { getFunctionList } from '@/api/function'
 import { getResourceList } from '@/api/resource'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -310,7 +305,7 @@ export default {
             map[resp.items[index].id] = { id: resp.items[index].id, name: resp.items[index].name }
           }
 
-          getRoleMenu(ids.join(',')).then(resp1 => {
+          getRoleResource(ids.join(',')).then(resp1 => {
             for (const index in resp1) {
               const data = resp1[index]
               map[data.resourceId][data.roleId] = true

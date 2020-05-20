@@ -25,8 +25,8 @@ import reactor.core.publisher.Mono;
 
 
 
-@Component
-@Slf4j
+//@Component
+//@Slf4j
 public class AccessFilter implements GlobalFilter, Ordered
 {
 
@@ -42,7 +42,6 @@ public class AccessFilter implements GlobalFilter, Ordered
 	@Autowired
 	AuthConfig authConfig;
 
-
 	@Autowired
 	AccessProvider accessProvider;
 
@@ -54,7 +53,7 @@ public class AccessFilter implements GlobalFilter, Ordered
 
 		String path = request.getURI().getPath();
 
-		if(authConfig.isSkip(path))
+		if(authConfig.isSkipAuth(path))
 		{
 			return chain.filter(exchange);
 		}
@@ -63,17 +62,14 @@ public class AccessFilter implements GlobalFilter, Ordered
 
 		JWTConfig.AuthInfo authInfo = jwtConfig.getAuthInfo(token);
 
-		return accessProvider.getVerify(authInfo.getUserId(), path, request.getMethod().name())
-				.flatMap(flag -> {
-					addHeader(mutate, Constant.JWT_KEY_USER_ID, authInfo.getUserId());
-					addHeader(mutate, Constant.JWT_KEY_NAME, authInfo.getName());
-					addHeader(mutate, Constant.JWT_KEY_ACCOUNT, authInfo.getAccount());
+		addHeader(mutate, Constant.JWT_KEY_USER_ID, authInfo.getUserId());
+		addHeader(mutate, Constant.JWT_KEY_NAME, authInfo.getName());
+		addHeader(mutate, Constant.JWT_KEY_ACCOUNT, authInfo.getAccount());
 
-					MDC.put(Constant.JWT_KEY_USER_ID, String.valueOf(authInfo.getUserId()));
+		MDC.put(Constant.JWT_KEY_USER_ID, String.valueOf(authInfo.getUserId()));
 
-					ServerHttpRequest build = mutate.build();
-					return chain.filter(exchange.mutate().request(build).build());
-				});
+		ServerHttpRequest build = mutate.build();
+		return chain.filter(exchange.mutate().request(build).build());
 	}
 
 	private void addHeader(ServerHttpRequest.Builder mutate, String name, Object value)

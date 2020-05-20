@@ -20,10 +20,7 @@ import { getRoleList } from '@/api/role'
 export default {
   name: 'RoleAbility',
   props: {
-    appId: {
-      type: String,
-      default: ''
-    }
+
   },
   data() {
     return {

@@ -30,11 +30,7 @@ public class App extends BaseEntity<App>
 
 	private String appKey;
 
-	private String ownerAccount;
-
-	private String ownerId;
-
-	private String ownerName;
+	private String owner;
 
 	private Integer state;
 

@@ -21,15 +21,11 @@ public interface RoleService
 
 	Flux<RoleFunction> getOwnerFunctionRoles(List<String> functionIds);
 
-	Flux<RoleMenu> getOwnerMenuRoles(List<String> menuIds);
-
-	Flux<RoleComponent> getOwnerComponentRoles(List<String> componentIds);
+	Flux<RoleResource> getOwnerResourceRoles(List<String> resourceIds);
 
 	Mono<Void> saveFunctionRoles(Map<String, Map<String, Boolean>> data);
 
-	Mono<Void> saveMenuRoles(Map<String, Map<String, Boolean>> data);
-
-	Mono<Void> saveComponentRoles(Map<String, Map<String, Boolean>> data);
+	Mono<Void> saveResourceRoles(Map<String, Map<String, Boolean>> data);
 
 	Flux<RoleFunction> getRoleFunctions(List<String> ids);
 

@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface AppService
 {
-	Flux<App> findApp(String userId);
+	Flux<App> findApp(String account);
 
 	Mono<App> createApp(App app);
 
-	Mono<Void> submitToAuditor(String userId, String appId);
+	Mono<Void> submitToAuditor(String appId);
 
 	Mono<App> updateApp(App app);
 
@@ -22,7 +22,9 @@ public interface AppService
 
 	Flux<AppMemberInfoDTO> getAppMember(String appId);
 
-	Mono<Void> addMember(String userId, String appId, List<AppAddMemberDTO> appAddMemberDTO);
+	Mono<String> getAppMemberRole(String appId, String account);
+
+	Mono<Void> addMember(String appId, List<AppAddMemberDTO> appAddMemberDTO);
 
 	Mono<Void> deleteMember(String appId, String id);
 }

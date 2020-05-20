@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
 
-@FeignClient(name= "VerifyApi", path = "/")
+@FeignClient("velen-saas-authority")
 public interface VerifyApi
 {
-	@PostMapping("/verify")
-	Mono<ResponseEntity> writeVerify(@RequestParam("userId") String userId);
+	@PostMapping("/permission/verify")
+	Mono<ResponseEntity> writeVerify(@RequestParam("account") String account, @RequestParam("appId") String appId);
 }
