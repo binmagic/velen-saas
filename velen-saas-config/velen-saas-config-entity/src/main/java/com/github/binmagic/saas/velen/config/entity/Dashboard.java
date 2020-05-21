@@ -10,5 +10,6 @@ public class Dashboard extends BaseEntity<Dashboard>
 {
 	private String name;
 
-	private Integer type;
+	private String type;
+
 }

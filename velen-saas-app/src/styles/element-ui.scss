@@ -42,3 +42,17 @@
     display: block
   }
 }
+
+.is-top:nth-child(2),.el-tabs__active-bar{
+  margin-left: 20px;
+}
+
+.mainLeft{
+  .el-input{
+    width: 179px;
+    .el-input__inner{
+        height: 35px;
+    }
+  }
+
+}
