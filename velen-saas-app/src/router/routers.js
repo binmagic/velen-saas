@@ -19,7 +19,6 @@ export const routerSystem = [{
   meta: {
     icon: 'ios-boat',
     title: '用户管理',
-    header: false
   },
   children: [
     {
@@ -29,7 +28,8 @@ export const routerSystem = [{
       meta: {
         icon: 'ios-boat',
         title: '权限列表',
-        hideAside: true
+        hideAside: true,
+        hideHeader: true
       }
     },
     {
@@ -39,7 +39,8 @@ export const routerSystem = [{
       meta: {
         icon: 'ios-boat',
         title: '资源列表',
-        hideAside: true
+        hideAside: true,
+        hideHeader: true
       }
     },
     {
@@ -49,7 +50,8 @@ export const routerSystem = [{
       meta: {
         icon: 'ios-boat',
         title: '角色列表',
-        hideAside: true
+        hideAside: true,
+        hideHeader: true
       }
     }
   ]
@@ -114,7 +116,7 @@ export const routes = [
       {
         path: '/app',
         component: () => import('@/views/app/index'),
-        meta: { title: '应用列表', icon: 'form', hideHeader: false, hideAside: true }
+        meta: { title: '应用列表', icon: 'form', hideHeader: true, hideAside: true }
       },
       {
         path: 'app/detail',
