@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="padding-app-container">
     <div class="filter-container">
       <el-button
         class="filter-item"

@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="padding-app-container">
     <el-tabs value="app_info">
       <el-tab-pane :label="$t('app.label.app_info')" name="app_info">
         <app-info :app-id="appId" />

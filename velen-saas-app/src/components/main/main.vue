@@ -7,22 +7,27 @@
         <logo @on-select="turnToPage"></logo>
       </header-bar>
     </el-header>
-    <el-header class="nav-header" v-if="$route.path != '/app' && !$route.path.startsWith('/authority')">
+    <el-header class="nav-header" v-if="!$route.meta.hideHeader">
       <el-row>
         <el-col :span="4">
           <app-manager class="app-manager" :app-list="appList" :active-app="$route.params.id"></app-manager>
         </el-col>
         <el-col :span="20">
           <header-navigation @on-select="turnToPage"></header-navigation>
-<!--          <side-menu ref="sideMenu" accordion :active-name="$route.name" :menu-list="menuList" @on-select="turnToPage">-->
-<!--          </side-menu>-->
         </el-col>
       </el-row>
     </el-header>
-    <el-main class="main-content">
-        <h3>{{$route.meta.title}}</h3>
+    <el-container class="main-content-container">
+      <el-aside class="main-aside" v-if="!$route.meta.hideAside">
+        <side-menu @on-select="turnToPage"/>
+      </el-aside>
+      <el-main class="main-content">
         <router-view />
-    </el-main>
+      </el-main>
+    </el-container>
+    <el-footer>
+
+    </el-footer>
   </el-container>
 </template>
 <script>
@@ -34,9 +39,11 @@ import HeaderBar from './components/header-bar'
 import HeaderNavigation from './components/header-navigation'
 import UserManager from './components/user-manager'
 import './main.scss'
+import SideMenu from "./components/side-menu/side-menu";
 export default {
   name: 'Main',
   components: {
+    SideMenu,
     Logo,
     AppManager,
     User,

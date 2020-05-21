@@ -16,28 +16,45 @@
   color: #fff;
 }
 
+
 .nav-header{
   padding: 0;
 }
+.main-content-container {
 
-.main-content{
-  padding: 0 110px!important;
-  h3{
-    font-size: 14px;
-    line-height: 14px;
-    margin: 27px 0 21px;
-    font-weight: 400;
-    color: #fff;
+  .main-aside{
+    width: 200px!important;
   }
 
-  .app-container{
-    background-color: white;
+  .main-content {
 
-    .filter-container{
-      padding-left: 20px;
-      padding-top: 20px;
+    h3 {
+      font-size: 14px;
+      line-height: 14px;
+      margin: 27px 0 21px;
+      font-weight: 400;
+      color: #fff;
+    }
+
+    .app-container {
+      background-color: white;
+
+      .filter-container {
+        padding-left: 20px;
+        padding-top: 20px;
+      }
+    }
+
+    .padding-app-container{
+      margin: 0 110px;
+
+      background-color: white;
+
+      .filter-container {
+        padding-left: 20px;
+        padding-top: 20px;
+      }
     }
   }
-
 }
 

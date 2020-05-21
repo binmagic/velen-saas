@@ -18,7 +18,8 @@ export const routerSystem = [{
   name: 'menu-user-manager',
   meta: {
     icon: 'ios-boat',
-    title: '用户管理'
+    title: '用户管理',
+    header: false
   },
   children: [
     {
@@ -27,7 +28,8 @@ export const routerSystem = [{
       component: () => import('@/views/permission/function'),
       meta: {
         icon: 'ios-boat',
-        title: '权限列表'
+        title: '权限列表',
+        hideAside: true
       }
     },
     {
@@ -36,7 +38,8 @@ export const routerSystem = [{
       component: () => import('@/views/permission/resource'),
       meta: {
         icon: 'ios-boat',
-        title: '资源列表'
+        title: '资源列表',
+        hideAside: true
       }
     },
     {
@@ -45,7 +48,8 @@ export const routerSystem = [{
       component: () => import('@/views/permission/role'),
       meta: {
         icon: 'ios-boat',
-        title: '角色列表'
+        title: '角色列表',
+        hideAside: true
       }
     }
   ]
@@ -54,15 +58,26 @@ export const routerSystem = [{
 export const routerApp = [
   {
     path: '/dashboard',
-    name: 'menu-dashboard',
     component: Main,
-    meta: { title: '概览', icon: 'form' },
+    meta: { title: '概览', icon: 'form', header: true },
     children: [
       {
         path: '/dashboard',
         name: 'menu-dashboard',
         component: () => import('@/views/dashboard/index'),
-        meta: { title: '概览', icon: 'form' }
+        meta: { title: '概览', icon: 'form', hideHeader: false, hideAside: false }
+      }
+    ]
+  },
+  {
+    path: '/analyze',
+    component: Main,
+    children: [
+      {
+        path: '/metadata',
+        name: 'menu-analyze-meta-event',
+        component: () => import('@/views/analyze/metadata/index'),
+        meta: { title: '元数据分析', icon: 'form', hideHeader: false, hideAside: false }
       }
     ]
   },
@@ -94,18 +109,17 @@ export const routes = [
   }, {
     path: '/',
     component: Main,
-    meta: { title: '应用', icon: 'form', hideInMenu: true },
     redirect: '/app',
     children: [
       {
         path: '/app',
         component: () => import('@/views/app/index'),
-        meta: { title: '应用列表', icon: 'form', hideInMenu: true }
+        meta: { title: '应用列表', icon: 'form', hideHeader: false, hideAside: true }
       },
       {
         path: 'app/detail',
         component: () => import('@/views/app/detail'),
-        meta: { title: '应用详情', icon: 'form', hideInMenu: true }
+        meta: { title: '应用详情', icon: 'form', hideHeader: false, hideAside: true }
       }
     ]
   },
