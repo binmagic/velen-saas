@@ -19,12 +19,12 @@
               <span>分享给我的概览</span>
               <i class="el-icon-arrow-right"></i>
               <span style="float: right;">
-                <i class="el-icon-more"></i>
-                <span></span>
+                <i class="el-icon-more" style="margin-right: 5px;display: none;"></i>
+                <span class="dashboard-aside-num">20</span>
               </span>
             </h3>
             <ul class="dashboard-aside-ul" style="margin:0px;list-style: none;">
-              <li class="dashboard-aside-li">
+              <li class="dashboard-aside-li dashboard-aside-li-active">
                 <span>
                   11
                 </span>
@@ -61,13 +61,14 @@
       tabName:{
         type:String,
         default:'second'
-      }
+      },
     } ,
 
 
     data() {
       return {
         value: this.overview,
+
       }
     },
     computed: {
@@ -89,7 +90,7 @@
       },
       handleNodeClick() {
 
-      }
+      },
     }
   }
 </script>
@@ -133,5 +134,27 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+
+  .dashboard-aside-num{
+    padding: 0 5px;
+    border-radius: 8px;
+    line-height: 1;
+    background: #e8eef2;
+  }
+
+  .dashboard-aside-li-active{
+    border-right: 2px solid;
+    background: #e5f9f4;
+    color: #04cb94;
+    font-weight: 500;
+  }
+
+  .group-hide{
+    display: none;
+  }
+
+  .group-show{
+    display: block;
   }
 </style>

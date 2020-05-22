@@ -1,15 +1,18 @@
-package com.github.binmagic.saas.velen.config.entity;
+package com.github.binmagic.saas.velen.config.dto;
 
-import com.github.binmagic.saas.velen.common.entity.BaseEntity;
+import com.github.binmagic.saas.velen.config.entity.CommonDashboard;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Document
 @Data
-public class CommonGroup extends BaseEntity<CommonGroup> {
+@Builder
+public class CommonGroupDTO {
+
+    private String id;
 
     private String name;
 
@@ -23,4 +26,6 @@ public class CommonGroup extends BaseEntity<CommonGroup> {
 
     @CreatedDate
     private LocalDateTime createTime;
+
+    private List<CommonDashboard> list;
 }

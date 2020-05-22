@@ -1,15 +1,17 @@
-package com.github.binmagic.saas.velen.config.entity;
+package com.github.binmagic.saas.velen.config.dto;
 
-import com.github.binmagic.saas.velen.common.entity.BaseEntity;
+import com.github.binmagic.saas.velen.config.entity.Dashboard;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-@Document
 @Data
-public class ShareDashboard extends BaseEntity<ShareDashboard> {
+@Builder
+public class ShareDashboardDTO {
+
+    private String id;
 
     private String userId;
 
@@ -17,7 +19,7 @@ public class ShareDashboard extends BaseEntity<ShareDashboard> {
 
     private String appId;
 
-    private String dashboardId;
+    private Dashboard dashboard;
 
     private String groupId;
 
@@ -25,4 +27,5 @@ public class ShareDashboard extends BaseEntity<ShareDashboard> {
 
     @CreatedDate
     private LocalDateTime createTime;
+
 }

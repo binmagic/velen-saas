@@ -20,7 +20,7 @@
       return {
         input:'',
         tabName:'second',
-        contented:true,
+        contented:false,
       }
     },
     methods:{
