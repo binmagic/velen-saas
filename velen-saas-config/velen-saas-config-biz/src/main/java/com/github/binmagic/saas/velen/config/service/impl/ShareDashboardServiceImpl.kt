@@ -22,7 +22,7 @@ class ShareDashboardServiceImpl : ShareDashboardService {
     }
 
     override suspend fun getShareDashboardByGroupId(groupId: String): List<ShareDashboardDTO> {
-        val shareList:MutableList<ShareDashboard> = shareDashboardRepository.findByGroupId(groupId) as MutableList<ShareDashboard>
+        /*val shareList:MutableList<ShareDashboard> = shareDashboardRepository.findByGroupId(groupId) as MutableList<ShareDashboard>
         val list:MutableList<ShareDashboardDTO> = mutableListOf<ShareDashboardDTO>()
         for (share: ShareDashboard in shareList){
             val dashboard: Dashboard = dashboardRepository.findDashboardById(share.dashboardId)
@@ -37,7 +37,8 @@ class ShareDashboardServiceImpl : ShareDashboardService {
             shareDashboardDTO.userId=share.userId
             list.add(shareDashboardDTO)
         }
-        return list
+        return list*/
+        return emptyList()
     }
 
     override suspend fun createShareDashboard(shareDashboard: ShareDashboard) {

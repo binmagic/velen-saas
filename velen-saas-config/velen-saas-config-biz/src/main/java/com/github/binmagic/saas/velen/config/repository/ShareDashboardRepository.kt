@@ -6,7 +6,10 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ShareDashboardRepository:BaseRepository<ShareDashboard> {
+
     fun findByUserIdAndAppId(userId :String ,appId: String) : List<ShareDashboard>
 
     fun findByGroupId(groupId : String) : List<ShareDashboard>
+
+
 }

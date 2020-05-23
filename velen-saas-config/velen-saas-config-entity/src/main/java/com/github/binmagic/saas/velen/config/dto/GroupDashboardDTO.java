@@ -1,19 +1,22 @@
-package com.github.binmagic.saas.velen.config.entity;
+package com.github.binmagic.saas.velen.config.dto;
 
-import com.github.binmagic.saas.velen.common.entity.BaseEntity;
+import com.github.binmagic.saas.velen.config.entity.Dashboard;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Document
 @Data
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-public class Group extends BaseEntity<Group> {
+@AllArgsConstructor
+public class GroupDashboardDTO {
+
+    private String id;
 
     private String name;
 
@@ -26,4 +29,5 @@ public class Group extends BaseEntity<Group> {
     @CreatedDate
     private LocalDateTime createTime;
 
+    private List<Dashboard> list;
 }

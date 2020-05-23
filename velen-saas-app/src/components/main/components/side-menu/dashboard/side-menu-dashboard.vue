@@ -38,7 +38,7 @@
     <div class="el-btn">
       <el-button-group style="border-radius: 20px;overflow: hidden;">
         <el-tooltip content="新建我的概览/分组">
-          <el-button type="primary" icon="el-icon-plus"></el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="modalSwitch"></el-button>
         </el-tooltip>
         <el-tooltip content="管理我的概览排序">
           <el-button type="primary" icon="el-icon-d-caret"></el-button>
@@ -48,15 +48,22 @@
         </el-tooltip>
       </el-button-group>
     </div>
+    <div v-if="modal.show">
+      <add-dashboard-or-group :show="modal.show" @modal-switch="modalSwitch"></add-dashboard-or-group>
+    </div>
   </div>
 </template>
 <script>
+
+  import AddDashboardOrGroup from './components/index'
   export default {
-    name: "mainLeft",
+    name: "SideMenuDashboard",
+    components:{
+      AddDashboardOrGroup
+    },
     props: {
       overview:{
         type:String,
-
       },
       tabName:{
         type:String,
@@ -68,7 +75,9 @@
     data() {
       return {
         value: this.overview,
-
+        modal:{
+          show: false,
+        },
       }
     },
     computed: {
@@ -91,6 +100,9 @@
       handleNodeClick() {
 
       },
+      modalSwitch:function () {
+        this.modal.show = !this.modal.show
+      }
     }
   }
 </script>

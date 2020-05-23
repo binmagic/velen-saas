@@ -1,19 +1,23 @@
 package com.github.binmagic.saas.velen.config.dto;
 
-import com.github.binmagic.saas.velen.config.entity.Dashboard;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
+import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
-public class GroupDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class GroupCreateDTO {
 
     private String id;
 
+    @NotEmpty
     private String name;
 
     private String userId;
@@ -22,8 +26,5 @@ public class GroupDTO {
 
     private String appId;
 
-    @CreatedDate
-    private LocalDateTime createTime;
-
-    private List<Dashboard> list;
+    private LocalDateTime createDate;
 }

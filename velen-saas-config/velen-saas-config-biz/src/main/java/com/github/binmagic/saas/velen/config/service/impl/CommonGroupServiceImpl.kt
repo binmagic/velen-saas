@@ -1,9 +1,7 @@
 package com.github.binmagic.saas.velen.config.service.impl
 
-import com.github.binmagic.saas.velen.config.dto.CommonGroupDTO
-import com.github.binmagic.saas.velen.config.dto.GroupDTO
+import com.github.binmagic.saas.velen.config.dto.CommonGroupDashboardDTO
 import com.github.binmagic.saas.velen.config.entity.CommonDashboard
-import com.github.binmagic.saas.velen.config.entity.Dashboard
 import com.github.binmagic.saas.velen.config.repository.CommonDashboardRepository
 import com.github.binmagic.saas.velen.config.repository.CommonGroupRepository
 import com.github.binmagic.saas.velen.config.service.CommonGroupService
@@ -20,17 +18,17 @@ class CommonGroupServiceImpl : CommonGroupService {
     @Autowired
     lateinit var commonDashboardRepository: CommonDashboardRepository
 
-    override suspend fun getCommonGroupByAppId(appId: String): Mono<List<CommonGroupDTO>> {
+    override suspend fun getCommonGroupByAppId(appId: String): Mono<List<CommonGroupDashboardDTO>> {
 
-        val list:MutableList<CommonGroupDTO> = commonGroupRepository.findByAppId(appId) as MutableList<CommonGroupDTO>
+        val list:MutableList<CommonGroupDashboardDTO> = commonGroupRepository.findByAppId(appId) as MutableList<CommonGroupDashboardDTO>
         list.sortBy { it.sort }
-        for (group : CommonGroupDTO in list){
+        for (group : CommonGroupDashboardDTO in list){
             val dashboardList:MutableList<CommonDashboard> = commonDashboardRepository.findByCommonType(group.id) as MutableList<CommonDashboard>
             dashboardList.sortBy { it.sort }
             group.list=dashboardList
         }
         return Mono.just(list)
-        
+
     }
 
 }

@@ -10,4 +10,5 @@ interface GroupRepository:BaseRepository<Group> {
 
     fun findByUserIdAndAppId(userId : String, appId : String) : List<Group>
 
+    fun countByUserIdAndAppId(userId: String,appId: String) : Long
 }
