@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono
 
 
 interface GroupService {
-    suspend fun getGroupByUserIdAndAppId(userId : String , appId : String) : Mono<List<GroupDashboardDTO>>
+    suspend fun getGroupByUserIdAndAppId(userId : String , appId : String) : Flux<Group>
 
     suspend fun createGroup(group: Group) : Mono<Group>
 
@@ -15,5 +15,5 @@ interface GroupService {
 
     suspend fun deleteGroupById(id: String) : Mono<Void>
 
-    suspend fun countGroupByUserIdAndAppId(userId: String,appId: String) :Long
+    suspend fun countGroupByUserIdAndAppId(userId: String,appId: String) :Mono<Long>
 }

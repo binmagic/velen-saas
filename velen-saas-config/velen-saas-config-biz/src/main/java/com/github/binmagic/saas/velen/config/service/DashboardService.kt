@@ -8,11 +8,11 @@ interface DashboardService {
 
     suspend fun getDashboardService() : Flux<Dashboard>
 
-    suspend fun getDashboardByType(type : String) : List<Dashboard>
+    suspend fun getDashboardByType(type : String) : Flux<Dashboard>
 
-    suspend fun createDashboard(dashboard: Dashboard)
+    suspend fun createDashboard(dashboard: Dashboard) : Mono<Dashboard>
 
-    suspend fun updateDashboard(dashboard: Dashboard)
+    suspend fun updateDashboard(dashboard: Dashboard) : Mono<Dashboard>
 
-    suspend fun deleteDashboardById(id : String)
+    suspend fun deleteDashboardById(id : String) : Mono<Void>
 }

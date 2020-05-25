@@ -4,6 +4,7 @@ import com.github.binmagic.saas.velen.common.component.controller.BaseController
 import com.github.binmagic.saas.velen.config.dto.DashboardCreateDTO
 import com.github.binmagic.saas.velen.config.entity.Dashboard
 import com.github.binmagic.saas.velen.config.service.DashboardService
+import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.validation.annotation.Validated
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 
 @RestController
-@RequestMapping("dashboard")
+@RequestMapping("/dashboard")
 class DashboardController : BaseController() {
 
 
@@ -25,12 +26,12 @@ class DashboardController : BaseController() {
         return dashboardService.getDashboardService()
     }
 
-    @PostMapping("addDashboard")
-    suspend fun createDashboard(@Validated @RequestBody dashboardCreateDTO: DashboardCreateDTO){
+    @PostMapping
+    suspend fun createDashboard(@Validated @RequestBody dashboardCreateDTO: DashboardCreateDTO) : Dashboard{
         val dashboard = Dashboard()
         BeanUtils.copyProperties(dashboardCreateDTO,dashboard)
-        dashboardService.createDashboard(dashboard)
+        val sort= dashboardService.getDashboardByType(dashboard.type).count().awaitSingle().toInt()
+        dashboard.sort=sort
+        return dashboardService.createDashboard(dashboard).awaitSingle()
     }
-
-
 }

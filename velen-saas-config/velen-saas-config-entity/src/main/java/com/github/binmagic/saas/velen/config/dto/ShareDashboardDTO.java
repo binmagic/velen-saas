@@ -17,19 +17,14 @@ public class ShareDashboardDTO {
 
     private String id;
 
-    private String userId;
+    private String name;
 
-    private String shareUserId;
-
-    private String appId;
-
-    private Dashboard dashboard;
-
-    private String groupId;
+    private String type;
 
     private Integer sort;
 
-    @CreatedDate
     private LocalDateTime createTime;
+
+    private String shareName;
 
 }

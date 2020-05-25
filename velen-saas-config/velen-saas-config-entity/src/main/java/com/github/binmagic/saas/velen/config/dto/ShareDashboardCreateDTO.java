@@ -1,34 +1,33 @@
 package com.github.binmagic.saas.velen.config.dto;
 
-
 import com.github.binmagic.saas.velen.config.entity.Dashboard;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupCreateDTO {
+public class ShareDashboardCreateDTO {
 
     private String id;
 
-    @NotEmpty
-    private String name;
-
     private String userId;
 
-    private Integer sort;
+    private String shareUserId;
 
     private String appId;
 
-    private LocalDateTime createDate;
+    private String dashboardId;
 
-    private List<Dashboard> dashboards;
+    private String groupId;
+
+    private Integer sort;
+
+    private LocalDateTime createTime;
+
 }

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function addGroup(data) {
   return request({
-    url:'/group/addGroup',
+    url:'/dashboard/group',
     method:'post',
     data
   })
@@ -10,7 +10,7 @@ export function addGroup(data) {
 
 export function updateGroup(data) {
   return request({
-    url:'/group/updateGroup',
+    url:'/dashboard/group',
     method:'put',
     data
   })
@@ -18,7 +18,15 @@ export function updateGroup(data) {
 
 export function deleteGroup(id) {
     return request({
-      url:`/group/delete/${id}`,
+      url:`/dashboard/group/${id}`,
       method:'delete'
     })
+}
+
+export function getGroup() {
+  return request({
+    url:'/dashboard/group',
+    method:'get'
+  })
+
 }

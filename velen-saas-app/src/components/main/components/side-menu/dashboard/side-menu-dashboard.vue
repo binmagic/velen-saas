@@ -1,11 +1,11 @@
 <template>
-  <div class="mainLeft">
+  <div class="menu-dashboard">
     <el-input
       placeholder="概览名称"
       prefix-icon="el-icon-search"
       v-model="value"
       @change="inputChange"
-      style="margin: 20px 10px;"
+      class="menu-dashboard-input"
     >
     </el-input>
     <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -14,19 +14,19 @@
       </el-tab-pane>
       <el-tab-pane label="我的概览" name="second">
         <div>
-          <div>
-            <h3 class="menu-dashboard-span">
-              <span>分享给我的概览</span>
-              <i class="el-icon-arrow-right"></i>
+          <div v-for="(group,index) in groups">
+            <h3 class="menu-dashboard-span"  @mouseenter="enter(index)" @mouseleave="leave" @click="group.show=!group.show">
+              <span>{{group.name}}</span>
+              <i class="el-icon-arrow-right"/>
               <span style="float: right;">
-                <i class="el-icon-more" style="margin-right: 5px;display: none;"></i>
-                <span class="dashboard-aside-num">20</span>
+                <i class="el-icon-more menu-dashboard-icon" v-if="hoverIndex==index && hover"></i>
+                <span class="dashboard-aside-num">{{group.list.length}}</span>
               </span>
             </h3>
-            <ul class="dashboard-aside-ul" style="margin:0px;list-style: none;">
-              <li class="dashboard-aside-li dashboard-aside-li-active">
+            <ul :class="['dashboard-aside-ul',group.show?'group-show':'group-hide']">
+              <li class="dashboard-aside-li"  v-for="dashboard in group.list">
                 <span>
-                  11
+                  {{dashboard.name}}
                 </span>
               </li>
             </ul>
@@ -48,49 +48,66 @@
         </el-tooltip>
       </el-button-group>
     </div>
-    <div v-if="modal.show">
-      <add-dashboard-or-group :show="modal.show" @modal-switch="modalSwitch"></add-dashboard-or-group>
-    </div>
+    <add-dashboard-or-group v-if="modal.show" :groups="groups" :dashboards="dashboards" :show="modal.show"
+                            @modal-switch="modalSwitch"></add-dashboard-or-group>
   </div>
 </template>
 <script>
+  import {getGroup} from '@/api/group'
+  import AddDashboardOrGroup from './components/AddDashboardOrGroup'
 
-  import AddDashboardOrGroup from './components/index'
   export default {
     name: "SideMenuDashboard",
-    components:{
+    components: {
       AddDashboardOrGroup
     },
     props: {
-      overview:{
-        type:String,
+      overview: {
+        type: String,
       },
-      tabName:{
-        type:String,
-        default:'second'
+      tabName: {
+        type: String,
+        default: 'second'
       },
-    } ,
+    },
 
 
     data() {
       return {
         value: this.overview,
-        modal:{
+        modal: {
           show: false,
         },
+        groups: [],
+        dashboards: [],
+        hover: false,
+        hoverIndex: -1,
       }
     },
+    created() {
+      this.findGroup()
+    },
     computed: {
-      activeName:{
-        get(){
+      activeName: {
+        get() {
           return this.tabName
         },
-        set(val){
-          this.$emit('update:tabName',val)
+        set(val) {
+          this.$emit('update:tabName', val)
         }
       }
     },
     methods: {
+      findGroup() {
+        getGroup().then(response => {
+          this.groups = response
+          for (let key in this.groups) {
+            this.groups[key].show=false
+            this.dashboards = this.dashboards.concat(this.groups[key].list)
+          }
+          console.log(this.groups)
+        })
+      },
       inputChange() {
         this.$emit('input-change', this.value)
       },
@@ -100,27 +117,39 @@
       handleNodeClick() {
 
       },
-      modalSwitch:function () {
+      modalSwitch () {
         this.modal.show = !this.modal.show
+      },
+      enter(index) {
+        this.hover = true
+        this.hoverIndex = index
+      },
+      leave() {
+        this.hover = false
+        this.hoverIndex = -1
       }
     }
   }
 </script>
 
 <style scoped>
-  .mainLeft{
+  .menu-dashboard {
     background: #ffffff;
     height: 100%;
   }
 
-  .el-btn{
+  .menu-dashboard-input {
+    margin: 20px 10px;
+  }
+
+  .el-btn {
     position: fixed;
     bottom: 20px;
     left: 17px;
     text-align: center;
   }
 
-  .menu-dashboard-span{
+  .menu-dashboard-span {
     margin: 0;
     padding: 10px 12px 10px 21px;
     font-size: 12px;
@@ -129,13 +158,13 @@
     user-select: none;
   }
 
-  .dashboard-aside-ul{
+  .dashboard-aside-ul {
+    padding: 0px;
+    margin: 0px;
     list-style: none;
-    padding: 0;
-    margin: 0;
   }
 
-  .dashboard-aside-li{
+  .dashboard-aside-li {
     height: 36px;
     padding: 0 21px 0 33px;
     line-height: 36px;
@@ -148,25 +177,29 @@
     text-overflow: ellipsis;
   }
 
-  .dashboard-aside-num{
+  .dashboard-aside-num {
     padding: 0 5px;
     border-radius: 8px;
     line-height: 1;
     background: #e8eef2;
   }
 
-  .dashboard-aside-li-active{
+  .dashboard-aside-li-active {
     border-right: 2px solid;
     background: #e5f9f4;
     color: #04cb94;
     font-weight: 500;
   }
 
-  .group-hide{
+  .menu-dashboard-icon {
+    margin-right: 5px;
+  }
+
+  .group-hide {
     display: none;
   }
 
-  .group-show{
+  .group-show {
     display: block;
   }
 </style>

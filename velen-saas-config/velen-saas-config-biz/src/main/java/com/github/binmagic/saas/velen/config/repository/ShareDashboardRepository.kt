@@ -3,13 +3,14 @@ package com.github.binmagic.saas.velen.config.repository
 import com.github.binmagic.saas.velen.common.component.dao.BaseRepository
 import com.github.binmagic.saas.velen.config.entity.ShareDashboard
 import org.springframework.stereotype.Repository
+import reactor.core.publisher.Flux
 
 @Repository
-interface ShareDashboardRepository:BaseRepository<ShareDashboard> {
+interface ShareDashboardRepository : BaseRepository<ShareDashboard> {
 
-    fun findByUserIdAndAppId(userId :String ,appId: String) : List<ShareDashboard>
+    fun findByUserIdAndAppId(userId: String, appId: String): Flux<ShareDashboard>
 
-    fun findByGroupId(groupId : String) : List<ShareDashboard>
+    fun findByGroupId(groupId: String): Flux<ShareDashboard>
 
 
 }

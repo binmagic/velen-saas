@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Dashboard extends BaseEntity<Dashboard>
 {
+
 	private String name;
 
 	private String type;

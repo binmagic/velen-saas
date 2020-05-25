@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="add-modal-mask" ></div>
+    <div class="add-modal-mask"></div>
     <div tabindex="-1" class="add-modal-wrap" @click="showChange">
       <div style="width: 318px;transform-origin: -746px 465px;" class="add-modal" @click.stop>
         <div class="add-modal-content">
@@ -17,22 +17,21 @@
                       <el-radio v-model="radio" :label="false">创建分组</el-radio>
                     </el-col>
                   </el-row>
-
                 </el-form-item>
                 <div v-if="radio">
                   <el-form-item label="概览名称">
                     <el-row>
                       <el-col :span="24">
-                        <el-input v-model="dashboardName" @change="test" placeholder="请输入"></el-input>
+                        <el-input v-model="dashboardName" placeholder="请输入"></el-input>
                       </el-col>
                     </el-row>
                   </el-form-item>
                   <el-form-item label="概览分组">
                     <el-row>
                       <el-col :span="24">
-                        <!--<el-select filterable>
-                          <el-option></el-option>
-                        </el-select>-->
+                        <el-select filterable v-model="group" @click="test">
+                          <el-option v-for="item in groups" :key="item.id" :label="item.name" :value="item.id"/>
+                        </el-select>
                       </el-col>
                     </el-row>
                   </el-form-item>
@@ -46,9 +45,9 @@
                     </el-row>
                   </el-form-item>
                   <el-form-item label="组内概览">
-                    <!--<el-select filterable placeholder="请选择">
-                      <el-option></el-option>
-                    </el-select>-->
+                    <el-select filterable placeholder="请选择" multiple v-model="dashboard">
+                      <el-option v-for="item in dashboards" :key="item.id" :label="item.name" :value="item.id"/>
+                    </el-select>
                   </el-form-item>
                 </div>
               </el-form>
@@ -67,34 +66,53 @@
 
 <script>
   import {addGroup} from "@/api/group";
+  import {addDashboard} from "@/api/dashboard";
 
   export default {
     name: "AddDashboardOrGroup",
-    props:{
-      show:{
-        type:Boolean
+    props: {
+      show: {
+        type: Boolean
+      },
+      groups: {
+        type: Array
+      },
+      dashboards: {
+        type: Array
       }
     },
-    data(){
-      return{
-        radio:true,
-        groupName:'',
-        dashboardName:'',
+    data() {
+      return {
+        radio: true,
+        groupName: '',
+        dashboardName: '',
+        group: '',
+        dashboard: [],
       }
     },
-    methods:{
-      insertSelect(){
-        if (this.radio){
-
-        }else {
-
+    methods: {
+      insertSelect() {
+        if (this.radio) {
+          console.log('this is dashboard')
+          let dashboardCreate = {name: this.dashboardName, type: this.group}
+          addDashboard(dashboardCreate).then(response => {
+            console.log(response)
+          })
+        } else {
+          console.log('this is group')
+          let groupCreate = {name: this.groupName, dashboards: this.dashboard}
+          addGroup(groupCreate).then(response => {
+            console.log(response)
+            //this.$emit('change-group', response)
+          })
         }
+        this.$emit("modal-switch", {show: !this.show})
       },
-      showChange:function () {
-        this.$emit("modal-switch",{show:!this.show})
+      showChange: function () {
+        this.$emit("modal-switch", {show: !this.show})
       },
-      test(){
-        console.log(this.dashboardName)
+      test() {
+        console.log(this.groups)
       }
     }
   }
@@ -123,7 +141,7 @@
     outline: 0;
   }
 
-  .add-modal{
+  .add-modal {
     box-sizing: border-box;
     color: #475669;
     font-size: 14px;
@@ -138,27 +156,27 @@
     padding: 0 0 24px;
   }
 
-  .add-modal-content{
+  .add-modal-content {
     position: relative;
     background-color: #fff;
     background-clip: padding-box;
     border: 0;
     border-radius: 3px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
   }
 
-  .add-modal-header{
+  .add-modal-header {
     border-bottom-color: #e9f0f7;
     padding: 14px 20px;
   }
 
-  .add-modal-body{
+  .add-modal-body {
     font-size: 14px;
     line-height: 1.5;
     word-wrap: break-word;
   }
 
-  .add-modal-foot{
+  .add-modal-foot {
     padding: 10px 15px;
     position: relative;
     overflow: hidden;
@@ -166,11 +184,11 @@
 
   }
 
-  .header-title{
+  .header-title {
     color: #1f2d3d;
     line-height: 20px;
     margin: 0;
-    color: rgba(0,0,0,.85);
+    color: rgba(0, 0, 0, .85);
     font-weight: 500;
     font-size: 16px;
     line-height: 22px;

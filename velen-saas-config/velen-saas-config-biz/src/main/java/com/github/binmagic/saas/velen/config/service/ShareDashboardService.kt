@@ -2,13 +2,16 @@ package com.github.binmagic.saas.velen.config.service
 
 import com.github.binmagic.saas.velen.config.dto.ShareDashboardDTO
 import com.github.binmagic.saas.velen.config.entity.ShareDashboard
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 interface ShareDashboardService {
-    suspend fun getShareDashboardByUserIdAndAppId(userId: String,appId: String) : List<ShareDashboard>
 
-    suspend fun getShareDashboardByGroupId(groupId: String) :List<ShareDashboardDTO>
+    suspend fun getShareDashboardByUserIdAndAppId(userId: String,appId: String) : Flux<ShareDashboard>
 
-    suspend fun createShareDashboard(shareDashboard: ShareDashboard)
+    suspend fun getShareDashboardByGroupId(groupId: String) :Flux<ShareDashboardDTO>
 
-    suspend fun upDateShareDashboard(shareDashboard: ShareDashboard)
+    suspend fun createShareDashboard(shareDashboard: ShareDashboard) : Mono<ShareDashboard>
+
+    suspend fun upDateShareDashboard(shareDashboard: ShareDashboard) : Mono<ShareDashboard>
 }
