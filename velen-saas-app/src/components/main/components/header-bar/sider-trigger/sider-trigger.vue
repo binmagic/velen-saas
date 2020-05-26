@@ -1,5 +1,5 @@
 <template>
-  <a type="text" :class="['sider-trigger-a', collapsed ? 'collapsed' : '']" @click="handleChange"><Icon :type="icon" :size="size" /></a>
+  <a type="text" :class="['sider-trigger-a', collapsed ? 'collapsed' : '']" @click="handleChange"><i :class="'el-icon-' + icon"></i></a>
 </template>
 <script>
 export default {

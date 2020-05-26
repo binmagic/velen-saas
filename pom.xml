@@ -46,10 +46,25 @@
 		<querydsl.version>4.3.1</querydsl.version>
 		<javaee-api.version>8.0.1</javaee-api.version>
 		<hutool-all.version>5.3.3</hutool-all.version>
+
+		<rxjava2-jdbc.version>0.2.7</rxjava2-jdbc.version>
+		<ImpalaJDBC41.version>2.6.3</ImpalaJDBC41.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>com.cloudera</groupId>
+				<artifactId>ImpalaJDBC41</artifactId>
+				<version>${ImpalaJDBC41.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.github.davidmoten</groupId>
+				<artifactId>rxjava2-jdbc</artifactId>
+				<version>${rxjava2-jdbc.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>io.projectreactor.kotlin</groupId>
 				<artifactId>reactor-kotlin-extensions</artifactId>

@@ -1,0 +1,54 @@
+<template>
+  <el-container class="meta-event-container">
+    <el-header class="meta-event-header">
+      <div style="height: 50px">
+        <span>元事件</span>
+        <el-select v-model="switchTable">
+          <el-option value="1" />
+        </el-select>
+      </div>
+      <el-divider />
+      <div>
+        <el-tag
+          v-for="column in columns"
+          :key="column.prop"
+          closable>
+          {{column.label}}
+        </el-tag>
+      </div>
+    </el-header>
+    <el-main>
+      <custom-table :columns="columns"></custom-table>
+    </el-main>
+  </el-container>
+</template>
+
+<style type="scss">
+  .meta-event-container{
+
+  }
+  .meta-event-header{
+    height: auto;
+  }
+</style>
+
+<script>
+
+import CustomTable from '_c/custom-table'
+
+export default {
+  components: {
+    CustomTable
+  },
+  data() {
+    return {
+      columns: [{
+        label: '序号',
+        prop: 'ID'
+      }],
+      switchTable: ''
+    }
+  }
+}
+
+</script>

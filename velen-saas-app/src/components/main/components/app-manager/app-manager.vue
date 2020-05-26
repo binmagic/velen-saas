@@ -1,10 +1,10 @@
 <template>
   <div class="app-manager-wrapper">
-    <span class="activeApp">{{activeApp}}</span>
+    <span class="activeApp">{{ activeApp | resolveAppName }}</span>
     <el-dropdown @command="handleCommand">
-      <i class="el-icon-arrow-down el-icon--right"></i>
+      <i class="el-icon-arrow-down el-icon--right" />
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item v-for="app of appList" :command="app.id">{{app.name}}</el-dropdown-item>
+        <el-dropdown-item v-for="app of appList" :command="app.id">{{ app.name }}</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -12,23 +12,50 @@
 
 <script>
 import './app-manager.scss'
+import { mapActions } from 'vuex'
+
+let app0
+
 export default {
   name: 'AppManager',
-  props: {
-    appList: {
-      type: Array,
-      default() {
-        return []
+  filters: {
+    resolveAppName(value) {
+      console.log('xxxresolveAppname')
+      for (const index in app0.appList) {
+        if (Object.is(app0.appList[index].id, value)) {
+          return app0.appList[index].name
+        }
       }
-    },
+    }
+  },
+  props: {
     activeApp: {
       type: String,
       default: ''
     }
   },
+  data() {
+    return {
+      appList: []
+    }
+  },
+  beforeCreate() {
+    app0 = this
+  },
+  mounted() {
+    console.log('app-manager mounted')
+    this.getAppList().then(resp => {
+      console.log('xxx')
+      this.appList = resp
+    })
+  },
+  created() {
+    console.log('app-manager created')
+  },
   methods: {
-    handleCommand(name){
-      this.$emit('on-select', name)
+    ...mapActions(['getAppList']),
+    handleCommand(name) {
+      this.$emit('on-select', { name: 'menu-app-detail', query: { 'app': name }})
     }
   }
 }

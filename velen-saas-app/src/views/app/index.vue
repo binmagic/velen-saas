@@ -110,7 +110,7 @@ export default {
       })
     },
     goDetail(row) {
-      this.$router.push({ path: `/app/detail`, query: { 'app': row.id }})
+      this.$router.push({ name: `menu-app-detail`, query: { 'app': row.id }})
     },
     resetTemp() {
       this.temp = {

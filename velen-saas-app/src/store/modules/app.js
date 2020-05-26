@@ -1,7 +1,8 @@
 import Cookies from 'js-cookie'
 import { getAppList } from '@/api/app'
 const state = {
-
+  appId: '',
+  appList: []
 }
 const APP_KEY = 'app'
 
@@ -16,6 +17,7 @@ const mutations = {
 
 const actions = {
   getAppList({ commit }) {
+    console.log('getAppList')
     return new Promise((resolve, reject) => {
       getAppList().then(data => {
         commit('SET_APP_LIST', data)

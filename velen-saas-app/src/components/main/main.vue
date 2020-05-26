@@ -2,24 +2,24 @@
   <el-container class="main-container">
     <el-header class="main-header">
       <header-bar>
-        <user account="187****0825" ></user>
-        <user-manager @on-select="turnToPage"></user-manager>
-        <logo @on-select="turnToPage"></logo>
+        <user account="187****0825" />
+        <user-manager @on-select="turnToPage" />
+        <logo @on-select="turnToPage" />
       </header-bar>
     </el-header>
-    <el-header class="nav-header" v-if="!$route.meta.hideHeader">
+    <el-header v-if="!$route.meta.hideHeader" class="nav-header">
       <el-row>
         <el-col :span="4">
-          <app-manager class="app-manager" :app-list="appList" :active-app="$route.params.id"></app-manager>
+          <app-manager class="app-manager" :active-app="$route.query.app" @on-select="turnToPage" />
         </el-col>
         <el-col :span="20">
-          <header-navigation @on-select="turnToPage"></header-navigation>
+          <header-navigation @on-select="turnToPage" />
         </el-col>
       </el-row>
     </el-header>
     <el-container class="main-content-container">
-      <el-aside class="main-aside" v-if="!$route.meta.hideAside">
-        <side-menu @on-select="turnToPage"/>
+      <el-aside v-if="!$route.meta.hideAside" class="main-aside">
+        <side-menu @on-select="turnToPage" />
       </el-aside>
       <el-main class="main-content">
         <router-view />
@@ -28,6 +28,7 @@
   </el-container>
 </template>
 <script>
+import './main.scss'
 import { mapGetters } from 'vuex'
 import AppManager from './components/app-manager'
 import Logo from './components/logo'
@@ -35,8 +36,7 @@ import User from './components/user'
 import HeaderBar from './components/header-bar'
 import HeaderNavigation from './components/header-navigation'
 import UserManager from './components/user-manager'
-import './main.scss'
-import SideMenu from "./components/side-menu/side-menu";
+import SideMenu from './components/side-menu/side-menu'
 export default {
   name: 'Main',
   components: {
@@ -56,27 +56,27 @@ export default {
   computed: {
     ...mapGetters([
       'errorCount'
-    ]),
-    appList() {
-      return this.$store.state.app.appList
-    },
-    menuList() {
-      return this.$store.getters.menuList
-    }
+    ])
   },
   methods: {
     turnToPage(route) {
       console.log(route)
       let { name, params, query } = {}
-      if (typeof route === 'string') name = route
-      else {
+      if (typeof route === 'string') {
+        name = route
+        params = {}
+        query = {}
+      } else {
         name = route.name
-        params = route.params
-        query = route.query
+        params = route.params || {}
+        query = route.query || {}
       }
       if (name.indexOf('isTurnByHref_') > -1) {
         window.open(name.split('_')[1])
         return
+      }
+      if (!query['app']) {
+        query['app'] = this.$store.state.app.appId
       }
       this.$router.push({
         name,
