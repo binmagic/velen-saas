@@ -8,11 +8,9 @@ import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/dashboard")
@@ -33,5 +31,17 @@ class DashboardController : BaseController() {
         val sort= dashboardService.getDashboardByType(dashboard.type).count().awaitSingle().toInt()
         dashboard.sort=sort
         return dashboardService.createDashboard(dashboard).awaitSingle()
+    }
+
+    @PutMapping
+    suspend fun updateDashboard(@Validated @RequestBody dashboardCreateDTO: DashboardCreateDTO) :Dashboard{
+        val dashboard= Dashboard()
+        BeanUtils.copyProperties(dashboardCreateDTO,dashboard)
+        return dashboardService.updateDashboard(dashboard).awaitSingle()
+    }
+
+    @DeleteMapping("{id}")
+    suspend fun deleteDashboardById(@PathVariable("id") id:String) :Mono<Void> {
+        return dashboardService.deleteDashboardById(id)
     }
 }

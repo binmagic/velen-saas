@@ -1,7 +1,5 @@
 package com.github.binmagic.saas.velen.config.dto;
 
-import com.github.binmagic.saas.velen.config.entity.CommonDashboard;
-import com.github.binmagic.saas.velen.config.entity.CommonGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,25 +7,20 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommonGroupDashboardDTO {
+public class CommonDashboardCreateDTO {
 
     private String id;
 
-    private String name;
+    private String dashboardName;
 
-    private String parentId;
-
-    private String appId;
+    private String commonType;
 
     private Integer sort;
 
     private LocalDateTime createTime;
-
-    private List list;
 }

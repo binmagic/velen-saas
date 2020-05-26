@@ -1,5 +1,6 @@
 package com.github.binmagic.saas.velen.config.service.impl
 
+import cn.hutool.core.util.IdUtil
 import com.github.binmagic.saas.velen.config.dto.CommonGroupDashboardDTO
 import com.github.binmagic.saas.velen.config.entity.CommonDashboard
 import com.github.binmagic.saas.velen.config.entity.CommonGroup
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.time.LocalDateTime
 
 @Service
 class CommonGroupServiceImpl : CommonGroupService {
@@ -20,17 +22,31 @@ class CommonGroupServiceImpl : CommonGroupService {
     @Autowired
     lateinit var commonDashboardRepository: CommonDashboardRepository
 
+    override suspend fun getCommonGroupByAppIdAndParentId(appId: String,parentId:String): Flux<CommonGroup> {
+        return commonGroupRepository.findByAppIdAndParentId(appId,parentId)
+    }
+
+    override suspend fun createCommonGroup(commonGroup: CommonGroup): Mono<CommonGroup> {
+        val now: LocalDateTime = LocalDateTime.now()
+        commonGroup.createTime=now
+        commonGroup.id= IdUtil.fastSimpleUUID()
+        return commonGroupRepository.insert(commonGroup)
+    }
+
+    override suspend fun updateCommonGroup(commonGroup: CommonGroup): Mono<CommonGroup> {
+        return commonGroupRepository.save(commonGroup)
+    }
+
+    override suspend fun countCommonGroupByAppId(appId: String): Mono<Long> {
+        return commonGroupRepository.countByAppId(appId)
+    }
+
     override suspend fun getCommonGroupByAppId(appId: String): Flux<CommonGroup> {
-
-        /*val list:MutableList<CommonGroupDashboardDTO> = commonGroupRepository.findByAppId(appId) as MutableList<CommonGroupDashboardDTO>
-        list.sortBy { it.sort }
-        for (group : CommonGroupDashboardDTO in list){
-            val dashboardList:MutableList<CommonDashboard> = commonDashboardRepository.findByCommonType(group.id) as MutableList<CommonDashboard>
-            dashboardList.sortBy { it.sort }
-            group.list=dashboardList
-        }*/
         return commonGroupRepository.findByAppId(appId)
+    }
 
+    override suspend fun deleteCommonGroupById(id: String): Mono<Void> {
+        return commonGroupRepository.deleteById(id)
     }
 
 }

@@ -3,38 +3,39 @@
     <el-input
       placeholder="概览名称"
       prefix-icon="el-icon-search"
-      v-model="value"
+      v-model="filterGroup"
       @change="inputChange"
       class="menu-dashboard-input"
     >
     </el-input>
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model="tabName" @tab-click="handleClick">
       <el-tab-pane label="公共概览" name="first">
-        公共概览
       </el-tab-pane>
       <el-tab-pane label="我的概览" name="second">
-        <div>
-          <div v-for="(group,index) in groups">
-            <h3 class="menu-dashboard-span"  @mouseenter="enter(index)" @mouseleave="leave" @click="group.show=!group.show">
-              <span>{{group.name}}</span>
-              <i class="el-icon-arrow-right"/>
-              <span style="float: right;">
+      </el-tab-pane>
+    </el-tabs>
+    <div v-if="tabName=='second'">
+      <div v-for="(group,index) in groups">
+        <h3 class="menu-dashboard-span" @click="showDashboard(group,index)" >
+          <span>{{group.name}}</span>
+          <i :class="[group.show?'el-icon-arrow-down':'el-icon-arrow-right']"/>
+          <span style="float: right;">
                 <i class="el-icon-more menu-dashboard-icon" v-if="hoverIndex==index && hover"></i>
                 <span class="dashboard-aside-num">{{group.list.length}}</span>
               </span>
-            </h3>
-            <ul :class="['dashboard-aside-ul',group.show?'group-show':'group-hide']">
-              <li class="dashboard-aside-li"  v-for="dashboard in group.list">
+        </h3>
+        <ul :class="['dashboard-aside-ul',group.show?'group-show':'group-hide']">
+          <li class="dashboard-aside-li" v-for="dashboard in group.list">
                 <span>
                   {{dashboard.name}}
                 </span>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-      </el-tab-pane>
-    </el-tabs>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div v-else>
+      公共概览
+    </div>
     <div class="el-btn">
       <el-button-group style="border-radius: 20px;overflow: hidden;">
         <el-tooltip content="新建我的概览/分组">
@@ -49,11 +50,11 @@
       </el-button-group>
     </div>
     <add-dashboard-or-group v-if="modal.show" :groups="groups" :dashboards="dashboards" :show="modal.show"
-                            @modal-switch="modalSwitch"></add-dashboard-or-group>
+                            @modal-switch="modalSwitch"/>
   </div>
 </template>
 <script>
-  import {getGroup} from '@/api/group'
+  import {getGroup, getCommonGroup} from '@/api/group'
   import AddDashboardOrGroup from './components/AddDashboardOrGroup'
 
   export default {
@@ -61,20 +62,13 @@
     components: {
       AddDashboardOrGroup
     },
-    props: {
-      overview: {
-        type: String,
-      },
-      tabName: {
-        type: String,
-        default: 'second'
-      },
-    },
+    props: {},
 
 
     data() {
       return {
-        value: this.overview,
+        tabName: 'second',
+        filterGroup: '',
         modal: {
           show: false,
         },
@@ -82,34 +76,36 @@
         dashboards: [],
         hover: false,
         hoverIndex: -1,
+        commonGroups: [],
+        commonDashboards: [],
       }
     },
     created() {
       this.findGroup()
+      this.findCommonGroup()
     },
-    computed: {
-      activeName: {
-        get() {
-          return this.tabName
-        },
-        set(val) {
-          this.$emit('update:tabName', val)
-        }
-      }
-    },
+    computed: {},
     methods: {
       findGroup() {
         getGroup().then(response => {
           this.groups = response
           for (let key in this.groups) {
-            this.groups[key].show=false
+            this.groups[key].show = false
             this.dashboards = this.dashboards.concat(this.groups[key].list)
           }
-          console.log(this.groups)
+        })
+      },
+      findCommonGroup() {
+        getCommonGroup().then(response => {
+          this.commonGroups=response
+          for (let key in this.commonGroups){
+            this.commonGroups[key].show = false
+          }
         })
       },
       inputChange() {
-        this.$emit('input-change', this.value)
+        //this.$emit('input-change', this.value)
+
       },
       handleClick() {
 
@@ -117,16 +113,25 @@
       handleNodeClick() {
 
       },
-      modalSwitch () {
+      modalSwitch() {
         this.modal.show = !this.modal.show
       },
-      enter(index) {
+      enter(index, e) {
         this.hover = true
         this.hoverIndex = index
       },
       leave() {
         this.hover = false
         this.hoverIndex = -1
+      },
+      showDashboard(group, index) {
+        this.groups[index].show=!this.groups[index].show
+        console.log(this.groups[index])
+        group.show = !group.show
+        console.log(group.show)
+        for (let key in this.groups){
+          console.log(this.groups[key].show)
+        }
       }
     }
   }

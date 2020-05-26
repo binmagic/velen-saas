@@ -10,4 +10,5 @@ interface CommonDashboardRepository : BaseRepository<CommonDashboard> {
 
     fun findByCommonType(commonType: String): Flux<CommonDashboard>
 
+
 }

@@ -26,7 +26,6 @@ public class GroupDashboardDTO {
 
     private String appId;
 
-    @CreatedDate
     private LocalDateTime createTime;
 
     private List<Dashboard> list;

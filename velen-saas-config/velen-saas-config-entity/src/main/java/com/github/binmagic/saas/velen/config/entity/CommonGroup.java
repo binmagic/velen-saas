@@ -17,11 +17,9 @@ public class CommonGroup extends BaseEntity<CommonGroup> {
 
     private String name;
 
-    private Integer isParent;
+    private String parentId;
 
     private String appId;
-
-    private String userId;
 
     private Integer sort;
 

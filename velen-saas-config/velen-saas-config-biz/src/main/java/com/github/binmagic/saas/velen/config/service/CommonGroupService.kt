@@ -7,6 +7,16 @@ import reactor.core.publisher.Mono
 
 interface CommonGroupService {
 
-    suspend fun getCommonGroupByAppId(appId:String) : Flux<CommonGroup>
+    suspend fun getCommonGroupByAppIdAndParentId(appId:String,parentId:String) : Flux<CommonGroup>
+
+    suspend fun createCommonGroup(commonGroup: CommonGroup) : Mono<CommonGroup>
+
+    suspend fun updateCommonGroup(commonGroup: CommonGroup) : Mono<CommonGroup>
+
+    suspend fun deleteCommonGroupById(id:String) : Mono<Void>
+
+    suspend fun countCommonGroupByAppId(appId: String) : Mono<Long>
+
+    suspend fun getCommonGroupByAppId(appId: String) : Flux<CommonGroup>
 
 }
