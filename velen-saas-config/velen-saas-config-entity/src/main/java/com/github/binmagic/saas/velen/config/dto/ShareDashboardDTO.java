@@ -25,6 +25,4 @@ public class ShareDashboardDTO {
 
     private LocalDateTime createTime;
 
-    private String shareName;
-
 }

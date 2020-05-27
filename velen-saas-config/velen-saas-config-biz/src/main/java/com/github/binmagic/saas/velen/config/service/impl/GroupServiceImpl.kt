@@ -20,13 +20,6 @@ class GroupServiceImpl : GroupService {
     lateinit var groupRepository: GroupRepository
 
     override suspend fun getGroupByUserIdAndAppId(userId: String, appId: String): Flux<Group> {
-        /*val list:MutableList<GroupDashboardDTO> = groupRepository.findByUserIdAndAppId(userId, appId) as MutableList<GroupDashboardDTO>
-        list.sortBy { it.sort }
-        for (group : GroupDashboardDTO in list){
-            val dashboardList:MutableList<Dashboard> = dashboardRepository.findByType(group.id) as MutableList<Dashboard>
-            dashboardList.sortBy { it.sort }
-            group.list=dashboardList
-        }*/
         return groupRepository.findByUserIdAndAppId(userId, appId)
     }
 

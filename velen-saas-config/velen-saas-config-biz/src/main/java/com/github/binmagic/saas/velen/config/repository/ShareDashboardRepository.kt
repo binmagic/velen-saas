@@ -10,7 +10,7 @@ interface ShareDashboardRepository : BaseRepository<ShareDashboard> {
 
     fun findByUserIdAndAppId(userId: String, appId: String): Flux<ShareDashboard>
 
-    fun findByGroupId(groupId: String): Flux<ShareDashboard>
+    fun findByType(type: String): Flux<ShareDashboard>
 
 
 }

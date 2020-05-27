@@ -10,4 +10,5 @@ import reactor.core.publisher.Mono
 interface DashboardRepository : BaseRepository<Dashboard> {
 
     fun findByType(type : String): Flux<Dashboard>
+
 }

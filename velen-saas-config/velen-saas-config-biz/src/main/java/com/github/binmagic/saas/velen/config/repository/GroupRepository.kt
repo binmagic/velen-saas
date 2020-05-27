@@ -12,4 +12,5 @@ interface GroupRepository:BaseRepository<Group> {
     fun findByUserIdAndAppId(userId : String, appId : String) : Flux<Group>
 
     fun countByUserIdAndAppId(userId: String,appId: String) : Mono<Long>
+
 }

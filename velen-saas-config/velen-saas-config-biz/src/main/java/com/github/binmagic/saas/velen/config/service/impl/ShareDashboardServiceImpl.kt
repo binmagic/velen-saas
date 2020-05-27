@@ -1,5 +1,6 @@
 package com.github.binmagic.saas.velen.config.service.impl
 
+import cn.hutool.core.util.IdUtil
 import com.github.binmagic.saas.velen.common.entity.Page
 import com.github.binmagic.saas.velen.config.dto.ShareDashboardDTO
 import com.github.binmagic.saas.velen.config.entity.Dashboard
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.time.LocalDateTime
 
 @Service
 class ShareDashboardServiceImpl : ShareDashboardService {
@@ -27,12 +29,15 @@ class ShareDashboardServiceImpl : ShareDashboardService {
       return shareDashboardRepository.findByUserIdAndAppId(userId, appId)
     }
 
-    override suspend fun getShareDashboardByGroupId(groupId: String): Flux<ShareDashboardDTO> {
-        TODO("Not yet implemented")
+    override suspend fun getShareDashboardByType(type: String): Flux<ShareDashboard> {
+        return shareDashboardRepository.findByType(type)
     }
 
 
     override suspend fun createShareDashboard(shareDashboard: ShareDashboard) :Mono<ShareDashboard> {
+        val now:LocalDateTime= LocalDateTime.now()
+        shareDashboard.createTime = now
+        shareDashboard.id = IdUtil.fastSimpleUUID()
         return shareDashboardRepository.insert(shareDashboard)
     }
 

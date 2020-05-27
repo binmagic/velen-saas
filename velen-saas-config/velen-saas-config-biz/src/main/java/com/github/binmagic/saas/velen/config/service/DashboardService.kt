@@ -10,6 +10,8 @@ interface DashboardService {
 
     suspend fun getDashboardByType(type : String) : Flux<Dashboard>
 
+    suspend fun getDashboardById(id:String) : Mono<Dashboard>
+
     suspend fun createDashboard(dashboard: Dashboard) : Mono<Dashboard>
 
     suspend fun updateDashboard(dashboard: Dashboard) : Mono<Dashboard>

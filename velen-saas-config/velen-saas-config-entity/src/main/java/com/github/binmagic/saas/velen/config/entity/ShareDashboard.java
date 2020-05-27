@@ -23,9 +23,11 @@ public class ShareDashboard extends BaseEntity<ShareDashboard> {
 
     private String dashboardId;
 
-    private String groupId;
+    private String type;
 
     private Integer sort;
+
+    private String userName;
 
     @CreatedDate
     private LocalDateTime createTime;

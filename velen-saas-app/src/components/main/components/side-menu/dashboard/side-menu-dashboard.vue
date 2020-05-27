@@ -31,7 +31,35 @@
       </div>
     </div>
     <div v-else>
-      公共概览
+      <div v-for="commonGroup in commonGroups">
+        <h3 class="menu-dashboard-span">
+          <span>{{commonGroup.name}}</span>
+          <i class="el-icon-arrow-right"/>
+          <span style="float:right;">
+          </span>
+        </h3>
+        <div v-if="commonGroup.hasSonGroup" style="padding-left: 19px;">
+          <div v-for="sonGroup in commonGroup.list">
+            <h3 class="menu-dashboard-span">
+              <span>{{sonGroup.name}}</span>
+              <i class="el-icon-arrow-right"/>
+              <span style="float:right;">
+                <span class="dashboard-aside-num">{{sonGroup.list.length}}</span>
+              </span>
+            </h3>
+            <ul>
+              <li v-for="sonCommonDashboard in sonGroup.list">
+                <span>{{sonCommonDashboard.name}}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <ul v-else>
+          <li v-for="commonDashboard in commonGroup.list">
+            <span>{{commonDashboard.name}}</span>
+          </li>
+        </ul>
+      </div>
     </div>
     <div class="el-btn">
       <el-button-group style="border-radius: 20px;overflow: hidden;">
@@ -66,46 +94,54 @@ export default {
   },
   props: {},
 
-  data() {
-    return {
-      tabName: 'second',
-      filterGroup: '',
-      modal: {
-        show: false
+
+    data() {
+      return {
+        tabName: 'second',
+        filterGroup: '',
+        modal: {
+          show: false,
+        },
+        groups: [],
+        dashboards: [],
+        hover: false,
+        hoverIndex: -1,
+        commonGroups: [],
+        commonDashboards: [],
+      }
+    },
+    created() {
+      this.findGroup()
+      this.findCommonGroup()
+    },
+    computed: {},
+    methods: {
+      findGroup() {
+        getGroup().then(response => {
+          this.groups = response
+          for (let key in this.groups) {
+            this.groups[key].show = false
+            this.dashboards = this.dashboards.concat(this.groups[key].list)
+          }
+        })
       },
-      groups: [],
-      dashboards: [],
-      hover: false,
-      hoverIndex: -1,
-      commonGroups: [],
-      commonDashboards: []
-    }
-  },
-  computed: {},
-  created() {
-    this.findGroup()
-    this.findCommonGroup()
-  },
-  methods: {
-    findGroup() {
-      getGroup().then(response => {
-        this.groups = response
-        for (const key in this.groups) {
-          this.groups[key].show = false
-          this.dashboards = this.dashboards.concat(this.groups[key].list)
-        }
-      })
-    },
-    findCommonGroup() {
-      getCommonGroup().then(response => {
-        this.commonGroups = response
-        for (const key in this.commonGroups) {
-          this.commonGroups[key].show = false
-        }
-      })
-    },
-    inputChange() {
-      // this.$emit('input-change', this.value)
+      findCommonGroup() {
+        getCommonGroup().then(response => {
+          this.commonGroups = response
+          for (let key in this.commonGroups) {
+            this.commonGroups[key].show = false
+            if (!this.commonGroups[key].hasSonGroup){
+              this.commonDashboards=this.commonDashboards.concat(this.commonGroups[key].list)
+            }else {
+              for (let i in  this.commonGroups[key].list){
+                this.commonDashboards=this.commonDashboards.concat(this.commonGroups[key].list[i].list)
+              }
+            }
+          }
+        })
+      },
+      inputChange() {
+        //this.$emit('input-change', this.value)
 
     },
     handleClick() {
@@ -113,29 +149,24 @@ export default {
     },
     handleNodeClick() {
 
-    },
-    modalSwitch() {
-      this.modal.show = !this.modal.show
-    },
-    enter(index, e) {
-      this.hover = true
-      this.hoverIndex = index
-    },
-    leave() {
-      this.hover = false
-      this.hoverIndex = -1
-    },
-    showDashboard(group, index) {
-      this.groups[index].show = !this.groups[index].show
-      console.log(this.groups[index])
-      group.show = !group.show
-      console.log(group.show)
-      for (const key in this.groups) {
-        console.log(this.groups[key].show)
+      },
+      modalSwitch() {
+        this.modal.show = !this.modal.show
+      },
+      enter(index) {
+        this.hover = true
+        this.hoverIndex = index
+      },
+      leave() {
+        this.hover = false
+        this.hoverIndex = -1
+      },
+      showDashboard(group, index) {
+        this.$set(group, 'show', !group.show)
+        console.log(group.show)
       }
     }
   }
-}
 </script>
 
 <style scoped>
