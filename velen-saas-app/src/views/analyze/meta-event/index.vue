@@ -1,5 +1,7 @@
 <template>
   <div class="app-container">
+    <custom-header :show-name="$route.meta.title">
+    </custom-header>
     <el-container class="main">
       <el-header class="meta-event-header">
         <div style="height: 50px">
@@ -37,10 +39,11 @@
 <script>
 
 import CustomTable from '_c/custom-table'
-
+import CustomHeader from '_c/custom-header'
 export default {
   components: {
-    CustomTable
+    CustomTable,
+    CustomHeader
   },
   data() {
     return {
