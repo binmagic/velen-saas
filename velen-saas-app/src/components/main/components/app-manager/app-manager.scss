@@ -1,6 +1,9 @@
-.app-manager-wrapper{
+@import "~@/styles/variables.scss";
 
+
+.app-manager-wrapper{
   background-color: white;
   text-align: center;
   line-height: 60px;
+  min-width: $sideBarWidth;
 }

@@ -19,19 +19,35 @@
 .nav-header {
   padding: 0;
   min-width: 960px;
+  display: flex;
+
+  .el-menu{
+    box-shadow: 0 2px 4px 0 rgba(175,186,200,.17);
+  }
 }
+
+
 
 .main-content-container {
 
   .main-aside {
-    width: 200px !important;
+    min-width: $sideBarWidth !important;
+    width: $sideBarWidth !important;
     border-right: solid 1px #e6e6e6;
+    box-shadow: 0 -1px 2px 0 rgba(175,186,200,.17);
+    padding-top: 8px;
   }
 
   .main-content {
     //padding: 0px !important;
+    background-color: #f5f7f9;
 
     .app-container {
+
+      .main{
+        padding: 10px 0;
+        background: white;
+      }
 
       .filter-container {
         padding-left: 20px;

@@ -43,29 +43,32 @@
   }
 }
 
-.is-top:nth-child(2),.el-tabs__active-bar{
+.is-top:nth-child(2), .el-tabs__active-bar {
   margin-left: 20px;
 }
 
-.menu-dashboard{
-  .el-input{
+.menu-dashboard {
+  .el-input {
     width: 179px;
 
-    .el-input__inner{
-        height: 35px;
-    }
-  }
-
-}
-
-.add-modal-wrap{
-  .el-input{
-    width: 100%;
-    .el-input__inner{
+    .el-input__inner {
       height: 35px;
     }
   }
-  .el-select{
+
+}
+
+.add-modal-wrap {
+  .el-input {
+    width: 100%;
+
+    .el-input__inner {
+      height: 35px;
+    }
+  }
+
+  .el-select {
     width: 100%;
   }
 }
+

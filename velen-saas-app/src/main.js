@@ -1,17 +1,14 @@
 import Vue from 'vue'
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
-import i18n from '@/locale'
+import i18n from './locale'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import '@/assets/themes/default-theme/index.css'
-
-import '@/styles/index.scss' // global css
-
+import './styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
-import config from '@/config'
+import config from './config'
 
 import '@/icons' // icon
 // import '@/permission' // permission control

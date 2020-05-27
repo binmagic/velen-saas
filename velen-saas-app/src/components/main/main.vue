@@ -8,14 +8,8 @@
       </header-bar>
     </el-header>
     <el-header v-if="!$route.meta.hideHeader" class="nav-header">
-      <el-row>
-        <el-col :span="4">
           <app-manager class="app-manager" :active-app="$route.query.app" @on-select="turnToPage" />
-        </el-col>
-        <el-col :span="20">
           <header-navigation @on-select="turnToPage" />
-        </el-col>
-      </el-row>
     </el-header>
     <el-container class="main-content-container">
       <el-aside v-if="!$route.meta.hideAside" class="main-aside">
