@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <custom-header :show-name="$route.meta.title">
+      <i class="el-icon-s-order">保存</i>
     </custom-header>
     <el-container class="main">
       <el-header class="meta-event-header">

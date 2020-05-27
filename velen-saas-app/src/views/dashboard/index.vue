@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <custom-header :show-name="$route.meta.title">
-      <div v-if="enableDatePick" style="margin-right: 40px; align-self: center;display: flex">
+      <div v-if="componentFlag.enableDatePick" style="margin-right: 40px; align-self: center;display: flex">
         <el-date-picker
           v-model="query.dateRange"
           type="daterange"
@@ -10,21 +10,21 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          :picker-options="pickerOptions"
+          :picker-options="componentOption.datePickerOptions"
         />
-        <i class="el-icon-close" style="align-self: center;margin-left: 20px" @click="showDatePick" />
+        <i class="el-icon-close" style="align-self: center;margin-left: 20px" @click="componentFlag.enableDatePick = false" />
       </div>
-      <el-button v-else icon="el-icon-date" size="mini" style="margin-right: 20px" @click="showDatePick" />
+      <el-button v-else icon="el-icon-date" size="mini" style="margin-right: 20px" @click="componentFlag.enableDatePick = true" />
       <el-button-group>
         <el-button icon="el-icon-refresh-left" />
         <el-button icon="el-icon-share" />
         <el-button icon="el-icon-more" />
       </el-button-group>
-      <el-dropdown trigger="click">
-        <span><el-button icon="el-icon-plus" size="mini" style="margin-left: 20px" type="success"/></span>
+      <el-dropdown trigger="click" @command="handleClickPlus">
+        <span><el-button icon="el-icon-plus" size="mini" style="margin-left: 20px" type="success" /></span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>从书签添加</el-dropdown-item>
-          <el-dropdown-item>新建标签</el-dropdown-item>
+          <el-dropdown-item command="createComponent">新建组件</el-dropdown-item>
           <el-dropdown-item>新建描述</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -32,9 +32,25 @@
 
     <div style="margin-top: 25vh">
       <div>
-        <el-button type="success" style="display:block;margin:0 auto">新建组件</el-button>
+        <el-button type="success" style="display:block;margin:0 auto" @click="componentFlag.enableCreateComponent = true">新建组件</el-button>
       </div>
     </div>
+
+    <el-dialog
+      title="新建组件"
+      :visible.sync="componentFlag.enableCreateComponent"
+      width="30%"
+      center
+    >
+      <el-row>
+        <el-col :span="8">
+          <el-card shadow="hover" @click.native="jump('menu-analyze-meta-event')">
+            元数据分析
+          </el-card>
+        </el-col>
+      </el-row>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -50,8 +66,13 @@ export default {
       query: {
         dateRange: []
       },
-      pickerOptions: {},
-      enableDatePick: false,
+      componentOption: {
+        datePickerOptions: {}
+      },
+      componentFlag: {
+        enableDatePick: false,
+        enableCreateComponent: false
+      },
       input: '',
       tabName: 'second',
       contented: false
@@ -64,8 +85,13 @@ export default {
     spanChange(e) {
       console.log(e.target.innerText)
     },
-    showDatePick() {
-      this.enableDatePick = !this.enableDatePick
+    handleClickPlus(command) {
+      if (Object.is(command, 'createComponent')) {
+        this.componentFlag.enableCreateComponent = true
+      }
+    },
+    jump(name) {
+      this.$router.push({ 'name': name ,query: {'app': this.$store.state.app.appId}})
     }
   }
 }

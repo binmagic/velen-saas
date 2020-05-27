@@ -20,7 +20,6 @@ export default {
   name: 'AppManager',
   filters: {
     resolveAppName(value) {
-      console.log('xxxresolveAppname')
       for (const index in app0.appList) {
         if (Object.is(app0.appList[index].id, value)) {
           return app0.appList[index].name
@@ -45,12 +44,10 @@ export default {
   mounted() {
     console.log('app-manager mounted')
     this.getAppList().then(resp => {
-      console.log('xxx')
       this.appList = resp
     })
   },
   created() {
-    console.log('app-manager created')
   },
   methods: {
     ...mapActions(['getAppList']),
