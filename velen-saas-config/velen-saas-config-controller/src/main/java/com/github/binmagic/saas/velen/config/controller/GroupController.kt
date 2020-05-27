@@ -2,9 +2,11 @@ package com.github.binmagic.saas.velen.config.controller
 
 import com.github.binmagic.saas.velen.common.component.controller.BaseController
 import com.github.binmagic.saas.velen.config.dto.GroupDashboardDTO
+import com.github.binmagic.saas.velen.config.entity.Dashboard
 import com.github.binmagic.saas.velen.config.entity.Group
 import com.github.binmagic.saas.velen.config.service.DashboardService
 import com.github.binmagic.saas.velen.config.service.GroupService
+import com.github.binmagic.saas.velen.config.service.ShareDashboardService
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.BeanUtils
@@ -24,18 +26,37 @@ class GroupController : BaseController() {
     @Autowired
     lateinit var dashboardService: DashboardService
 
+    @Autowired
+    lateinit var shareDashboardService:ShareDashboardService
     @GetMapping
     suspend fun getGroup(): List<GroupDashboardDTO> {
         val appId = currentAppId.awaitSingle()
         val userId = currentUserId.awaitSingle()
-        val groups = groupService.getGroupByUserIdAndAppId(userId, appId).collectList().awaitSingle()
-        val groupDashboardDTOs: ArrayList<GroupDashboardDTO> = ArrayList()
+        var groups = groupService.getGroupByUserIdAndAppId(userId, appId).collectList().awaitSingle()
+        if (groups.isNullOrEmpty()){
 
+            val groupInfo= Group()
+            groupInfo.name="分享给我的概览"
+            groupInfo.appId=appId
+            groupInfo.userId=userId
+            groupInfo.sort=0
+            groupService.createGroup(groupInfo)
+        }
+        groups = groupService.getGroupByUserIdAndAppId(userId, appId).collectList().awaitSingle()
+        val groupDashboardDTOs: ArrayList<GroupDashboardDTO> = ArrayList()
         groups.sortBy { it.sort }
         for (group in groups) {
             val groupDashboardDTO = GroupDashboardDTO()
             BeanUtils.copyProperties(group, groupDashboardDTO)
             val dashboards = dashboardService.getDashboardByType(group.id).collectList().awaitSingle()
+            val shareDashboards = shareDashboardService.getShareDashboardByType(group.id).collectList().awaitSingle()
+            for (shareDashboard in shareDashboards){
+                val shareDashboardDTO = dashboardService.getDashboardById(shareDashboard.dashboardId).awaitSingle()
+                val dashboard = Dashboard()
+                BeanUtils.copyProperties(shareDashboardDTO,dashboard)
+                dashboard.name+=shareDashboard.userName
+                dashboards.add(dashboard)
+            }
             dashboards.sortBy { it.sort }
             groupDashboardDTO.list = dashboards
             groupDashboardDTOs.add(groupDashboardDTO)

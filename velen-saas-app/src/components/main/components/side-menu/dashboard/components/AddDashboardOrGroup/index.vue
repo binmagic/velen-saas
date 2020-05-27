@@ -54,7 +54,7 @@
             </div>
             <div class="add-modal-foot" style="text-align: right">
               <el-button @click="showChange">取消</el-button>
-              <el-button type="primary" @click="insertSelect">确定</el-button>
+              <el-button type="primary" plain @click="insertSelect">确定</el-button>
             </div>
           </div>
         </div>
@@ -92,20 +92,28 @@
     },
     methods: {
       insertSelect() {
+        const h=this.$createElement
         if (this.radio) {
           console.log('this is dashboard')
           let dashboardCreate = {name: this.dashboardName, type: this.group}
           addDashboard(dashboardCreate).then(response => {
             console.log(response)
+            this.$notify({
+              title:'提示',
+              message:h('i','创建概览成功')
+            })
           })
         } else {
           console.log('this is group')
           let groupCreate = {name: this.groupName, dashboards: this.dashboard}
           addGroup(groupCreate).then(response => {
             console.log(response)
-            //this.$emit('change-group', response)
+
+
           })
+
         }
+        this.$emit('change-groups')
         this.$emit("modal-switch", {show: !this.show})
       },
       showChange: function () {

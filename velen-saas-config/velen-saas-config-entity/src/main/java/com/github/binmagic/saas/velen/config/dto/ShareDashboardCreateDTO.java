@@ -24,10 +24,12 @@ public class ShareDashboardCreateDTO {
 
     private String dashboardId;
 
-    private String groupId;
+    private String type;
 
     private Integer sort;
 
     private LocalDateTime createTime;
+
+    private String userName;
 
 }

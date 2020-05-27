@@ -23,6 +23,8 @@ public class CommonGroupDashboardDTO {
 
     private String parentId;
 
+    private Boolean hasSonGroup;
+
     private String appId;
 
     private Integer sort;

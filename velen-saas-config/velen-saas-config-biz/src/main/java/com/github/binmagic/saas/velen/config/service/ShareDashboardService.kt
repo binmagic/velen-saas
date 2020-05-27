@@ -9,7 +9,7 @@ interface ShareDashboardService {
 
     suspend fun getShareDashboardByUserIdAndAppId(userId: String,appId: String) : Flux<ShareDashboard>
 
-    suspend fun getShareDashboardByGroupId(groupId: String) :Flux<ShareDashboardDTO>
+    suspend fun getShareDashboardByType(type: String) :Flux<ShareDashboard>
 
     suspend fun createShareDashboard(shareDashboard: ShareDashboard) : Mono<ShareDashboard>
 

@@ -29,6 +29,11 @@ class DashboardServiceImpl : DashboardService {
 
     }
 
+    override suspend fun getDashboardById(id: String): Mono<Dashboard> {
+        return dashboardRepository.findById(id)
+
+    }
+
     override suspend fun createDashboard(dashboard: Dashboard): Mono<Dashboard> {
         val now: LocalDateTime = LocalDateTime.now()
         dashboard.createTime = now

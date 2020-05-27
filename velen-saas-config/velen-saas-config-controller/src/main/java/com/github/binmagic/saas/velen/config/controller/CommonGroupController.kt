@@ -38,7 +38,9 @@ class CommonGroupController:BaseController() {
 
             if (commonGroupDashboardDTO.list.isNullOrEmpty()){
                 commonGroupDashboardDTO.list = commonDashboardService.getCommonDashboardServiceByType(commonGroup.id).collectList().awaitSingle().sortBy { it.sort } as List<CommonDashboard>
+                commonGroupDashboardDTO.hasSonGroup= false
             }else{
+                commonGroupDashboardDTO.hasSonGroup=true
                 for(item in list){
                     val dto=CommonGroupDashboardDTO()
                     BeanUtils.copyProperties(item,dto)
