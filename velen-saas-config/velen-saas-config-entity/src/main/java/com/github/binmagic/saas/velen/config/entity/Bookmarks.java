@@ -5,11 +5,15 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document
 @Data
 public class Bookmarks extends BaseEntity<Bookmarks>
 {
+
+	public static final Bookmarks EMPTY = new Bookmarks();
 
 	private String name;
 
@@ -19,8 +23,13 @@ public class Bookmarks extends BaseEntity<Bookmarks>
 
 	private String data;
 
+	private List<String> dashboards = new ArrayList<>();
+
 	private LocalDateTime createTime;
+
+	private LocalDateTime updateTime;
 
 	private String userId;
 
+	private String appId;
 }
