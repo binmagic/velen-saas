@@ -28,26 +28,16 @@ class CommonGroupController:BaseController() {
     @GetMapping
     suspend fun getCommonGroup() :List<CommonGroupDashboardDTO>{
         val appId=currentAppId.awaitSingle()
-        val commonGroups = commonGroupService.getCommonGroupByAppIdAndParentId(appId,"0").collectList().awaitSingle()
+        val commonGroups = commonGroupService.getCommonGroupByAppId(appId).collectList().awaitSingle()
         val commonGroupDashboardDTOs : ArrayList<CommonGroupDashboardDTO> = ArrayList()
         commonGroups.sortBy { it.sort }
         for (commonGroup in commonGroups){
-            val commonGroupDashboardDTO= CommonGroupDashboardDTO()
+            val commonGroupDashboardDTO = CommonGroupDashboardDTO()
             BeanUtils.copyProperties(commonGroup,commonGroupDashboardDTO)
-            val list = commonGroupService.getCommonGroupByAppIdAndParentId(appId,commonGroup.id).collectList().awaitSingle()
-
-            if (commonGroupDashboardDTO.list.isNullOrEmpty()){
-                commonGroupDashboardDTO.list = commonDashboardService.getCommonDashboardServiceByType(commonGroup.id).collectList().awaitSingle().sortBy { it.sort } as List<CommonDashboard>
-                commonGroupDashboardDTO.hasSonGroup= false
-            }else{
-                commonGroupDashboardDTO.hasSonGroup=true
-                for(item in list){
-                    val dto=CommonGroupDashboardDTO()
-                    BeanUtils.copyProperties(item,dto)
-                    dto.list=commonDashboardService.getCommonDashboardServiceByType(dto.id).collectList().awaitSingle().sortBy { it.sort } as List<CommonDashboard>
-                    commonGroupDashboardDTO.list.add(dto)
-                }
-            }
+            val commonDashboards = commonDashboardService.getCommonDashboardServiceByType(commonGroup.id).collectList().awaitSingle()
+            commonDashboards.sortBy { it.sort }
+            commonGroupDashboardDTO.list=commonDashboards
+            commonGroupDashboardDTOs.add(commonGroupDashboardDTO)
         }
         return commonGroupDashboardDTOs
     }
@@ -60,7 +50,6 @@ class CommonGroupController:BaseController() {
         val appId= currentAppId.awaitSingle()
         commonGroup.appId=appId
         commonGroup.sort = commonGroupService.countCommonGroupByAppId(appId).awaitSingle().toInt()
-
         val result= commonGroupService.createCommonGroup(commonGroup).awaitSingle()
         BeanUtils.copyProperties(result,commonGroupDashboardDTO)
         return commonGroupDashboardDTO

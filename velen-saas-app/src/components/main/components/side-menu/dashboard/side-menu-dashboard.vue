@@ -1,76 +1,102 @@
 <template>
   <div class="menu-dashboard">
-    <el-input
-      v-model="filterGroup"
-      placeholder="概览名称"
-      prefix-icon="el-icon-search"
-      class="menu-dashboard-input"
-      @change="inputChange"
-    />
+        <el-input
+          size="small"
+          v-model="filterGroup"
+          placeholder="概览名称"
+          prefix-icon="el-icon-search"
+          class="menu-dashboard-input"
+          @change="inputChange"
+        />
     <el-tabs v-model="tabName" @tab-click="handleClick">
-      <el-tab-pane label="公共概览" name="first" />
-      <el-tab-pane label="我的概览" name="second" />
-    </el-tabs>
-    <div v-if="tabName=='second'">
-      <div v-for="(group,index) in groups">
-        <h3 class="menu-dashboard-span" @click="showDashboard(group,index)">
-          <span>{{ group.name }}</span>
-          <i :class="[group.show?'el-icon-arrow-down':'el-icon-arrow-right']" />
-          <span style="float: right;">
-            <i v-if="hoverIndex==index && hover" class="el-icon-more menu-dashboard-icon" />
-            <span class="dashboard-aside-num">{{ group.list.length }}</span>
-          </span>
-        </h3>
-        <ul :class="['dashboard-aside-ul',group.show?'group-show':'group-hide']">
-          <li v-for="dashboard in group.list" class="dashboard-aside-li">
-            <span>
-              {{ dashboard.name }}
+      <el-tab-pane label="公共概览" name="first">
+
+        <el-collapse v-for="(commonGroup,index) in commonGroups">
+          <el-collapse-item>
+            <template slot="title">
+              <div class="menu-dashboard-span">
+                <span>{{commonGroup.name}}</span>
+                <span style="float: right;">
+              <el-popover
+                placement="bottom"
+                trigger="hover"
+                width="74">
+              <div>
+                <div class="dashboard-aside-popover">
+                  <i class="el-icon-edit"/>
+                  <span>重命名</span>
+                </div>
+                <div class="dashboard-aside-popover">
+                  <i class="el-icon-delete"/>
+                  <span>删除</span>
+                </div>
+              </div>
+              <i @click.stop slot="reference"
+                 class="el-icon-more menu-dashboard-icon"/>
+            </el-popover>
+              <span class="dashboard-aside-num" v-if="commonGroup.list.length>0">{{ commonGroup.list.length }}</span>
             </span>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div v-else>
-      <div v-for="commonGroup in commonGroups">
-        <h3 class="menu-dashboard-span">
-          <span>{{commonGroup.name}}</span>
-          <i class="el-icon-arrow-right"/>
-          <span style="float:right;">
-          </span>
-        </h3>
-        <div v-if="commonGroup.hasSonGroup" style="padding-left: 19px;">
-          <div v-for="sonGroup in commonGroup.list">
-            <h3 class="menu-dashboard-span">
-              <span>{{sonGroup.name}}</span>
-              <i class="el-icon-arrow-right"/>
-              <span style="float:right;">
-                <span class="dashboard-aside-num">{{sonGroup.list.length}}</span>
-              </span>
-            </h3>
-            <ul>
-              <li v-for="sonCommonDashboard in sonGroup.list">
-                <span>{{sonCommonDashboard.name}}</span>
+              </div>
+            </template>
+            <ul class="dashboard-aside-ul">
+              <li v-for="commonDashboard in commonGroup.list" class="dashboard-aside-li">
+                <span>
+                  {{ commonDashboard.name }}
+                </span>
               </li>
             </ul>
-          </div>
-        </div>
-        <ul v-else>
-          <li v-for="commonDashboard in commonGroup.list">
-            <span>{{commonDashboard.name}}</span>
-          </li>
-        </ul>
-      </div>
-    </div>
+          </el-collapse-item>
+        </el-collapse>
+      </el-tab-pane>
+      <el-tab-pane label="我的概览" name="second">
+        <el-collapse v-for="(group,index) in groups">
+          <el-collapse-item>
+            <template slot="title">
+              <div class="menu-dashboard-span" @mouseleave="leave" @mouseenter="enter(index)">
+                <span>{{group.name}}</span>
+                <span style="float: right;">
+              <el-popover
+                placement="bottom"
+                trigger="hover"
+                width="74">
+              <div>
+                <div class="dashboard-aside-popover">
+                  <i class="el-icon-edit"/>
+                  <span>重命名</span>
+                </div>
+                <div class="dashboard-aside-popover">
+                  <i class="el-icon-delete"/>
+                  <span>删除</span>
+                </div>
+              </div>
+              <i v-show="hoverIndex==index && hover" @click.stop slot="reference"
+                 class="el-icon-more menu-dashboard-icon"/>
+            </el-popover>
+              <span class="dashboard-aside-num" v-if="group.list.length>0">{{ group.list.length }}</span>
+            </span>
+              </div>
+            </template>
+            <ul class="dashboard-aside-ul">
+              <li v-for="dashboard in group.list" class="dashboard-aside-li">
+                <span>
+                  {{ dashboard.name }}
+                </span>
+              </li>
+            </ul>
+          </el-collapse-item>
+        </el-collapse>
+      </el-tab-pane>
+    </el-tabs>
     <div class="el-btn">
       <el-button-group style="border-radius: 20px;overflow: hidden;">
         <el-tooltip content="新建我的概览/分组">
-          <el-button type="primary" icon="el-icon-plus" @click="modalSwitch" />
+          <el-button type="primary" icon="el-icon-plus" @click="modalSwitch"/>
         </el-tooltip>
         <el-tooltip content="管理我的概览排序">
-          <el-button type="primary" icon="el-icon-d-caret" />
+          <el-button type="primary" icon="el-icon-d-caret" @click="modal.sortShow=true"/>
         </el-tooltip>
         <el-tooltip content="分享我的概览">
-          <el-button type="primary" icon="el-icon-share" />
+          <el-button type="primary" icon="el-icon-share"/>
         </el-tooltip>
       </el-button-group>
     </div>
@@ -81,26 +107,41 @@
       :show="modal.show"
       @modal-switch="modalSwitch"
     />
+    <el-dialog :visible.sync="modal.sortShow" width="30%">
+      <template slot="title">
+        <div style="position: relative;">
+          <span>管理我的概览排序</span>
+          <el-input v-model="sortInput" placeholder="搜索概览名称" style="position: absolute;right: 30px;top: -10px;"/>
+        </div>
+
+      </template>
+      <el-tree :data="groups" :props="treeProps" ref="tree" :filter-node-method="filterNode"></el-tree>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { getGroup, getCommonGroup } from '@/api/group'
-import AddDashboardOrGroup from './components/AddDashboardOrGroup'
 
-export default {
-  name: 'SideMenuDashboard',
-  components: {
-    AddDashboardOrGroup
-  },
-  props: {},
+  import {getGroup, getCommonGroup} from '@/api/group'
+  import AddDashboardOrGroup from './components/add-dashboard-or-group'
 
-
+  export default {
+    name: 'SideMenuDashboard',
+    components: {
+      AddDashboardOrGroup,
+    },
+    props: {},
+    watch:{
+      sortInput(val){
+        this.$refs.tree.filter(val)
+      }
+    },
     data() {
       return {
         tabName: 'second',
         filterGroup: '',
         modal: {
           show: false,
+          sortShow:false,
         },
         groups: [],
         dashboards: [],
@@ -108,6 +149,11 @@ export default {
         hoverIndex: -1,
         commonGroups: [],
         commonDashboards: [],
+        sortInput:'',
+        treeProps:{
+          children:'list',
+          label:'name'
+        }
       }
     },
     created() {
@@ -120,7 +166,6 @@ export default {
         getGroup().then(response => {
           this.groups = response
           for (let key in this.groups) {
-            this.groups[key].show = false
             this.dashboards = this.dashboards.concat(this.groups[key].list)
           }
         })
@@ -129,25 +174,17 @@ export default {
         getCommonGroup().then(response => {
           this.commonGroups = response
           for (let key in this.commonGroups) {
-            this.commonGroups[key].show = false
-            if (!this.commonGroups[key].hasSonGroup){
-              this.commonDashboards=this.commonDashboards.concat(this.commonGroups[key].list)
-            }else {
-              for (let i in  this.commonGroups[key].list){
-                this.commonDashboards=this.commonDashboards.concat(this.commonGroups[key].list[i].list)
-              }
-            }
+            this.commonDashboards = this.commonDashboards.concat(this.commonGroups[key].list)
           }
         })
       },
       inputChange() {
-        //this.$emit('input-change', this.value)
 
-    },
-    handleClick() {
+      },
+      handleClick() {
 
-    },
-    handleNodeClick() {
+      },
+      handleNodeClick() {
 
       },
       modalSwitch() {
@@ -161,15 +198,35 @@ export default {
         this.hover = false
         this.hoverIndex = -1
       },
-      showDashboard(group, index) {
-        this.$set(group, 'show', !group.show)
-        console.log(group.show)
+      filterNode(value,data,node){
+        if(!value){
+          return true;
+        }
+        let level = node.level;
+        let _array = [];//这里使用数组存储 只是为了存储值。
+        this.getReturnNode(node,_array,value);
+        let result = false;
+        _array.forEach((item)=>{
+          result = result || item;
+        });
+        return result;
+      },
+      getReturnNode(node,_array,value){
+        let isPass = node.data &&  node.data.name && node.data.name.indexOf(value) !== -1;
+        isPass?_array.push(isPass):'';
+        this.index++;
+        console.log(this.index)
+        if(!isPass && node.level!=1 && node.parent){
+          this.getReturnNode(node.parent,_array,value);
+        }
       }
     }
   }
 </script>
 
 <style scoped>
+  @import './side-menu-dashboard.scss';
+
   .menu-dashboard {
     background: #ffffff;
     height: 100%;
@@ -187,12 +244,13 @@ export default {
   }
 
   .menu-dashboard-span {
+    width: 100%;
     margin: 0;
-    padding: 10px 12px 10px 21px;
+    padding-right: 12px;
+    padding-left: 21px;
     font-size: 12px;
     color: #8492a6;
-    cursor: pointer;
-    user-select: none;
+
   }
 
   .dashboard-aside-ul {
@@ -238,5 +296,11 @@ export default {
 
   .group-show {
     display: block;
+  }
+
+  .dashboard-aside-popover {
+    margin-top: 5px;
+    height: 24px;
+    cursor: pointer;
   }
 </style>

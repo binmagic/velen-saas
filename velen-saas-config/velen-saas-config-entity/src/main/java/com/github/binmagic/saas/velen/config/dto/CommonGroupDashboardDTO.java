@@ -21,15 +21,11 @@ public class CommonGroupDashboardDTO {
 
     private String name;
 
-    private String parentId;
-
-    private Boolean hasSonGroup;
-
     private String appId;
 
     private Integer sort;
 
     private LocalDateTime createTime;
 
-    private List list;
+    private List<CommonDashboard> list;
 }

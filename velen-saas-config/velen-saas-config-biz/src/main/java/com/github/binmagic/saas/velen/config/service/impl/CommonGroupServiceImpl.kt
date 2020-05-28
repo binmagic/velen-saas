@@ -19,13 +19,6 @@ class CommonGroupServiceImpl : CommonGroupService {
     @Autowired
     lateinit var commonGroupRepository: CommonGroupRepository
 
-    @Autowired
-    lateinit var commonDashboardRepository: CommonDashboardRepository
-
-    override suspend fun getCommonGroupByAppIdAndParentId(appId: String,parentId:String): Flux<CommonGroup> {
-        return commonGroupRepository.findByAppIdAndParentId(appId,parentId)
-    }
-
     override suspend fun createCommonGroup(commonGroup: CommonGroup): Mono<CommonGroup> {
         val now: LocalDateTime = LocalDateTime.now()
         commonGroup.createTime=now
