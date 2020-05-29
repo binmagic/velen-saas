@@ -11,7 +11,6 @@ interface CommonGroupRepository : BaseRepository<CommonGroup> {
 
     fun findByAppId(appId: String) : Flux<CommonGroup>
 
-    fun findByAppIdAndParentId(appId: String,parentId:String): Flux<CommonGroup>
 
     fun countByAppId(appId: String) : Mono<Long>
 }

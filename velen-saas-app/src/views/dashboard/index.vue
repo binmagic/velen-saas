@@ -1,33 +1,35 @@
 <template>
   <div class="app-container">
     <custom-header :show-name="$route.meta.title">
-      <div v-if="componentFlag.enableDatePick" style="margin-right: 40px; align-self: center;display: flex">
-        <el-date-picker
-          v-model="query.dateRange"
-          type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :picker-options="componentOption.datePickerOptions"
-        />
-        <i class="el-icon-close" style="align-self: center;margin-left: 20px" @click="componentFlag.enableDatePick = false" />
+      <div slot="tools" >
+        <div v-if="componentFlag.enableDatePick" style="margin-right: 40px; align-self: center;display: flex">
+          <el-date-picker
+            v-model="query.dateRange"
+            type="daterange"
+            align="right"
+            unlink-panels
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :picker-options="componentOption.datePickerOptions"
+          />
+          <i class="el-icon-close" style="align-self: center;margin-left: 20px" @click="componentFlag.enableDatePick = false" />
+        </div>
+        <el-button v-else icon="el-icon-date" style="margin-right: 20px" @click="componentFlag.enableDatePick = true" />
+        <el-button-group>
+          <el-button icon="el-icon-refresh-left" />
+          <el-button icon="el-icon-share" />
+          <el-button icon="el-icon-more" />
+        </el-button-group>
+        <el-dropdown trigger="click" @command="handleClickPlus">
+          <span><el-button icon="el-icon-plus" style="margin-left: 20px" type="success" /></span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>从书签添加</el-dropdown-item>
+            <el-dropdown-item command="createComponent">新建组件</el-dropdown-item>
+            <el-dropdown-item>新建描述</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
-      <el-button v-else icon="el-icon-date" size="mini" style="margin-right: 20px" @click="componentFlag.enableDatePick = true" />
-      <el-button-group>
-        <el-button icon="el-icon-refresh-left" />
-        <el-button icon="el-icon-share" />
-        <el-button icon="el-icon-more" />
-      </el-button-group>
-      <el-dropdown trigger="click" @command="handleClickPlus">
-        <span><el-button icon="el-icon-plus" size="mini" style="margin-left: 20px" type="success" /></span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>从书签添加</el-dropdown-item>
-          <el-dropdown-item command="createComponent">新建组件</el-dropdown-item>
-          <el-dropdown-item>新建描述</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
     </custom-header>
 
     <div style="margin-top: 25vh">
@@ -96,3 +98,27 @@ export default {
   }
 }
 </script>
+
+<style type="scss">
+  .custom-tools{
+    .el-button {
+      height: 40px;
+      width: 50px;
+      align-self: center;
+    }
+
+    i{
+      align-self: center;
+    }
+
+    .el-button-group{
+      align-self: center;
+      width: 150px;
+    }
+
+    .el-button-group .el-button{
+      padding: 0 10px;
+      width: 50px;
+    }
+  }
+</style>

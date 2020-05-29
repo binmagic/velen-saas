@@ -1,6 +1,10 @@
 .custom-header-title{
   width: calc(100% - 260px);
   max-width: calc(100% - 260px);
+  align-items: center;
+  span{
+    display: flex;
+  }
 }
 
 .custom-tools{
@@ -9,28 +13,11 @@
   margin-right: 10px;
   padding-top: 15px;
   padding-bottom: 15px;
-
-  .el-button {
-    height: 40px;
-    width: 50px;
-    align-self: center;
-  }
-
-  i{
-    align-self: center;
-  }
-
-  .el-button-group{
-    align-self: center;
-    width: 150px;
-  }
-
-  .el-button-group .el-button{
-    padding: 0 10px;
-    width: 50px;
-  }
 }
 
 .custom-header{
   display: flex;
+  div{
+    display: flex;
+  }
 }

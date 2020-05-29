@@ -45,7 +45,7 @@ class ResourceServiceImpl : ResourceService {
 
         val example = Example.of(Resource.EMPTY, exampleMatcher)
 
-        val total = resourceRepository.count().awaitSingle()
+        val total = resourceRepository.count(example).awaitSingle()
 
         val items = resourceRepository.findAll(example, pageRequest).collectList().awaitSingle()
 

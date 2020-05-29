@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 @Data
 public class BaseEntity<E>
 {
+
 	@Id
 	protected String id;
 }

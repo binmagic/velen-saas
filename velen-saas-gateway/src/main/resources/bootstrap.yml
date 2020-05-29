@@ -40,6 +40,12 @@ spring:
               - Path=/api/dashboard/**
             filters:
               - StripPrefix=1
+        -   id: velen-saas-bookmarks
+            uri: lb://velen-saas-config
+            predicates:
+              - Path=/api/bookmarks/**
+            filters:
+              - StripPrefix=1
     nacos:
       discovery:
         metadata:

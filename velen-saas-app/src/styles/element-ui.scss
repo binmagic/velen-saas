@@ -43,6 +43,15 @@
   }
 }
 
+.el-popover{
+  min-width: 70px;
+  padding: 5px;
+}
+
+.el-collapse-item__content{
+  padding-bottom: 0px;
+}
+
 .is-top:nth-child(2), .el-tabs__active-bar {
   margin-left: 20px;
 }
