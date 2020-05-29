@@ -1,16 +1,15 @@
 <template>
   <div class="menu-dashboard">
-        <el-input
-          size="small"
-          v-model="filterGroup"
-          placeholder="概览名称"
-          prefix-icon="el-icon-search"
-          class="menu-dashboard-input"
-          @change="inputChange"
-        />
+    <el-input
+      size="small"
+      v-model="filterGroup"
+      placeholder="概览名称"
+      prefix-icon="el-icon-search"
+      class="menu-dashboard-input"
+      @change="inputChange"
+    />
     <el-tabs v-model="tabName" @tab-click="handleClick">
       <el-tab-pane label="公共概览" name="first">
-
         <el-collapse v-for="(commonGroup,index) in commonGroups">
           <el-collapse-item>
             <template slot="title">
@@ -77,7 +76,7 @@
               </div>
             </template>
             <ul class="dashboard-aside-ul">
-              <li v-for="dashboard in group.list" class="dashboard-aside-li">
+              <li v-for="dashboard in group.list" class="dashboard-aside-li" @click="clickDashboard(dashboard)">
                 <span>
                   {{ dashboard.name }}
                 </span>
@@ -113,9 +112,18 @@
           <span>管理我的概览排序</span>
           <el-input v-model="sortInput" placeholder="搜索概览名称" style="position: absolute;right: 30px;top: -10px;"/>
         </div>
-
       </template>
-      <el-tree :data="groups" :props="treeProps" ref="tree" :filter-node-method="filterNode"></el-tree>
+      <el-tree
+        :data="groups" :props="treeProps"
+        ref="tree" :filter-node-method="filterNode" show-checkbox
+        :render-content="renderContent">
+
+      </el-tree>
+      <div slot="footer">
+        <el-button type="primary" style="float:left;">新建分组</el-button>
+        <el-button @click="modal.sortShow=false">取消</el-button>
+        <el-button type="primary">确定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -130,8 +138,8 @@
       AddDashboardOrGroup,
     },
     props: {},
-    watch:{
-      sortInput(val){
+    watch: {
+      sortInput(val) {
         this.$refs.tree.filter(val)
       }
     },
@@ -141,7 +149,7 @@
         filterGroup: '',
         modal: {
           show: false,
-          sortShow:false,
+          sortShow: false,
         },
         groups: [],
         dashboards: [],
@@ -149,10 +157,10 @@
         hoverIndex: -1,
         commonGroups: [],
         commonDashboards: [],
-        sortInput:'',
-        treeProps:{
-          children:'list',
-          label:'name'
+        sortInput: '',
+        treeProps: {
+          children: 'list',
+          label: 'name'
         }
       }
     },
@@ -198,26 +206,142 @@
         this.hover = false
         this.hoverIndex = -1
       },
-      filterNode(value,data,node){
-        if(!value){
+      filterNode(value, data, node) {
+        if (!value) {
           return true;
         }
         let level = node.level;
         let _array = [];//这里使用数组存储 只是为了存储值。
-        this.getReturnNode(node,_array,value);
+        this.getReturnNode(node, _array, value);
         let result = false;
-        _array.forEach((item)=>{
+        _array.forEach((item) => {
           result = result || item;
         });
         return result;
       },
-      getReturnNode(node,_array,value){
-        let isPass = node.data &&  node.data.name && node.data.name.indexOf(value) !== -1;
-        isPass?_array.push(isPass):'';
+      getReturnNode(node, _array, value) {
+        let isPass = node.data && node.data.name && node.data.name.indexOf(value) !== -1;
+        isPass ? _array.push(isPass) : '';
         this.index++;
         console.log(this.index)
-        if(!isPass && node.level!=1 && node.parent){
-          this.getReturnNode(node.parent,_array,value);
+        if (!isPass && node.level != 1 && node.parent) {
+          this.getReturnNode(node.parent, _array, value);
+        }
+      },
+      clickDashboard(dashboard) {
+        this.$route.meta.title = dashboard.name
+      },
+      renderContent(h, {node, data, store}) {
+        if (node.level == 1) {
+          return h('div', {
+              style: {
+                height: '32px',
+                width: '526px',
+                lineHeight: '32px'
+              },
+              on: {
+                'mouseenter': () => {
+                  this.$set(data, 'show', true)
+                },
+                'mouseleave': () => {
+                  this.$set(data, 'show', false)
+                }
+              }
+            }, [h('span', {}, data.name),
+              h('span', {
+                style: {
+                  display: data.show ? '' : 'none',
+                  float: 'right',
+                  marginRight: '5px'
+                },
+              }, [
+                //添加
+                h('el-button', {
+                  props: {
+                    type: 'text',
+                    size: 'small',
+                  },
+                  style: {
+                    marginLeft: "15px",
+                  },
+                  on: {
+                    click: (e) => {
+                      e.stopPropagation()
+                      this.$set(data, 'rename', true)
+
+                    }
+                  }
+                }, "重命名"),
+                h('el-button', {
+                  props: {
+                    type: 'text',
+                    size: 'small',
+                  },
+                  style: {
+                    color: 'red'
+                  },
+                }, "删除"),
+              ])
+            ]
+          )
+        } else if (node.level == 2) {
+          return h('div', {
+              style: {
+                height: '32px',
+                width: '526px',
+                lineHeight: '32px'
+              },
+              on: {
+                'mouseenter': () => {
+                  this.$set(data, 'show', true)
+                },
+                'mouseleave': () => {
+                  this.$set(data, 'show', false)
+                }
+              }
+            }, [h('span', {}, data.name),
+              h('span', {
+                style: {
+                  display: data.show ? '' : 'none',
+                  float: 'right',
+                  marginRight: '5px'
+                },
+              }, [
+                //添加
+                h('el-button', {
+                  props: {
+                    type: 'text',
+                    size: 'small',
+                  },
+                  style: {
+                    marginLeft: "15px",
+                  },
+                  on: {
+                    click: (e) => {
+                      e.stopPropagation()
+                    }
+                  }
+                }, "重命名"),
+                h('el-button', {
+                  props: {
+                    type: 'text',
+                    size: 'small',
+                  },
+                  style: {},
+                  if: {},
+                }, "移动至"),
+                h('el-button', {
+                  props: {
+                    type: 'text',
+                    size: 'small',
+                  },
+                  style: {
+                    color: 'red'
+                  },
+                }, "删除"),
+              ])
+            ]
+          )
         }
       }
     }
@@ -226,81 +350,4 @@
 
 <style scoped>
   @import './side-menu-dashboard.scss';
-
-  .menu-dashboard {
-    background: #ffffff;
-    height: 100%;
-  }
-
-  .menu-dashboard-input {
-    margin: 20px 10px;
-  }
-
-  .el-btn {
-    position: fixed;
-    bottom: 20px;
-    left: 17px;
-    text-align: center;
-  }
-
-  .menu-dashboard-span {
-    width: 100%;
-    margin: 0;
-    padding-right: 12px;
-    padding-left: 21px;
-    font-size: 12px;
-    color: #8492a6;
-
-  }
-
-  .dashboard-aside-ul {
-    padding: 0px;
-    margin: 0px;
-    list-style: none;
-  }
-
-  .dashboard-aside-li {
-    height: 36px;
-    padding: 0 21px 0 33px;
-    line-height: 36px;
-    position: relative;
-    font-size: 14px;
-    color: #1f2d3d;
-    cursor: pointer;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  .dashboard-aside-num {
-    padding: 0 5px;
-    border-radius: 8px;
-    line-height: 1;
-    background: #e8eef2;
-  }
-
-  .dashboard-aside-li-active {
-    border-right: 2px solid;
-    background: #e5f9f4;
-    color: #04cb94;
-    font-weight: 500;
-  }
-
-  .menu-dashboard-icon {
-    margin-right: 5px;
-  }
-
-  .group-hide {
-    display: none;
-  }
-
-  .group-show {
-    display: block;
-  }
-
-  .dashboard-aside-popover {
-    margin-top: 5px;
-    height: 24px;
-    cursor: pointer;
-  }
 </style>

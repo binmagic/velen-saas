@@ -10,3 +10,80 @@
 .is-top:nth-child(2), .el-tabs__active-bar {
   margin-left: 20px;
 }
+
+.menu-dashboard {
+  background: #ffffff;
+  height: 100%;
+}
+
+.menu-dashboard-input {
+  margin: 20px 0px;
+}
+
+.el-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 17px;
+  text-align: center;
+}
+
+.menu-dashboard-span {
+  width: 100%;
+  margin: 0;
+  padding-right: 12px;
+  padding-left: 21px;
+  font-size: 12px;
+  color: #8492a6;
+
+}
+
+.dashboard-aside-ul {
+  padding: 0px;
+  margin: 0px;
+  list-style: none;
+}
+
+.dashboard-aside-li {
+  height: 36px;
+  padding: 0 21px 0 33px;
+  line-height: 36px;
+  position: relative;
+  font-size: 14px;
+  color: #1f2d3d;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.dashboard-aside-num {
+  padding: 0 5px;
+  border-radius: 8px;
+  line-height: 1;
+  background: #e8eef2;
+}
+
+.dashboard-aside-li-active {
+  border-right: 2px solid;
+  background: #e5f9f4;
+  color: #04cb94;
+  font-weight: 500;
+}
+
+.menu-dashboard-icon {
+  margin-right: 5px;
+}
+
+.group-hide {
+  display: none;
+}
+
+.group-show {
+  display: block;
+}
+
+.dashboard-aside-popover {
+  margin-top: 5px;
+  height: 24px;
+  cursor: pointer;
+}
