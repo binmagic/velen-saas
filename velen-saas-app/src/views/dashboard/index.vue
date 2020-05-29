@@ -93,7 +93,7 @@ export default {
       }
     },
     jump(name) {
-      this.$router.push({ 'name': name ,query: {'app': this.$store.state.app.appId}})
+      this.$router.push({ 'name': name, query: this.$route.query })
     }
   }
 }

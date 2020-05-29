@@ -168,7 +168,7 @@ export default {
     },
     jump(type) {
       console.log(type)
-      this.$router.push({ 'name': type.name, 'query': { 'app': this.$store.state.app.appId }})
+      this.$router.push({ 'name': type.name, 'query': this.$route.query })
     }
   }
 }

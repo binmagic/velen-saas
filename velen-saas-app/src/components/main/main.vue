@@ -8,8 +8,8 @@
       </header-bar>
     </el-header>
     <el-header v-if="!$route.meta.hideHeader" class="nav-header">
-          <app-manager class="app-manager" :active-app="$route.query.app" @on-select="turnToPage" />
-          <header-navigation @on-select="turnToPage" />
+      <app-manager class="app-manager" :active-app="$route.query.app" @on-select="turnToPage" />
+      <header-navigation @on-select="turnToPage" />
     </el-header>
     <el-container class="main-content-container">
       <el-aside v-if="!$route.meta.hideAside" class="main-aside">
@@ -54,23 +54,20 @@ export default {
   },
   methods: {
     turnToPage(route) {
-      console.log(route)
       let { name, params, query } = {}
       if (typeof route === 'string') {
         name = route
-        params = {}
-        query = {}
       } else {
         name = route.name
-        params = route.params || {}
-        query = route.query || {}
+        params = route.params
+        query = route.query
       }
       if (name.indexOf('isTurnByHref_') > -1) {
         window.open(name.split('_')[1])
         return
       }
-      if (!query['app']) {
-        query['app'] = this.$store.state.app.appId
+      if (!query) {
+        query = this.$route.query
       }
       this.$router.push({
         name,
