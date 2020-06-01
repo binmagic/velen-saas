@@ -34,10 +34,10 @@ class DashboardController : BaseController() {
     }
 
     @PutMapping
-    suspend fun updateDashboard(@Validated @RequestBody dashboardCreateDTO: DashboardCreateDTO) :Dashboard{
+    suspend fun updateDashboard(@Validated @RequestBody dashboardCreateDTO: DashboardCreateDTO){
         val dashboard= Dashboard()
         BeanUtils.copyProperties(dashboardCreateDTO,dashboard)
-        return dashboardService.updateDashboard(dashboard).awaitSingle()
+        dashboardService.updateDashboard(dashboard)
     }
 
     @DeleteMapping("{id}")

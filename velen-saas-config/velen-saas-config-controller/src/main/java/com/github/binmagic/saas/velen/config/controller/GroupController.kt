@@ -1,6 +1,7 @@
 package com.github.binmagic.saas.velen.config.controller
 
 import com.github.binmagic.saas.velen.common.component.controller.BaseController
+import com.github.binmagic.saas.velen.config.dto.DashboardCreateDTO
 import com.github.binmagic.saas.velen.config.dto.GroupDashboardDTO
 import com.github.binmagic.saas.velen.config.entity.Dashboard
 import com.github.binmagic.saas.velen.config.entity.Group
@@ -52,13 +53,17 @@ class GroupController : BaseController() {
             val shareDashboards = shareDashboardService.getShareDashboardByType(group.id).collectList().awaitSingle()
             for (shareDashboard in shareDashboards){
                 val shareDashboardDTO = dashboardService.getDashboardById(shareDashboard.dashboardId).awaitSingle()
-                val dashboard = Dashboard()
-                BeanUtils.copyProperties(shareDashboardDTO,dashboard)
-                dashboard.name+=shareDashboard.userName
-                dashboards.add(dashboard)
+                shareDashboardDTO.name+=shareDashboard.userName
+                dashboards.add(shareDashboardDTO)
             }
-            dashboards.sortBy { it.sort }
-            groupDashboardDTO.list = dashboards
+            val list:ArrayList<DashboardCreateDTO> = ArrayList()
+            for (dashboard in dashboards){
+                val dashboardCreate = DashboardCreateDTO()
+                BeanUtils.copyProperties(dashboard,dashboardCreate)
+                list.add(dashboardCreate)
+            }
+            list.sortBy { it.sort }
+            groupDashboardDTO.list = list
             groupDashboardDTOs.add(groupDashboardDTO)
         }
         return groupDashboardDTOs
@@ -73,8 +78,10 @@ class GroupController : BaseController() {
         group.sort = groupService.countGroupByUserIdAndAppId(group.userId, group.appId).awaitSingle().toInt()
         val dashboards = groupDashboardDTO.list
         if (!dashboards.isNullOrEmpty()) {
-            for (dashboard in dashboards) {
-                dashboard.type = group.id
+            for (dashboardCreate in dashboards) {
+                dashboardCreate.type = group.id
+                val dashboard = Dashboard()
+                BeanUtils.copyProperties(dashboardCreate,dashboard)
                 dashboardService.updateDashboard(dashboard)
             }
         }
@@ -84,12 +91,20 @@ class GroupController : BaseController() {
     }
 
     @PutMapping
-    suspend fun updateGroup(@Validated @RequestBody groupDashboardDTO: GroupDashboardDTO) : GroupDashboardDTO {
-        val group = Group()
-        BeanUtils.copyProperties(groupDashboardDTO, group)
-        val result=groupService.updateGroup(group).awaitSingle()
-        BeanUtils.copyProperties(result,groupDashboardDTO)
-        return groupDashboardDTO
+    suspend fun updateGroup(@Validated @RequestBody groupDashboardDTOs: List<GroupDashboardDTO>)  {
+        for (groupDashboardDTO in groupDashboardDTOs) {
+            val group = Group()
+            BeanUtils.copyProperties(groupDashboardDTO, group)
+
+            if (!groupDashboardDTO.list.isNullOrEmpty()){
+                for (dashboardCreate in groupDashboardDTO.list){
+                    var dashboard = Dashboard()
+                    BeanUtils.copyProperties(dashboardCreate,dashboard)
+                    dashboardService.updateDashboard(dashboard).awaitSingle()
+                }
+            }
+            groupService.updateGroup(group).awaitSingle()
+        }
     }
 
     @DeleteMapping("{id}")

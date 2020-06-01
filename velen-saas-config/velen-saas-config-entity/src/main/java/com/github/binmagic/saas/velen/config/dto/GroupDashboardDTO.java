@@ -28,5 +28,5 @@ public class GroupDashboardDTO {
 
     private LocalDateTime createTime;
 
-    private List<Dashboard> list;
+    private List<DashboardCreateDTO> list;
 }

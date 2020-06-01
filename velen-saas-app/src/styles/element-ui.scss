@@ -61,6 +61,17 @@
     border-top: none;
     border-bottom:none;
   }
+
+  .el-tree-node{
+    .el-tree-node__children{
+      .el-checkbox .el-checkbox__inner{
+        display: inline-block;
+      }
+    }
+    .el-checkbox .el-checkbox__inner{
+      display: none;
+    }
+  }
 }
 
 .add-modal-wrap {
@@ -77,14 +88,5 @@
   }
 }
 
-.el-tree-node{
-  .el-tree-node__children{
-    .el-checkbox .el-checkbox__inner{
-      display: inline-block;
-    }
-  }
-  .el-checkbox .el-checkbox__inner{
-    display: none;
-  }
-}
+
 
