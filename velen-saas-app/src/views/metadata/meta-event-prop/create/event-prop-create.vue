@@ -14,13 +14,17 @@
         <el-input v-model="formData.name" />
       </el-form-item>
       <el-form-item label="数据类型">
-        <el-select v-model="formData.type" style="width: 100%" />
+        <el-select v-model="formData.type" style="width: 100%">
+          <el-option v-for="type of $const.metadata.data_type" :label="type" :value="type" />
+        </el-select>
       </el-form-item>
       <el-form-item label="设为公共属性">
         <el-checkbox v-model="formData.public" />
       </el-form-item>
       <el-form-item label="应埋点平台">
-        <el-select v-model="formData.platform" style="width: 100%" />
+        <el-select v-model="formData.platform"  multiple style="width: 100%">
+          <el-option v-for="_platform of $const.metadata.platform" :label="_platform" :value="_platform" />
+        </el-select>
       </el-form-item>
       <el-form-item label="设置时机">
         <el-input
@@ -49,7 +53,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :loading="createLoading" @click="handleSubmit" >确定</el-button>
+        <el-button type="primary" :loading="createLoading" @click="handleSubmit">确定</el-button>
         <el-button>取消</el-button>
       </el-form-item>
     </el-form>
@@ -58,7 +62,7 @@
 </template>
 
 <script>
-import {createEventProp } from '@/api/metadata'
+import { createMetaEventProp } from '@/api/metadata'
 export default {
   name: 'EventPropCreate',
   props: {
@@ -70,9 +74,16 @@ export default {
   data() {
     return {
       formData: {
-
+        platform: [],
+        timing: '',
+        example: '',
+        unit: '',
+        public: '',
+        type: '',
+        name: '',
+        showName: ''
       },
-      createLoading: false,
+      createLoading: false
     }
   },
   methods: {
@@ -81,7 +92,8 @@ export default {
     },
     handleSubmit() {
       this.createLoading = true
-      createEventProp(this.formData).then(resp => {
+      delete this.formData['public']
+      createMetaEventProp(this.formData).then(resp => {
         this.createLoading = false
         this.$message.success('success')
         this.$emit('on-create-event-prop')

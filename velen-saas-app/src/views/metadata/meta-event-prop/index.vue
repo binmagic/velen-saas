@@ -112,7 +112,7 @@
 
 </template>
 <script>
-import { getEventProp } from '@/api/metadata'
+import { getMetaEventProp } from '@/api/metadata'
 import CustomHeader from '_c/custom-header'
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves'
@@ -133,8 +133,8 @@ export default {
       list: [],
       listLoading: false,
       query: {
-        total: '',
-        
+        page: 1,
+        limit: 10
       },
       componentFlag: {
         enableDrawer: false
@@ -146,7 +146,12 @@ export default {
   },
   methods: {
     fetchData() {
-      getEventProp
+      this.listLoading = true
+      getMetaEventProp(this.query).then(resp => {
+        this.total = resp.total
+        this.list = resp.items
+        this.listLoading = false
+      })
     },
     handleCreate() {
       this.componentFlag.enableDrawer = true

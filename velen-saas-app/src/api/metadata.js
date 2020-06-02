@@ -1,17 +1,31 @@
 import request from '@/utils/request'
 
-
-export function getEventProp(params){
+export function getMetaEvent(params) {
   return request({
-    uri: '/metadata/event/prop',
+    url: '/metadata/event',
     method: 'get',
     params
   })
 }
 
-export function createEventProp(data){
+export function createMetaEvent(data) {
   return request({
-    uri: '/metadata/event/prop',
+    url: '/metadata/event',
+    method: 'post',
+    data
+  })
+}
+
+export function getMetaEventProp(id) {
+  return request({
+    url: `/metadata/event/prop/${id}`,
+    method: 'get'
+  })
+}
+
+export function createMetaEventProp(data) {
+  return request({
+    url: '/metadata/event/prop',
     method: 'post',
     data
   })

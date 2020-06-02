@@ -13,25 +13,20 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MetaEventPropDTO
+public class MetaEventDTO
 {
-	private String id;
 
 	private String showName;
 
 	private String name;
 
-	private String type;
-
-	private boolean isPublish;
-
 	private List<String> platform = new ArrayList<>();
 
 	private String timing;
 
-	private String unit;
+	private List<String> tag = new ArrayList<>();
 
-	private String example;
+	private String remark;
 
 	private LocalDateTime createTime;
 

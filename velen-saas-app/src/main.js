@@ -9,7 +9,7 @@ import App from './App'
 import store from './store'
 import router from './router'
 import config from './config'
-
+import consts from './consts'
 import '@/icons' // icon
 // import '@/permission' // permission control
 
@@ -34,6 +34,8 @@ import * as filters from './filters' // global filters
 Vue.use(ElementUI, {
   i18n: (key, value) => i18n.t(key, value)
 })
+
+Vue.prototype.$const = consts
 
 Vue.prototype.$config = config
 

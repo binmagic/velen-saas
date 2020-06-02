@@ -13,15 +13,18 @@ import java.util.List;
 @Data
 public class MetaEvent extends BaseEntity<MetaEvent>
 {
+
+	public static final MetaEvent EMPTY = new MetaEvent();
+
 	private String showName;
 
 	private String name;
 
-	private List<String> platform = new ArrayList<>();
+	private List<String> platform;
 
 	private String timing;
 
-	private List<String> tag = new ArrayList<>();
+	private List<String> tag;
 
 	private String remark;
 

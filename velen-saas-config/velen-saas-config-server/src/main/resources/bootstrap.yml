@@ -23,7 +23,7 @@ spring:
         server-addr: ${middleware.host}:8848
   data:
     mongodb:
-      database: velen-saas-admin
+      database: velen-saas-config
       host: localhost
       port: 27017
 

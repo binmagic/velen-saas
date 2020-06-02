@@ -21,11 +21,11 @@ public class MetaEventProp extends BaseEntity<MetaEventProp>
 
 	private String type;
 
-	private boolean isPublish;
+	private Boolean isPublish;
 
-	private boolean isInUse;
+	private Boolean isInUse;
 
-	private List<String> platform = new ArrayList<>();
+	private List<String> platform;
 
 	private String timing;
 

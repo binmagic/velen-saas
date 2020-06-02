@@ -49,7 +49,7 @@ spring:
         -   id: velen-saas-matadata
             uri: lb://velen-saas-config
             predicates:
-              - Path=/api/matadata/**
+              - Path=/api/metadata/**
             filters:
               - StripPrefix=1
     nacos:

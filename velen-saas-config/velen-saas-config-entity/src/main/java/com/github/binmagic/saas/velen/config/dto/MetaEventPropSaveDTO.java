@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,17 +12,15 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MetaEventPropDTO
+public class MetaEventPropSaveDTO
 {
-	private String id;
-
 	private String showName;
 
 	private String name;
 
 	private String type;
 
-	private boolean isPublish;
+	private boolean isPublic;
 
 	private List<String> platform = new ArrayList<>();
 
@@ -32,8 +29,4 @@ public class MetaEventPropDTO
 	private String unit;
 
 	private String example;
-
-	private LocalDateTime createTime;
-
-	private LocalDateTime updateTime;
 }

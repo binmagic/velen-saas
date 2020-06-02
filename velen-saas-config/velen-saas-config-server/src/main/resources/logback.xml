@@ -12,7 +12,7 @@
 			<maxFileSize>50MB</maxFileSize>
 		</rollingPolicy>
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<level>INFO</level>
+			<level>DEBUG</level>
 		</filter>
 		<!-- Safely log to the same file from multiple JVMs. Degrades performance! -->
 		<prudent>true</prudent>
@@ -33,7 +33,7 @@
 		</encoder>
 		<!-- Only log level WARN and above -->
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<level>INFO</level>
+			<level>DEBUG</level>
 		</filter>
 	</appender>
 
@@ -42,7 +42,7 @@
 	<logger name="hammock-cafe" level="ALL" />
 	<logger name="user" level="ALL" />
 
-	<root level="INFO">
+	<root level="DEBUG">
 		<!-- <appender-ref ref="FILE_ASYNC" /> -->
 		<appender-ref ref="STDOUT" />
 	</root>
