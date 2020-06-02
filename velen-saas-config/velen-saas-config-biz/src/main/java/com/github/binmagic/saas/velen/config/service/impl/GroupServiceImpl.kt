@@ -41,4 +41,8 @@ class GroupServiceImpl : GroupService {
     override suspend fun countGroupByUserIdAndAppId(userId: String, appId: String): Mono<Long> {
         return groupRepository.countByUserIdAndAppId(userId, appId)
     }
+
+    override suspend fun getGroupById(id: String): Mono<Group> {
+        return groupRepository.findById(id)
+    }
 }

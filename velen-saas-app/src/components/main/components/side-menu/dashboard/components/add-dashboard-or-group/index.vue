@@ -94,7 +94,6 @@
       insertSelect() {
         const h=this.$createElement
         if (this.radio) {
-          console.log('this is dashboard')
           let dashboardCreate = {name: this.dashboardName, type: this.group}
           addDashboard(dashboardCreate).then(response => {
             console.log(response)
@@ -104,7 +103,6 @@
             })
           })
         } else {
-          console.log('this is group')
           let groupCreate = {name: this.groupName, dashboards: this.dashboard}
           addGroup(groupCreate).then(response => {
             console.log(response)

@@ -105,69 +105,23 @@
       :show="modal.show"
       @modal-switch="modalSwitch"
     />
-    <el-dialog :visible.sync="modal.sortShow" width="30%" :show-close="false" @closed="closeDialog">
-      <template slot="title">
-        <div style="position: relative;">
-          <el-row>
-            <el-col :span="14" style="line-height: 40px;">
-              <span>管理我的概览排序</span>
-            </el-col>
-            <el-col :span="10">
-              <el-input
-                v-model="sortInput"
-                placeholder="搜索概览名称"
-                prefix-icon="el-icon-search"
-                size="medium"
-                clearable
-                style="text-align: right"/>
-            </el-col>
-          </el-row>
-        </div>
-      </template>
-      <el-tree
-        :data="treeGroup"
-        :props="treeProps"
-        ref="tree"
-        :filter-node-method="filterNode"
-        show-checkbox
-        draggable node-key="id"
-        :allow-drop="allowDrop"
-        @node-drop="handleDrop">
-        <div slot-scope="{node , data}"
-             @mouseenter="()=>treeEnter(node,data)"
-             @mouseleave="()=>treeLeave(data)"
-             style="height:32px;width:526px;lineHeight: 32px;">
-          <el-row>
-            <el-col :span="16">
-              <span>{{data.name}}</span>
-            </el-col>
-            <el-col :span="8">
-              <span style="float: right;margin-right: 5px;" v-if="data.show">
-                <el-button type="text" size="small" @click.stop >重命名</el-button>
-                <el-button v-if="node.level==2" type="text" size="small" @click.stop>移动到</el-button>
-                <el-button type="text" size="small" @click.stop style="color: red;">删除</el-button>
-              </span>
-            </el-col>
-          </el-row>
-        </div>
-      </el-tree>
-      <div slot="footer">
-        <el-button type="primary" size="medium" style="float:left;">新建分组</el-button>
-        <el-button @click="sortShow" size="medium">取消</el-button>
-        <el-button type="primary" size="medium" @click="updateSubmit">确定</el-button>
-      </div>
-    </el-dialog>
+    <sort :sort-groups="groups"
+          :sort-show-visible="modal.sortShow"
+          @update-group="findGroup"
+          @close-sort="handleCloseSort"
+    />
   </div>
 </template>
 <script>
 
-  import {getGroup, getCommonGroup,updateGroup} from '@/api/group'
+  import {getGroup, getCommonGroup} from '@/api/group'
   import AddDashboardOrGroup from './components/add-dashboard-or-group'
-
+  import Sort from './components/sort'
   export default {
     name: 'SideMenuDashboard',
     components: {
       AddDashboardOrGroup,
+      Sort
     },
     props: {},
     watch: {
@@ -197,11 +151,20 @@
         }
       }
     },
+
     created() {
       this.findGroup()
       this.findCommonGroup()
     },
     computed: {},
+    directives: {
+      focus: {
+        inserted: function (el) {
+          el.querySelector('input').focus();
+          // 通过querySelector()方法获取input元素
+        }
+      }
+    },
     methods: {
       findGroup() {
         getGroup().then(response => {
@@ -231,89 +194,11 @@
         this.hover = false
         this.hoverIndex = -1
       },
-      filterNode(value, data, node) {
-        if (!value) {
-          return true;
-        }
-        let level = node.level;
-        let _array = [];//这里使用数组存储 只是为了存储值。
-        this.getReturnNode(node, _array, value);
-        let result = false;
-        _array.forEach((item) => {
-          result = result || item;
-        });
-        return result;
-      },
-      getReturnNode(node, _array, value) {
-        let isPass = node.data && node.data.name && node.data.name.indexOf(value) !== -1;
-        isPass ? _array.push(isPass) : '';
-        this.index++;
-        if (!isPass && node.level != 1 && node.parent) {
-          this.getReturnNode(node.parent, _array, value);
-        }
-      },
       clickDashboard(dashboard) {
         this.$route.meta.title = dashboard.name
       },
-      allowDrop(draggingNode, dropNode, type) {
-        if (draggingNode.level == 1) {
-          if (dropNode.level == 1) {
-            return type !== 'inner'
-          } else if (dropNode.level == 2) {
-            return false
-          } else {
-            return true
-          }
-          return type !== 'inner'
-        } else {
-          if (dropNode.level == 2) {
-            return type !== 'inner'
-          } else if (dropNode.level == 1) {
-            return type == 'inner'
-          } else {
-            return false
-          }
-        }
-      },
-      sortShow() {
-        this.modal.sortShow = false
-        this.treeGroup = JSON.parse(JSON.stringify(this.groups))
-      },
-      treeEnter(node, data) {
-        this.$set(data, 'show', true)
-      },
-      treeLeave(data) {
-        this.$set(data, 'show', false)
-      },
-      closeDialog() {
-        this.treeGroup = JSON.parse(JSON.stringify(this.groups))
-      },
-      handleDrop(draggingNode, dropNode, type, event) {
-        if (draggingNode.level == 1) {
-          for (let key in this.treeGroup) {
-            this.treeGroup[key].sort = key
-          }
-        } else {
-          if (type === 'inner') {
-            draggingNode.data.sort = dropNode.childNodes.length-1
-            draggingNode.data.type = dropNode.data.id
-          } else {
-            let group = this.treeGroup.find(v => v.id === dropNode.data.type)
-            for (let key in group.list) {
-              group.list[key].sort = key
-              group.list[key].type = dropNode.data.type
-            }
-          }
-        }
-      },
-      updateSubmit(){
-        console.log(this.treeGroup)
-        updateGroup(this.treeGroup).then(response =>{
-          console.log(response)
-
-        })
-        this.findGroup()
-        this.modal.sortShow = false
+      handleCloseSort(){
+        this.modal.sortShow=false
       }
     }
   }

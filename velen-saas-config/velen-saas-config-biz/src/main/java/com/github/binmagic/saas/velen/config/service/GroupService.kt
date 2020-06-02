@@ -16,4 +16,6 @@ interface GroupService {
     suspend fun deleteGroupById(id: String) : Mono<Void>
 
     suspend fun countGroupByUserIdAndAppId(userId: String,appId: String) :Mono<Long>
+
+    suspend fun getGroupById(id: String) : Mono<Group>
 }
