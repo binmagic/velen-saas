@@ -20,13 +20,13 @@ class MetadataController : BaseController() {
     lateinit var metadataService: MetadataService
 
     @GetMapping("/event/detail")
-    suspend fun getMetaEventProp(name : String) {
+    suspend fun getMetaEventProp(name : String) : MetaEventDetailDTO{
 
         val metaEventDetailDTO = MetaEventDetailDTO()
 
         currentAppId.awaitSingle()
 
-        metaEventDetailDTO.eventDefined =
+        return metaEventDetailDTO
 
     }
 

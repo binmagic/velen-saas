@@ -84,9 +84,6 @@ class MetadataServiceImpl : MetadataService {
         BeanUtils.copyProperties(query.params, metaEvent)
 
         if (query.params.isNotEmpty()) {
-            exampleMatcher = ExampleMatcher.matching()
-                    .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
-                    .withIgnoreCase(true)
             for ((key) in query.params) {
                 exampleMatcher.withMatcher(key, ExampleMatcher.GenericPropertyMatchers.contains())
             }
