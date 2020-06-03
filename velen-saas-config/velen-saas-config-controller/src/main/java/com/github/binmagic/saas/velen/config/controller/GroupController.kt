@@ -35,17 +35,13 @@ class GroupController : BaseController() {
     suspend fun getGroup(): List<GroupDashboardDTO> {
         val appId = currentAppId.awaitSingle()
         val userId = currentUserId.awaitSingle()
-        var groups = groupService.getGroupByUserIdAndAppId(userId, appId).collectList().awaitSingle()
-        if (groups.isNullOrEmpty()) {
-
-            val groupInfo = Group()
+        val list = groupService.getGroupByUserIdAndAppId(userId, appId).collectList().awaitSingle()
+        if (list.isNullOrEmpty()) {
+            val groupInfo = GroupDashboardDTO()
             groupInfo.name = "分享给我的概览"
-            groupInfo.appId = appId
-            groupInfo.userId = userId
-            groupInfo.sort = 0
-            groupService.createGroup(groupInfo)
+            createGroup(groupInfo)
         }
-        groups = groupService.getGroupByUserIdAndAppId(userId, appId).collectList().awaitSingle()
+        val groups = groupService.getGroupByUserIdAndAppId(userId, appId).collectList().awaitSingle()
         val groupDashboardDTOs: ArrayList<GroupDashboardDTO> = ArrayList()
         groups.sortBy { it.sort }
         for (group in groups) {
@@ -84,7 +80,7 @@ class GroupController : BaseController() {
                 dashboardCreate.type = group.id
                 val dashboard = Dashboard()
                 BeanUtils.copyProperties(dashboardCreate, dashboard)
-                dashboardService.updateDashboard(dashboard)
+                dashboardService.updateDashboard(dashboard).awaitSingle()
             }
         }
         val result = groupService.createGroup(group).awaitSingle()
@@ -94,6 +90,7 @@ class GroupController : BaseController() {
 
     @PutMapping
     suspend fun updateGroup(@Validated @RequestBody groupDashboardDTOs: List<GroupDashboardDTO>) {
+        println(groupDashboardDTOs)
         for (groupDashboardDTO in groupDashboardDTOs) {
             val group = Group()
             BeanUtils.copyProperties(groupDashboardDTO, group)
@@ -101,6 +98,7 @@ class GroupController : BaseController() {
             if (result == null) {
                createGroup(groupDashboardDTO)
             } else {
+                groupService.updateGroup(group)
                 if (!groupDashboardDTO.list.isNullOrEmpty()) {
                     for (dashboardCreate in groupDashboardDTO.list) {
                         var dashboard = Dashboard()
@@ -108,21 +106,13 @@ class GroupController : BaseController() {
                         dashboardService.updateDashboard(dashboard).awaitSingle()
                     }
                 }
-                groupService.updateGroup(group).awaitSingle()
+
             }
         }
     }
 
-    @DeleteMapping("{id}")
-    suspend fun deleteGroup(@PathVariable("id") id: String): Mono<Void> {
-        val appId = currentAppId.awaitSingle()
-        val userId = currentUserId.awaitSingle()
-        val groups = groupService.getGroupByUserIdAndAppId(userId, appId).collectList().awaitSingle()
-        val dashboards = dashboardService.getDashboardByType(id).collectList().awaitSingle()
-        for (dashboard in dashboards) {
-            dashboard.type = groups[0].id
-            dashboardService.updateDashboard(dashboard)
-        }
-        return groupService.deleteGroupById(id)
+    @DeleteMapping("/{id}")
+    suspend fun deleteGroup(@PathVariable("id") id: String) {
+        groupService.deleteGroupById(id).awaitFirstOrNull()
     }
 }

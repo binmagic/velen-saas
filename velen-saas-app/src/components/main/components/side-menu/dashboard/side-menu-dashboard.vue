@@ -104,6 +104,7 @@
       :dashboards="dashboards"
       :show="modal.show"
       @modal-switch="modalSwitch"
+      @change-groups="findGroup"
     />
     <sort :sort-groups="groups"
           :sort-show-visible="modal.sortShow"
@@ -117,6 +118,7 @@
   import {getGroup, getCommonGroup} from '@/api/group'
   import AddDashboardOrGroup from './components/add-dashboard-or-group'
   import Sort from './components/sort'
+
   export default {
     name: 'SideMenuDashboard',
     components: {
@@ -170,6 +172,7 @@
         getGroup().then(response => {
           this.groups = response
           this.treeGroup = JSON.parse(JSON.stringify(this.groups))
+          this.dashboards = []
           for (let key in this.groups) {
             this.dashboards = this.dashboards.concat(this.groups[key].list)
           }
@@ -178,6 +181,7 @@
       findCommonGroup() {
         getCommonGroup().then(response => {
           this.commonGroups = response
+          this.commonDashboards = []
           for (let key in this.commonGroups) {
             this.commonDashboards = this.commonDashboards.concat(this.commonGroups[key].list)
           }
@@ -197,8 +201,8 @@
       clickDashboard(dashboard) {
         this.$route.meta.title = dashboard.name
       },
-      handleCloseSort(){
-        this.modal.sortShow=false
+      handleCloseSort() {
+        this.modal.sortShow = false
       }
     }
   }

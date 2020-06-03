@@ -15,10 +15,12 @@
                 width="180"
                 v-model="visible"
                 trigger="click"
+                @hide="hidePopover"
               >
                 <el-select size="mini" v-model="selectGroup">
                   <el-option label="选择分组" :value="'0'">选择分组</el-option>
-                  <el-option v-for="group in treeGroup" :key="group.id" :label="group.name"
+                  <el-option v-for="group in treeGroup" :disabled="group.name=='分享给我的概览'" :key="group.id"
+                             :label="group.name"
                              :value="group.id"></el-option>
                 </el-select>
                 <el-button size="medium" icon="el-icon-rank" slot="reference">
@@ -51,7 +53,8 @@
       draggable node-key="id"
       :allow-drop="allowDrop"
       @node-drop="handleDrop"
-      @check-change="checkNode=true"
+      @check-change="checkChangeHandle"
+      :check-strictly="true"
     >
       <div slot-scope="{ node , data }"
            @mouseenter="()=>$set(data, 'show', true)"
@@ -69,17 +72,19 @@
                   placement="bottom"
                   width="180"
                   v-model="data.move"
-                  >
+                >
                   <div style="text-align: center;">
                     <span style="font-size: 14px">移动到</span>
                   </div>
-                  <el-select size="mini" filterable  v-model="moveGroup">
-                    <el-option v-for="group in treeGroup" :key="group.id" :label="group.name"
-                             :value="group.id"></el-option>
+                  <el-select size="mini" filterable v-model="moveGroup">
+                    <el-option v-for="group in treeGroup" :disabled="group.name==='分享给我的概览'" placeholder="请选择"
+                               :key="group.id"
+                               :label="group.name"
+                               :value="group.id"></el-option>
                   </el-select>
                   <div style="text-align: right; margin: 0; padding: 2px;">
                     <el-button size="mini" type="text" @click="$set(data,'move',false)">取消</el-button>
-                    <el-button type="primary" size="mini" @click="moveDashboard">确定</el-button>
+                    <el-button type="primary" size="mini" @click="moveDashboard(data)">确定</el-button>
                   </div>
                   <el-button v-if="node.level==2" type="text" size="small" slot="reference"
                              @click.stop="data.move?$set(data,'move',true):$set(data,'move',false)">移动到</el-button>
@@ -88,8 +93,11 @@
                   <div style="border-bottom: 1px solid #d3dce6;">
                     <span style="font-size: 14px"><i class="el-icon-warning" style="color: #ffbf00"/>确认删除</span>
                   </div>
-                  <p>
+                  <p v-if="node.level==1">
                     删除后标签将移动到第一个分组
+                  </p>
+                  <p v-else>
+                    删除概览
                   </p>
                   <div style="text-align: right; margin: 0; padding: 2px; border-top: 1px solid #d3dce6;">
                     <el-button size="mini" type="text" @click="$set(data,'del',false)">取消</el-button>
@@ -97,7 +105,7 @@
                   </div>
                   <el-button type="text" size="small"
                              @click.stop="data.del?$set(data,'del',true):$set(data,'del',false)"
-                             style="color: red;" slot="reference">删除</el-button>
+                             style="color: red;" v-if="data.name!=='分享给我的概览'" slot="reference">删除</el-button>
                 </el-popover>
               </span>
           </el-col>
@@ -144,7 +152,8 @@
         ids: [],
         checkNode: false,
         selectGroup: '0',
-        moveGroup:''
+        moveGroup: '',
+        checkNodes: [],
       }
     },
     watch: {
@@ -224,13 +233,18 @@
         }
       },
       updateSubmit() {
+        for (let i in this.treeGroup) {
+          this.treeGroup[i].sort = Number(i)
+          for (let j in this.treeGroup[i].list) {
+            this.treeGroup[i].list[j].sort = Number(j)
+          }
+        }
+        console.log(this.treeGroup)
         updateGroup(this.treeGroup).then(response => {
-
         })
         if (this.ids.length > 0) {
           for (let key in this.ids) {
             deleteGroup(this.ids[key]).then(response => {
-
             })
           }
         }
@@ -246,7 +260,9 @@
       },
       openShow() {
         this.treeGroup = JSON.parse(JSON.stringify(this.sortGroups))
-        this.moveGroup = JSON.parse(JSON.stringify(this.sortGroups[0].name))
+        this.createIds = []
+        this.ids = []
+        this.checkNodes = []
       },
       blurInput(data) {
         if (data.name == '' || !data.name) {
@@ -278,8 +294,47 @@
         this.$set(this, 'checkNode', !this.checkNode)
         this.$refs.tree.setCheckedKeys([])
       },
-      moveDashboard(){
-        
+      checkChangeHandle(data, flag) {
+        this.$set(this, 'checkNode', true)
+        if (flag) {
+          this.checkNodes.push(data)
+        } else {
+          this.checkNodes = this.checkNodes.filter(i => {
+            return i != data
+          })
+        }
+
+      },
+      hidePopover() {
+        if (this.selectGroup !== '0') {
+          this.treeGroup.some(item => {
+            this.checkNodes.some(node => {
+              item.list = item.list.filter(i => {
+                return i != node
+              })
+            })
+            if (item.id === this.selectGroup) {
+              item.list = item.list.concat(this.checkNodes)
+            }
+          })
+        }
+      },
+      moveDashboard(data) {
+        this.treeGroup.some((item, i) => {
+          if (item.id == data.type) {
+            item.list.some((del, j) => {
+              if (del.id == data.id) {
+                item.list.splice(j, 1)
+                return true
+              }
+            })
+          }
+          if (item.id == this.moveGroup) {
+            data.type = item.id
+            item.list.push(data)
+          }
+        })
+        this.$set(data, 'move', false)
       }
     }
 

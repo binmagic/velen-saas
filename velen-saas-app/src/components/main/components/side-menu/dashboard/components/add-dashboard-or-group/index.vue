@@ -29,7 +29,7 @@
                   <el-form-item label="概览分组">
                     <el-row>
                       <el-col :span="24">
-                        <el-select filterable v-model="group" @click="test">
+                        <el-select filterable v-model="group">
                           <el-option v-for="item in groups" :key="item.id" :label="item.name" :value="item.id"/>
                         </el-select>
                       </el-col>
@@ -59,7 +59,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -86,13 +85,12 @@
         radio: true,
         groupName: '',
         dashboardName: '',
-        group: '',
+        group: '',//this.groups[0].name
         dashboard: [],
       }
     },
     methods: {
       insertSelect() {
-        const h=this.$createElement
         if (this.radio) {
           let dashboardCreate = {name: this.dashboardName, type: this.group}
           addDashboard(dashboardCreate).then(response => {
@@ -103,13 +101,17 @@
             })
           })
         } else {
-          let groupCreate = {name: this.groupName, dashboards: this.dashboard}
-          addGroup(groupCreate).then(response => {
-            console.log(response)
-
-
+          var list=[]
+          this.dashboards.some(item=>{
+            this.dashboard.some(i=>{
+              if(item.id===i){
+                list.push(item)
+              }
+            })
           })
-
+          let groupCreate = {name: this.groupName, list: list}
+          addGroup(groupCreate).then(response => {
+          })
         }
         this.$emit('change-groups')
         this.$emit("modal-switch", {show: !this.show})
@@ -117,9 +119,6 @@
       showChange: function () {
         this.$emit("modal-switch", {show: !this.show})
       },
-      test() {
-        console.log(this.groups)
-      }
     }
   }
 </script>
