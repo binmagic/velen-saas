@@ -10,21 +10,31 @@
         <div style="height: 50px">
           <span>元事件</span>
           <el-select v-model="switchEvent" @change="handleSelectEvent">
-            <el-option v-for="event of mate_events" :label="event.showName" :value="event.id"></el-option>
+            <el-option v-for="event of meta_events" :key="event.id" :label="event.showName" :value="event.id" />
           </el-select>
-        </div>
-        <el-divider />
-        <div>
-          <el-tag
-            v-for="column in columns"
-            :key="column.prop"
-            closable>
-            {{column.label}}
-          </el-tag>
         </div>
       </el-header>
       <el-main>
-        <custom-table :columns="columns"></custom-table>
+        <el-row style="display: flex; align-items: center">
+          <el-col :span="8">
+            <el-date-picker
+              v-model="originQuery.dateRange"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            />
+          </el-col>
+          <el-col :span="8" style="text-align: center;">
+            <h4>{{ getMetaEventName() }}</h4>
+          </el-col>
+          <el-col :span="8">
+
+          </el-col>
+        </el-row>
+        <custom-table :columns="columns" :value="data"/>
       </el-main>
     </el-container>
   </div>
@@ -43,8 +53,9 @@
 
 import CustomTable from '_c/custom-table'
 import CustomHeader from '_c/custom-header'
+import {reportMetaEvent} from '@/api/query'
 
-import {getMetaEvent, getMetaEventProp} from '@/api/metadata'
+import { getMetaEvent, getMetaEventProp } from '@/api/metadata'
 
 export default {
   components: {
@@ -53,24 +64,71 @@ export default {
   },
   data() {
     return {
+      id: '',
       columns: [],
+      data: [],
       switchEvent: '',
-      mate_events: []
+      meta_events: [],
+      meta_props: {},
+      query: {
+
+      },
+      originQuery: {
+        dateRange: []
+      }
     }
   },
+  created() {
+    this.fetchMetaEventProps()
+    this.fetchMetaEvent()
+  },
   methods: {
+    fetchData() {
+      reportMetaEvent(this.query).then(resp => {
+        this.data = resp.items
+      })
+    },
+    fetchMetaEventProps() {
+      getMetaEventProp().then(resp => {
+        for (const index in resp.items) {
+          this.meta_props[resp.items[index].id] = resp.items[index]
+        }
+      })
+    },
     fetchMetaEvent() {
       getMetaEvent().then(resp => {
-        this.mate_events = resp.items
+        this.meta_events = resp.items
       })
-    },
-    fetchMetaEventProp() {
-
     },
     handleSelectEvent() {
-      getMetaEventProp(this.switchEvent).then(resp => {
-
-      })
+      let props = []
+      for (const index in this.meta_events) {
+        const meta_event = this.meta_events[index]
+        if (Object.is(meta_event.id, this.switchEvent)) {
+          props = meta_event.propIds
+          break
+        }
+      }
+      this.handleColumn(props)
+      this.fetchData()
+    },
+    handleColumn(props) {
+      console.log(props)
+      for (const index in props) {
+        const prop = this.meta_props[props[index]]
+        this.columns.push({
+          'prop': prop.name,
+          'label': prop.showName
+        })
+      }
+    },
+    getMetaEventName() {
+      for (const index in this.meta_events) {
+        const meta_event = this.meta_events[index]
+        if (Object.is(meta_event.id, this.switchEvent)) {
+          return meta_event.showName
+        }
+      }
     }
   }
 }

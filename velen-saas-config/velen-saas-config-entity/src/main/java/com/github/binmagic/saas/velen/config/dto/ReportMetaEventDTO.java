@@ -5,17 +5,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MetaEventDetailDTO
+public class ReportMetaEventDTO
 {
+	private LocalDateTime fromDate;
 
-	private List<MetaEventPropDTO> properties = new ArrayList<>();
+	private LocalDateTime toDate;
 
-	private MetaEventDTO eventDefined;
+	private Boolean useCache;
+
+	private String subTaskType;
+
+	private String request_id;
 }

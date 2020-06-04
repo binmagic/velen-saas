@@ -161,3 +161,6 @@ npm run lint -- --fix
 - 前端项目中一般不会出现操作原生dom的情况
 - 所有样式有可读的名字
 - 样式少时可以定义在页面最下方，当样式多时增加scss文件定义
+
+##常见错误
+[Command line is too long. Shorten command line](https://my.oschina.net/u/921876/blog/2995478)

@@ -19,18 +19,6 @@ class MetadataController : BaseController() {
     @Autowired
     lateinit var metadataService: MetadataService
 
-    @GetMapping("/event/detail")
-    suspend fun getMetaEventProp(name : String) : MetaEventDetailDTO{
-
-        val metaEventDetailDTO = MetaEventDetailDTO()
-
-        currentAppId.awaitSingle()
-
-        return metaEventDetailDTO
-
-    }
-
-
     @GetMapping("event")
     suspend fun findPageMetaEvent(query : Page.Query) : Page.Result<MetaEventDTO>{
 

@@ -6,8 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "jdbc.dynamic")
-@ConditionalOnProperty(value = "jdbc.dynamic.url")
+@ConfigurationProperties(prefix = "rxjdbc")
+@ConditionalOnProperty(value = "rxjdbc.url")
 @Data
 public class DBConfig
 {

@@ -35,4 +35,6 @@ public class MetaEvent extends BaseEntity<MetaEvent>
 	private LocalDateTime createTime;
 
 	private LocalDateTime updateTime;
+
+	private List<String> propIds;
 }

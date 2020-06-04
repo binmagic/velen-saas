@@ -13,9 +13,9 @@ import org.davidmoten.rx.jdbc.pool.Pools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -33,7 +33,7 @@ public class DynamicDataSource
 
 	private Scheduler scheduler;
 
-	@PostMapping
+	@PostConstruct
 	private void postInit()
 	{
 		ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -84,7 +84,17 @@ public class DynamicDataSource
 				DriverManager.getConnection(url, dbConfig.getUsername(), dbConfig.getPassword());
 
 		NonBlockingConnectionPool pool = Pools.nonBlocking().scheduler(scheduler)
-				.connectionProvider(ConnectionProvider.from(connection))
+				.connectionProvider(new ConnectionProvider()
+				{
+					public Connection get()
+					{
+						return connection;
+					}
+
+					public void close()
+					{
+					}
+				})
 				.build();
 
 		return Database.from(pool);

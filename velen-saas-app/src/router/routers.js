@@ -82,7 +82,7 @@ export const routerApp = [
     component: Main,
     children: [
       {
-        path: '/meta-event',
+        path: '/analyze-meta-event',
         name: 'menu-analyze-meta-event',
         component: () => import('@/views/analyze/meta-event/index'),
         meta: {title: '元数据分析', icon: 'form', hideHeader: false, hideAside: false}

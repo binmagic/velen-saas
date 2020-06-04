@@ -12,6 +12,10 @@
 
 	<artifactId>velen-saas-config-server</artifactId>
 
+	<properties>
+		<java.version>11</java.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.alibaba.cloud</groupId>
@@ -30,6 +34,52 @@
 			<groupId>com.github.binmagic.saas</groupId>
 			<artifactId>velen-saas-config-controller</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-hadoop</artifactId>
+			<version>2.5.0.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.hive/hive-jdbc -->
+		<dependency>
+			<groupId>org.apache.hive</groupId>
+			<artifactId>hive-jdbc</artifactId>
+			<version>2.3.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.jetty.aggregate</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>jdk.tools</groupId>
+			<artifactId>jdk.tools</artifactId>
+			<scope>system</scope>
+			<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
+		</dependency>
+
+		<!--		<dependency>-->
+		<!--			<groupId>org.apache.hive</groupId>-->
+		<!--			<artifactId>hive-jdbc</artifactId>-->
+		<!--			<exclusions>-->
+		<!--				<exclusion>-->
+		<!--					<groupId>org.eclipse.jetty</groupId>-->
+		<!--					<artifactId>*</artifactId>-->
+		<!--				</exclusion>-->
+		<!--			</exclusions>-->
+		<!--		</dependency>-->
+
+		<!--		<dependency>-->
+		<!--			<groupId>org.apache.hadoop</groupId>-->
+		<!--			<artifactId>hadoop-common</artifactId>-->
+		<!--		</dependency>-->
+
+		<!--		<dependency>-->
+		<!--			<groupId>com.cloudera</groupId>-->
+		<!--			<artifactId>ImpalaJDBC41</artifactId>-->
+		<!--		</dependency>-->
+
 	</dependencies>
 
 	<build>

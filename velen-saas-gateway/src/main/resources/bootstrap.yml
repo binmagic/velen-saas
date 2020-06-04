@@ -52,6 +52,12 @@ spring:
               - Path=/api/metadata/**
             filters:
               - StripPrefix=1
+        -   id: velen-saas-query
+            uri: lb://velen-saas-config
+            predicates:
+              - Path=/api/query/**
+            filters:
+              - StripPrefix=1
     nacos:
       discovery:
         metadata:

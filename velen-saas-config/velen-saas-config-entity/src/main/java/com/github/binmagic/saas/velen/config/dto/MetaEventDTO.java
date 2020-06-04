@@ -16,6 +16,8 @@ import java.util.List;
 public class MetaEventDTO
 {
 
+	private String id;
+
 	private String showName;
 
 	private String name;
@@ -31,4 +33,6 @@ public class MetaEventDTO
 	private LocalDateTime createTime;
 
 	private LocalDateTime updateTime;
+
+	private List<String> propIds = new ArrayList<>();
 }

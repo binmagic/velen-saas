@@ -16,10 +16,11 @@ export function createMetaEvent(data) {
   })
 }
 
-export function getMetaEventProp(id) {
+export function getMetaEventProp(params) {
   return request({
-    url: `/metadata/event/prop/${id}`,
-    method: 'get'
+    url: `/metadata/event/prop`,
+    method: 'get',
+    params
   })
 }
 

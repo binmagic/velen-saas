@@ -10,7 +10,7 @@ import path from "path";
         <el-menu-item index="menu-analyze-keep">留存分析</el-menu-item>
         <el-menu-item index="menu-analyze-meta-event">元事件分析</el-menu-item>
       </el-submenu>
-      <el-menu-item index="">用户分群</el-menu-item>
+      <el-menu-item index="menu-user-group">用户分群</el-menu-item>
       <el-menu-item index="menu-bookmarks">书签</el-menu-item>
       <el-menu-item index="menu-metadata">元数据</el-menu-item>
       <el-menu-item index="menu-scene-lib">场景库</el-menu-item>

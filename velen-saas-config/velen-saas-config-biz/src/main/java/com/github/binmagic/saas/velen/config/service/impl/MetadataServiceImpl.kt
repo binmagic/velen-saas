@@ -1,5 +1,6 @@
 package com.github.binmagic.saas.velen.config.service.impl
 
+import cn.hutool.core.bean.BeanUtil
 import com.github.binmagic.saas.velen.common.entity.Page
 import com.github.binmagic.saas.velen.config.dto.MetaEventPropSaveDTO
 import com.github.binmagic.saas.velen.config.entity.Bookmarks
@@ -41,15 +42,12 @@ class MetadataServiceImpl : MetadataService {
         var exampleMatcher = ExampleMatcher.matching()
                 .withMatcher("appId", ExampleMatcher.GenericPropertyMatchers.exact())
 
-        if (query.params.isNotEmpty()) {
-            for ((key) in query.params) {
-                exampleMatcher.withMatcher(key, ExampleMatcher.GenericPropertyMatchers.contains())
-            }
-        }
+        val metaEventProp = BeanUtil.mapToBean(query.params, MetaEventProp::class.java, true)
+        metaEventProp.appId = appId
 
         val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
 
-        val example = Example.of(MetaEventProp.EMPTY, exampleMatcher)
+        val example = Example.of(metaEventProp, exampleMatcher)
 
         val total = metaEventPropRepository.count(example).awaitSingle()
 
@@ -79,19 +77,12 @@ class MetadataServiceImpl : MetadataService {
         var exampleMatcher =
                 ExampleMatcher.matching().withMatcher("appId", ExampleMatcher.GenericPropertyMatchers.exact())
 
-        val metaEvent = MetaEvent()
-
-        BeanUtils.copyProperties(query.params, metaEvent)
-
-        if (query.params.isNotEmpty()) {
-            for ((key) in query.params) {
-                exampleMatcher.withMatcher(key, ExampleMatcher.GenericPropertyMatchers.contains())
-            }
-        }
+        val metaEvent = BeanUtil.mapToBean(query.params, MetaEvent::class.java, true)
+        metaEvent.appId = appId
 
         val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
 
-        val example = Example.of(MetaEvent.EMPTY, exampleMatcher)
+        val example = Example.of(metaEvent, exampleMatcher)
 
         val total = metaEventRepository.count(example).awaitSingle()
 

@@ -5,7 +5,7 @@
       :data="insideTableData"
       style="width: 100%"
     >
-      <el-table-column v-for="column of insideColumns" :prop="column.prop" :label="column.lable" :width="column.width" />
+      <el-table-column v-for="column of insideColumns" :label="column.label" :align="column.align" :width="column.width"/>
     </el-table>
   </div>
 </template>
@@ -47,7 +47,11 @@ export default {
       insideColumns: [],
       insideTableData: [],
       searchKey: '',
-      searchValue: ''
+      searchValue: '',
+      default_column: {
+        align: 'center',
+        width: 'auto'
+      }
     }
   },
   watch: {
@@ -73,7 +77,7 @@ export default {
     },
     handleColumns(columns) {
       this.insideColumns = columns.map((item, index) => {
-        let res = item
+        let res = Object.assign({}, this.default_column, item)
         if (res.editable) res = this.supportEdit(res, index)
         if (res.key === 'handle') res = this.supportHandle(res)
         return res

@@ -17,5 +17,6 @@
 			<groupId>com.github.binmagic.saas</groupId>
 			<artifactId>velen-saas-config-entity</artifactId>
 		</dependency>
+
 	</dependencies>
 </project>

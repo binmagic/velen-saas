@@ -49,7 +49,7 @@
             <el-col :span="8">属性显示名</el-col>
             <el-col :span="8">数据类型</el-col>
           </el-row>
-          <el-row v-for="prop of formData.customProp" :gutter="20" style="background: white; display: flex; margin-bottom: 10px">
+          <el-row v-for="prop of selectProperties" v-if="!prop.isCommon && !prop.isPerset" :gutter="20" style="background: white; display: flex; margin-bottom: 10px">
             <el-col :span="8">
               <el-input disabled :value="prop.name" />
             </el-col>
@@ -60,7 +60,7 @@
               </el-select>
             </el-col>
             <el-col :span="2">
-              <i class="el-icon-close" @click="handleDeleteCustomProp(prop)" />
+              <i class="el-icon-close" @click="handleDeleteProp(prop)" />
             </el-col>
           </el-row>
           <el-row style="background: white">
@@ -71,12 +71,11 @@
                 width="500"
               >
                 <div style="display: flex;margin-bottom: 20px">
-                  <el-button type="success" @click="handleAddToList(formData.customProp)">添加</el-button>
+                  <el-button type="success" @click="handleAddToList()">添加</el-button>
                 </div>
                 <el-table
                   ref="propertiesTable"
-                  v-loading="properties.dataLoading"
-                  :data="properties.data"
+                  :data="properties"
                   border
                   fit
                   highlight-current-row
@@ -102,13 +101,6 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <pagination
-                  v-show="properties.total>0"
-                  :total="properties.total"
-                  :page.sync="properties.query.page"
-                  :limit.sync="properties.query.limit"
-                  @pagination="fetchMetaEventProp"
-                />
                 <i slot="reference" class="el-icon-plus" />
               </el-popover>
             </el-col>
@@ -120,7 +112,7 @@
             <el-col :span="8">属性显示名</el-col>
             <el-col :span="8">数据类型</el-col>
           </el-row>
-          <el-row v-for="prop of formData.commonProp" :gutter="20" style="background: white; display: flex; margin-bottom: 10px">
+          <el-row v-for="prop of selectProperties" v-if="prop.isCommon" :gutter="20" style="background: white; display: flex; margin-bottom: 10px">
             <el-col :span="8">
               <el-input disabled :value="prop.name" />
             </el-col>
@@ -144,7 +136,7 @@
             <el-col :span="8">属性显示名</el-col>
             <el-col :span="8">数据类型</el-col>
           </el-row>
-          <el-row v-for="prop of formData.presetProp" :gutter="20" style="background: white; display: flex; margin-bottom: 10px">
+          <el-row v-for="prop of selectProperties" v-if="prop.isPreset" :gutter="20" style="background: white; display: flex; margin-bottom: 10px">
             <el-col :span="8">
               <el-input disabled :value="prop.name" />
             </el-col>
@@ -180,7 +172,7 @@
         <el-button type="text">取消</el-button>
       </span>
       <span>
-        <el-button type="success" @click="handleSubmit" :loading="componentFlag.createLoading">确认</el-button>
+        <el-button type="success" :loading="componentFlag.createLoading" @click="handleSubmit">确认</el-button>
       </span>
     </div>
   </el-drawer>
@@ -189,16 +181,12 @@
 
 <script>
 import { createMetaEvent, getMetaEventProp } from '@/api/metadata'
-import Pagination from '@/components/Pagination'
-import waves from '@/directive/waves'
 
 export default {
   name: 'EventCreate',
   components: {
-    Pagination
   },
   directives: {
-    waves
   },
   props: {
     enable: {
@@ -216,9 +204,7 @@ export default {
         name: '',
         showName: '',
         tag: [],
-        customProp: [],
-        commonProp: [],
-        presetProp: []
+        propIds: []
       },
       componentFlag: {
         enableTagAdd: false,
@@ -226,18 +212,12 @@ export default {
       },
       selectTag: '',
       tags: [],
-      properties: {
-        dataLoading: false,
-        data: [],
-        total: 0,
-        query: {
-          page: 1,
-          limit: 10
-        }
-      }
+      properties: [],
+      selectProperties: []
     }
   },
   created() {
+    this.fetchMetaEventProp()
     this.fetchMetaEventProp()
   },
   methods: {
@@ -245,6 +225,10 @@ export default {
       this.$emit('update:enable', false)
     },
     handleSubmit() {
+      this.formData.propIds = []
+      for (const index in this.selectProperties) {
+        this.formData.propIds.push(this.selectProperties[index].id)
+      }
       this.componentFlag.createLoading = true
       createMetaEvent(this.formData).then(resp => {
         this.componentFlag.createLoading = false
@@ -254,50 +238,35 @@ export default {
         this.componentFlag.createLoading = false
       })
     },
-    handleDeleteCustomProp(prop) {
-      for (const index in this.formData.customProp) {
-        if (Object.is(this.formData.customProp[index].id, prop.id)) {
-          this.$delete(this.formData.customProp, index)
+    handleDeleteProp(prop) {
+      for (const index in this.selectProperties) {
+        if (Object.is(this.selectProperties[index].id, prop.id)) {
+          this.$delete(this.selectProperties, index)
           break
         }
       }
     },
-    handleDeleteCommonProp(prop) {
-      for (const index in this.formData.commonProp) {
-        if (Object.is(this.formData.commonProp[index].id, prop.id)) {
-          this.$delete(this.formData.commonProp, index)
-          break
-        }
-      }
-    },
-    handleDeletePresetProp(prop){
-      for (const index in this.formData.presetProp) {
-        if (Object.is(this.formData.presetProp[index].id, prop.id)) {
-          this.$delete(this.formData.presetProp, index)
-          break
-        }
-      }
-    },
-    handleAddToList(props) {
+    handleAddToList() {
       const selection = this.$refs.propertiesTable.store.states.selection
-      console.log(selection)
       for (const index in selection) {
         let isMatch = true
-        for (const _index in props) {
-          if (Object.is(props[_index].id, selection[index].id)) {
+        for (const _index in this.selectProperties) {
+          if (Object.is(this.selectProperties[_index].id, selection[index].id)) {
             isMatch = false
             break
           }
         }
-        if (isMatch) { props.push(selection[index]) }
+        if (isMatch) { this.selectProperties.push(selection[index]) }
       }
     },
     fetchMetaEventProp() {
-      this.properties.dataLoading = true
-      getMetaEventProp(this.properties.query).then(resp => {
-        this.properties.dataLoading = false
-        this.properties.data = resp.items
-        this.properties.total = resp.total
+      getMetaEventProp().then(resp => {
+        this.properties = resp.items
+        for (const index in this.properties) {
+          if (this.properties[index].isCommon || this.properties[index].isPerset) {
+            this.selectProperties.push(this.properties)
+          }
+        }
       })
     }
   }
