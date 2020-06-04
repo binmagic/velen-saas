@@ -25,4 +25,8 @@ public class Dashboard extends BaseEntity<Dashboard>
 	@CreatedDate
 	private LocalDateTime createTime;
 
+	private String userId;
+
+	private String userName;
+
 }

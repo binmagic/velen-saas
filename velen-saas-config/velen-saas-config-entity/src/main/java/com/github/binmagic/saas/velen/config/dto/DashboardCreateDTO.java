@@ -23,4 +23,8 @@ public class DashboardCreateDTO
     private Integer sort;
 
     private LocalDateTime createTime;
+
+    private String userId;
+
+    private String userName;
 }

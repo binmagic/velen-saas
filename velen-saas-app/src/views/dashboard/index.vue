@@ -52,14 +52,14 @@
         </el-col>
       </el-row>
     </el-dialog>
-
+    <router-view />
   </div>
 </template>
 
 <script>
 import CustomHeader from '_c/custom-header'
 export default {
-  name: 'Overview',
+  name: 'Dashboard',
   components: {
     CustomHeader
   },
@@ -83,9 +83,6 @@ export default {
   methods: {
     handleInput(val) {
       this.input = val
-    },
-    spanChange(e) {
-      console.log(e.target.innerText)
     },
     handleClickPlus(command) {
       if (Object.is(command, 'createComponent')) {

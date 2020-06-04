@@ -97,7 +97,8 @@
             console.log(response)
             this.$notify({
               title:'提示',
-              message:h('i','创建概览成功')
+              message:'创建概览成功',
+              type:'success'
             })
           })
         } else {

@@ -61,13 +61,19 @@ export const routerApp = [
   {
     path: '/dashboard',
     component: Main,
-    meta: { title: '概览', icon: 'form', header: true },
+    meta: {title: '概览', icon: 'form', header: true},
     children: [
       {
         path: '/dashboard',
         name: 'menu-dashboard',
         component: () => import('@/views/dashboard/index'),
-        meta: { title: '概览', icon: 'form', hideHeader: false, hideAside: false }
+        meta: {title: '概览', icon: 'form', hideHeader: false, hideAside: false}
+      },
+      {
+        path: '/dashboard/manager',
+        name: 'menu-dashboard-manager',
+        component: () => import('@/views/dashboard/manager/index'),
+        meta: {title: '管理概览', icon: 'from', hideHeader: false, hideAside: true}
       }
     ]
   },
@@ -79,7 +85,7 @@ export const routerApp = [
         path: '/meta-event',
         name: 'menu-analyze-meta-event',
         component: () => import('@/views/analyze/meta-event/index'),
-        meta: { title: '元数据分析', icon: 'form', hideHeader: false, hideAside: false }
+        meta: {title: '元数据分析', icon: 'form', hideHeader: false, hideAside: false}
       }
     ]
   },
@@ -91,7 +97,7 @@ export const routerApp = [
         path: '/bookmarks',
         name: 'menu-bookmarks',
         component: () => import('@/views/bookmarks/index'),
-        meta: { title: '元数据分析', icon: 'form', hideHeader: false, hideAside: true }
+        meta: {title: '元数据分析', icon: 'form', hideHeader: false, hideAside: true}
       }
     ]
   },
@@ -103,26 +109,26 @@ export const routerApp = [
         path: '/meta-data',
         name: 'menu-metadata',
         component: () => import('@/views/metadata/index'),
-        meta: { title: '元数据管理', icon: 'form', hideHeader: false, hideAside: false }
+        meta: {title: '元数据管理', icon: 'form', hideHeader: false, hideAside: false}
       },
       {
         path: '/meta-event-prop',
         name: 'menu-metadata-event-prop',
         component: () => import('@/views/metadata/meta-event-prop/index'),
-        meta: { title: '事件属性', icon: 'form', hideHeader: false, hideAside: false }
+        meta: {title: '事件属性', icon: 'form', hideHeader: false, hideAside: false}
       },
       {
         path: '/meta-event',
         name: 'menu-metadata-event',
         component: () => import('@/views/metadata/meta-event/index'),
-        meta: { title: '元事件', icon: 'form', hideHeader: false, hideAside: false }
+        meta: {title: '元事件', icon: 'form', hideHeader: false, hideAside: false}
       }
     ]
   },
   {
     path: '/more',
     component: Main,
-    meta: { title: '更多', icon: 'form' },
+    meta: {title: '更多', icon: 'form'},
     children: [
       {
         path: '/dashboard',
@@ -153,13 +159,13 @@ export const routes = [
         path: '/app',
         name: 'menu-app',
         component: () => import('@/views/app/index'),
-        meta: { title: '应用列表', icon: 'form', hideHeader: true, hideAside: true }
+        meta: {title: '应用列表', icon: 'form', hideHeader: true, hideAside: true}
       },
       {
         path: '/app/detail',
         name: 'menu-app-detail',
         component: () => import('@/views/app/detail'),
-        meta: { title: '应用详情', icon: 'form', hideHeader: false, hideAside: true }
+        meta: {title: '应用详情', icon: 'form', hideHeader: false, hideAside: true}
       }
     ]
   },

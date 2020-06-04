@@ -7,7 +7,7 @@
       prefix-icon="el-icon-search"
       class="menu-dashboard-input"
     />
-    <el-tabs v-model="tabName">
+    <el-tabs v-model="tabName" style="height: 100%;">
       <el-tab-pane label="公共概览" name="first">
         <el-collapse v-for="(commonGroup,index) in commonGroups">
           <el-collapse-item>
@@ -47,12 +47,13 @@
         </el-collapse>
       </el-tab-pane>
       <el-tab-pane label="我的概览" name="second">
-        <el-collapse v-for="(group,index) in groups">
-          <el-collapse-item>
-            <template slot="title">
-              <div class="menu-dashboard-span" @mouseleave="leave" @mouseenter="enter(index)">
-                <span>{{group.name}}</span>
-                <span style="float: right;">
+        <div style="height: 100%;overflow-y: auto;">
+          <el-collapse v-for="(group,index) in groups">
+            <el-collapse-item>
+              <template slot="title">
+                <div class="menu-dashboard-span" @mouseleave="leave" @mouseenter="enter(index)">
+                  <span>{{group.name}}</span>
+                  <span style="float: right;">
               <el-popover
                 placement="bottom"
                 trigger="hover"
@@ -72,17 +73,18 @@
             </el-popover>
               <span class="dashboard-aside-num" v-if="group.list.length>0">{{ group.list.length }}</span>
             </span>
-              </div>
-            </template>
-            <ul class="dashboard-aside-ul">
-              <li v-for="dashboard in group.list" class="dashboard-aside-li" @click="clickDashboard(dashboard)">
+                </div>
+              </template>
+              <ul class="dashboard-aside-ul">
+                <li v-for="dashboard in group.list" class="dashboard-aside-li" @click="clickDashboard(dashboard)">
                 <span>
                   {{ dashboard.name }}
                 </span>
-              </li>
-            </ul>
-          </el-collapse-item>
-        </el-collapse>
+                </li>
+              </ul>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
       </el-tab-pane>
     </el-tabs>
     <div class="el-btn">
@@ -94,7 +96,7 @@
           <el-button type="primary" icon="el-icon-d-caret" @click="modal.sortShow=true"/>
         </el-tooltip>
         <el-tooltip content="分享我的概览">
-          <el-button type="primary" icon="el-icon-share"/>
+          <el-button type="primary" icon="el-icon-share" @click="clickHandle"/>
         </el-tooltip>
       </el-button-group>
     </div>
@@ -203,6 +205,9 @@
       },
       handleCloseSort() {
         this.modal.sortShow = false
+      },
+      clickHandle(){
+        this.$emit('on-select','menu-dashboard-manager')
       }
     }
   }

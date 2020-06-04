@@ -26,8 +26,12 @@ class DashboardController : BaseController() {
 
     @PostMapping
     suspend fun createDashboard(@Validated @RequestBody dashboardCreateDTO: DashboardCreateDTO) : Dashboard{
+        val userId=currentUserId.awaitSingle()
+        val userName=currentUserAccount.awaitSingle()
         val dashboard = Dashboard()
         BeanUtils.copyProperties(dashboardCreateDTO,dashboard)
+        dashboard.userId=userId
+        dashboard.userName=userName
         val sort= dashboardService.getDashboardByType(dashboard.type).count().awaitSingle().toInt()
         dashboard.sort=sort
         return dashboardService.createDashboard(dashboard).awaitSingle()
