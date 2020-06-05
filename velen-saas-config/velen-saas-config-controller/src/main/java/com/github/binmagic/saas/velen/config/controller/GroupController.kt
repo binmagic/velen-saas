@@ -48,18 +48,23 @@ class GroupController : BaseController() {
             val groupDashboardDTO = GroupDashboardDTO()
             BeanUtils.copyProperties(group, groupDashboardDTO)
             val dashboards = dashboardService.getDashboardByType(group.id).collectList().awaitSingle()
-            val shareDashboards = shareDashboardService.getShareDashboardByType(group.id).collectList().awaitSingle()
-            for (shareDashboard in shareDashboards) {
-                val shareDashboardDTO = dashboardService.getDashboardById(shareDashboard.dashboardId).awaitSingle()
-                shareDashboardDTO.name += shareDashboard.userName
-                dashboards.add(shareDashboardDTO)
-            }
             val list: ArrayList<DashboardCreateDTO> = ArrayList()
             for (dashboard in dashboards) {
                 val dashboardCreate = DashboardCreateDTO()
                 BeanUtils.copyProperties(dashboard, dashboardCreate)
+                dashboardCreate.isPublic=0
                 list.add(dashboardCreate)
             }
+            val shareDashboards = shareDashboardService.getShareDashboardByType(group.id).collectList().awaitSingle()
+            for (shareDashboard in shareDashboards) {
+                val shareDashboardDTO = dashboardService.getDashboardById(shareDashboard.dashboardId).awaitSingle()
+                shareDashboardDTO.name += shareDashboard.userName
+                val shareDashboardCreate=DashboardCreateDTO()
+                BeanUtils.copyProperties(shareDashboardDTO,shareDashboardCreate)
+                shareDashboardCreate.isPublic=1
+                list.add(shareDashboardCreate)
+            }
+
             list.sortBy { it.sort }
             groupDashboardDTO.list = list
             groupDashboardDTOs.add(groupDashboardDTO)

@@ -30,23 +30,54 @@
         </el-col>
       </el-row>
       <el-table :data="dashboards">
-        <el-table-column type="selection"></el-table-column>
-        <el-table-column prop="name" label="名称"></el-table-column>
-        <el-table-column prop="typeName" label="所属分组"></el-table-column>
-        <el-table-column prop="userId" label="共享给..."></el-table-column>
-        <el-table-column prop="userName" label="创建人"></el-table-column>
-        <el-table-column label="操作">
-          <el-link :underline="false" type="primary">分享设置</el-link>
-          <i class="el-icon-edit" style="cursor: pointer;margin: 0px 20px;"/>
-          <i class="el-icon-delete" style="cursor: pointer;color: red;"/>
+        <el-table-column type="selection"/>
+        <el-table-column width="309" prop="name" label="名称"/>
+        <el-table-column width="239" prop="typeName" label="所属分组"/>
+        <el-table-column  width="742" label="共享给...">
+          <template slot-scope="scope">
+            <span v-if="scope.row.isPublic==0">仅自己可见</span>
+            <span v-else>不是你创建的概览，须复制为自己的概览后，方可分享给Ta人</span>
+          </template>
+        </el-table-column>
+        <el-table-column width="214" prop="userName" label="创建人"/>
+        <el-table-column width="288" label="操作">
+          <template slot-scope="scope">
+            <span v-if="scope.row.isPublic==0">
+            <el-link :underline="false" type="primary" @click="dialogVisible=true">分享设置</el-link>
+            <i class="el-icon-edit" style="cursor: pointer;margin: 0px 20px;"/>
+            <i class="el-icon-delete" style="cursor: pointer;color: red;"/>
+          </span>
+          </template>
         </el-table-column>
       </el-table>
     </el-main>
+    <el-dialog title="分享设置" :visible.sync="dialogVisible" width="30%">
+        <el-row >
+          <el-col :span="15">
+            <el-radio-group v-model="radio">
+              <el-radio :label="1">仅自己可见</el-radio>
+              <el-radio :label="2">全部成员</el-radio>
+              <el-radio :label="3">指定成员</el-radio>
+            </el-radio-group>
+          </el-col>
+        </el-row>
+        <div v-if="radio===1">
+          <p>设置后，此概览将仅可你自己查看。其他成员均不可查看。</p>
+        </div>
+        <div v-if="radio===3">
+          <el-input style="margin-top: 10px;" v-model="membeName" size="small" placeholder="搜索成员姓名"/>
+        </div>
+      <div slot="footer" style="text-align: right;">
+        <el-button size="small">取消</el-button>
+        <el-button size="small" type="primary">保存</el-button>
+      </div>
+    </el-dialog>
+
   </el-container>
 </template>
 
 <script>
-  import {getGroup, getCommonGroup} from '@/api/group'
+  import {getGroup} from '@/api/group'
   export default {
     name: "DashboardManager",
 
@@ -56,6 +87,9 @@
         group:'',
         groups:[],
         dashboards:[],
+        dialogVisible:false,
+        radio:1,
+        membeName:'',
       }
     },
     created() {
