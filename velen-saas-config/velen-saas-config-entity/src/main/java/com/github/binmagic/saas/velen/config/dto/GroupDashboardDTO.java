@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class GroupDashboardDTO {
 
     private String id;
 
+    @NotEmpty
     private String name;
 
     private String userId;

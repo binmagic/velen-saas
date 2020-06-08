@@ -30,7 +30,8 @@
                     <el-row>
                       <el-col :span="24">
                         <el-select filterable v-model="group">
-                          <el-option v-for="item in groups" :key="item.id" :label="item.name" :value="item.id"/>
+                          <el-option v-for="item in groups" :disabled="group.name==='分享给我的概览'"
+                                     :key="item.id" :label="item.name" :value="item.id"/>
                         </el-select>
                       </el-col>
                     </el-row>
@@ -94,7 +95,6 @@
         if (this.radio) {
           let dashboardCreate = {name: this.dashboardName, type: this.group}
           addDashboard(dashboardCreate).then(response => {
-            console.log(response)
             this.$notify({
               title:'提示',
               message:'创建概览成功',

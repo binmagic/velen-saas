@@ -4,6 +4,7 @@ import com.github.binmagic.saas.velen.common.component.controller.BaseController
 import com.github.binmagic.saas.velen.config.dto.DashboardCreateDTO
 import com.github.binmagic.saas.velen.config.entity.Dashboard
 import com.github.binmagic.saas.velen.config.service.DashboardService
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,11 +42,11 @@ class DashboardController : BaseController() {
     suspend fun updateDashboard(@Validated @RequestBody dashboardCreateDTO: DashboardCreateDTO){
         val dashboard= Dashboard()
         BeanUtils.copyProperties(dashboardCreateDTO,dashboard)
-        dashboardService.updateDashboard(dashboard)
+        dashboardService.updateDashboard(dashboard).awaitSingle()
     }
 
     @DeleteMapping("{id}")
-    suspend fun deleteDashboardById(@PathVariable("id") id:String) :Mono<Void> {
-        return dashboardService.deleteDashboardById(id)
+    suspend fun deleteDashboardById(@PathVariable("id") id:String) {
+        dashboardService.deleteDashboardById(id).awaitFirstOrNull()
     }
 }

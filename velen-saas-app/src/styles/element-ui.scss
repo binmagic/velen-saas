@@ -61,7 +61,16 @@
     border-top: none;
     border-bottom:none;
   }
+  .el-tabs__content{
+    height: calc(100% - 100px);
+    .el-tab-pane{
+      height: calc(100% - 30px);
+    }
+  }
 
+}
+
+.dashboard-dialog{
   .el-tree-node{
     .el-tree-node__children{
       .el-checkbox .el-checkbox__inner{
@@ -75,13 +84,6 @@
   .el-tree-node__content{
     height: 32px;
   }
-  .el-tabs__content{
-    height: calc(100% - 100px);
-    .el-tab-pane{
-      height: calc(100% - 30px);
-    }
-  }
-
 }
 
 .add-modal-wrap {

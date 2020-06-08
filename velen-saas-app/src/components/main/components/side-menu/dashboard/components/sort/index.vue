@@ -3,7 +3,8 @@
              :show-close="false"
              @open="openShow"
              @closed="closeDialog"
-             :before-close="handleClose">
+             :before-close="handleClose"
+              class="dashboard-dialog">
     <template slot="title">
       <div style="position: relative;">
         <el-row>
@@ -101,7 +102,7 @@
                   </p>
                   <div style="text-align: right; margin: 0; padding: 2px; border-top: 1px solid #d3dce6;">
                     <el-button size="mini" type="text" @click="$set(data,'del',false)">取消</el-button>
-                    <el-button type="primary" size="mini" @click="delGroup(data)">确定</el-button>
+                    <el-button type="primary" size="mini" @click="delGroup(node,data)">确定</el-button>
                   </div>
                   <el-button type="text" size="small"
                              @click.stop="data.del?$set(data,'del',true):$set(data,'del',false)"
@@ -127,6 +128,7 @@
 
 <script>
   import {updateGroup, deleteGroup} from "@/api/group";
+  import {deleteDashboard} from "@/api/dashboard";
 
   export default {
     name: "sort",
@@ -154,6 +156,7 @@
         selectGroup: '0',
         moveGroup: '',
         checkNodes: [],
+        dashboardIds:[],
       }
     },
     watch: {
@@ -248,6 +251,12 @@
             })
           }
         }
+        if (this.dashboardIds.length>0){
+          for (let key in this.dashboardIds){
+            deleteDashboard(this.dashboardIds[key]).then(response=>{
+            })
+          }
+        }
         this.$emit('update-group')
         this.$emit('close-sort')
       },
@@ -263,6 +272,7 @@
         this.createIds = []
         this.ids = []
         this.checkNodes = []
+        this.dashboardIds=[]
       },
       blurInput(data) {
         if (data.name == '' || !data.name) {
@@ -270,20 +280,32 @@
         }
         this.$set(data, 'rename', false)
       },
-      delGroup(data) {
-        for (let key in data.list) {
-          data.list[key].type = this.treeGroup[0].type
-          this.treeGroup[0].list.push(data.list[key])
-        }
-        this.treeGroup.some((item, i) => {
-          if (item.id == data.id) {
-            this.treeGroup.splice(i, 1)
-            return true
+      delGroup(node,data) {
+        if (node.level==1){
+          for (let key in data.list) {
+            data.list[key].type = this.treeGroup[0].type
+            this.treeGroup[0].list.push(data.list[key])
           }
-        })
-        if (this.createIds.indexOf(data.id) <= -1) {
-          this.ids.push(data.id)
+          this.treeGroup.some((item, i) => {
+            if (item.id == data.id) {
+              this.treeGroup.splice(i, 1)
+              return true
+            }
+          })
+          if (this.createIds.indexOf(data.id) <= -1) {
+            this.ids.push(data.id)
+          }
+        }else{
+          this.dashboardIds.push(data.id)
+          this.treeGroup.some(item=>{
+            if (item.id==data.type){
+              item.list=item.list.filter(i=>{
+                return i!=data
+              })
+            }
+          })
         }
+        this.$set(data,'del',false)
       },
       createGroup() {
         const newGroup = {id: this.treeGroup.length + '', name: '新建分组' + this.treeGroup.length, list: [], rename: true}

@@ -3,6 +3,7 @@ package com.github.binmagic.saas.velen.config.dto;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,6 +17,7 @@ public class DashboardCreateDTO
 {
     private String id;
 
+    @NotEmpty
     private String name;
 
     private String type;
