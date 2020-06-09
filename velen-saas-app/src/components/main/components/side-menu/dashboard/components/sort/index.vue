@@ -317,7 +317,6 @@
         this.$refs.tree.setCheckedKeys([])
       },
       checkChangeHandle(data, flag) {
-        this.$set(this, 'checkNode', true)
         if (flag) {
           this.checkNodes.push(data)
         } else {
@@ -325,7 +324,11 @@
             return i != data
           })
         }
-
+        if (this.checkNodes.length>0){
+          this.checkNode=true
+        }else{
+          this.checkNode=false
+        }
       },
       hidePopover() {
         if (this.selectGroup !== '0') {

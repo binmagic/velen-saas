@@ -28,7 +28,5 @@ public class DashboardCreateDTO
 
     private LocalDateTime createTime;
 
-    private String userId;
-
     private String userName;
 }

@@ -7,7 +7,7 @@
       </h4>
     </el-header>
     <el-main>
-      <el-row style="padding-bottom: 18px;">
+      <el-row v-if="isChecked" style="padding-bottom: 18px;">
         <el-col :span="4">
           <span style="font-size: 14px;">创建人</span>
           <el-select size="small" v-model="creator" @change="filterTable">
@@ -24,14 +24,34 @@
         </el-col>
         <el-col :span="3">
           <div class="manager-input">
-            <el-input prefix-icon="el-icon-search" size="small" @input="filterTable" v-model="filterName" placeholder="搜索概览名称"/>
+            <el-input prefix-icon="el-icon-search" size="small" @input="filterTable" v-model="filterName"
+                      placeholder="搜索概览名称"/>
           </div>
         </el-col>
         <el-col :span="2">
           <el-button icon="el-icon-s-fold" size="small" type="primary" @click="modal.sortShow=true">设置概览显示顺序</el-button>
         </el-col>
       </el-row>
-      <el-table :data="filterGroup">
+      <el-row v-else style="padding-bottom: 18px;">
+        <el-col>
+          <el-button size="mini">增加可访问成员</el-button>
+          <el-button size="mini">重置分享设置</el-button>
+
+          <el-popconfirm
+            width="213"
+            confirmButtonText='确定'
+            cancelButtonText='取消'
+            icon="el-icon-info"
+            iconColor="#ffbf00"
+            title="删除所选概览?"
+            @onConfirm="delSelectDashboard"
+          >
+            <el-button size="mini" slot="reference" style="color: red;">删除</el-button>
+          </el-popconfirm>
+          <el-button size="mini" @click="$refs.multipleTable.clearSelection()">取消</el-button>
+        </el-col>
+      </el-row>
+      <el-table :data="filterGroup" @selection-change="selectionChange" ref="multipleTable">
         <el-table-column type="selection"/>
         <el-table-column width="309" prop="name" label="名称"/>
         <el-table-column width="239" prop="typeName" label="所属分组"/>
@@ -87,6 +107,13 @@
           </template>
         </el-table-column>
       </el-table>
+      <pagination
+        :hidden="filterGroup.length<=0"
+        :total="filterGroup.length"
+        :page.sync="page"
+        :limit.sync="limit"
+        @pagination="changePage"
+      />
     </el-main>
     <el-dialog title="分享设置" :visible.sync="dialogVisible" width="30%">
       <el-row>
@@ -115,38 +142,46 @@
       @update-group="findGroup"
       @close-sort="handleCloseSort"
     />
+
   </el-container>
 </template>
 
 <script>
   import {getGroup} from '@/api/group'
-  import {updateDashboard,deleteDashboard} from "@/api/dashboard";
+  import {updateDashboard, deleteDashboard} from "@/api/dashboard";
   import Sort from '@/components/main/components/side-menu/dashboard/components/sort'
+  import Pagination from '@/components/Pagination'
 
   export default {
     name: "DashboardManager",
-    components:{
-      Sort
+    components: {
+      Sort,
+      Pagination
     },
     data() {
       return {
+        page:1,
+        limit:10,
         creator: null,
-        creators:[],
+        creators: [],
         group: null,
         groups: [],
         dashboards: [],
+        isChecked: true,
         dialogVisible: false,
         radio: 1,
         memberName: '',
-        modal:{
-          sortShow:false,
+        modal: {
+          sortShow: false,
         },
         edit: {
           dashboardName: '',
           groupName: '',
         },
-        filterGroup:[],
-        filterName:'',
+        filterGroup: [],
+        filterName: '',
+        selectDel:false,
+        selectionGroup:[],
       }
     },
     created() {
@@ -165,9 +200,9 @@
             })
             this.dashboards = this.dashboards.concat(this.groups[key].list)
           }
-          this.filterGroup=JSON.parse(JSON.stringify(this.dashboards))
-          this.dashboards.some(item=>{
-            if (this.creators.indexOf(item.userName)){
+          this.filterGroup = JSON.parse(JSON.stringify(this.dashboards))
+          this.dashboards.some(item => {
+            if (this.creators.indexOf(item.userName)) {
               this.creators.push(item.userName)
             }
           })
@@ -185,24 +220,32 @@
           query
         })
       },
-      handleCloseSort(){
-        this.modal.sortShow=false
+      handleCloseSort() {
+        this.modal.sortShow = false
       },
-      filterTable(){
-        this.filterGroup=JSON.parse(JSON.stringify(this.dashboards))
-        if (this.creator!=null && this.creator!=''){
-          this.filterGroup=this.filterGroup.filter(item=>{
-            return item.userName==this.creator
+      selectionChange(selection) {
+        this.selectionGroup=selection
+        if (selection.length > 0) {
+          this.isChecked = false
+        } else {
+          this.isChecked = true
+        }
+      },
+      filterTable() {
+        this.filterGroup = JSON.parse(JSON.stringify(this.dashboards))
+        if (this.creator != null && this.creator != '') {
+          this.filterGroup = this.filterGroup.filter(item => {
+            return item.userName == this.creator
           })
         }
-        if (this.group!=null && this.group!=''){
-          this.filterGroup=this.filterGroup.filter(item=>{
-            return item.type==this.group
+        if (this.group != null && this.group != '') {
+          this.filterGroup = this.filterGroup.filter(item => {
+            return item.type == this.group
           })
         }
-        if (this.filterName!=null && this.filterName!=''){
-          this.filterGroup=this.filterGroup.filter(item=>{
-            return item.name.indexOf(this.filterName)>-1
+        if (this.filterName != null && this.filterName != '') {
+          this.filterGroup = this.filterGroup.filter(item => {
+            return item.name.indexOf(this.filterName) > -1
           })
         }
       },
@@ -222,9 +265,19 @@
         })
         this.findGroup()
       },
-      delDashboard(dashboard){
-        deleteDashboard(dashboard.id).then(resp=>{})
+      delDashboard(dashboard) {
+        deleteDashboard(dashboard.id).then(resp => {
+        })
         this.findGroup()
+      },
+      delSelectDashboard(){
+        for (let key in this.selectionGroup){
+          deleteDashboard(this.selectionGroup[key].id).then(resp=>{})
+        }
+        this.findGroup()
+      },
+      changePage(){
+
       }
     }
   }

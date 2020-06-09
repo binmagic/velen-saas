@@ -22,7 +22,7 @@
                   <el-form-item label="概览名称">
                     <el-row>
                       <el-col :span="24">
-                        <el-input v-model="dashboardName" placeholder="请输入"></el-input>
+                        <el-input v-model="dashboardName" v-focus placeholder="请输入"/>
                       </el-col>
                     </el-row>
                   </el-form-item>
@@ -30,7 +30,7 @@
                     <el-row>
                       <el-col :span="24">
                         <el-select filterable v-model="group">
-                          <el-option v-for="item in groups" :disabled="group.name==='分享给我的概览'"
+                          <el-option v-for="item in groups" :disabled="item.name==='分享给我的概览'"
                                      :key="item.id" :label="item.name" :value="item.id"/>
                         </el-select>
                       </el-col>
@@ -41,7 +41,7 @@
                   <el-form-item label="分组名称">
                     <el-row>
                       <el-col :span="24">
-                        <el-input v-model="groupName" style="width: 100%!important;" placeholder="请输入"></el-input>
+                        <el-input v-model="groupName" style="width: 100%!important;" v-focus placeholder="请输入"></el-input>
                       </el-col>
                     </el-row>
                   </el-form-item>
@@ -79,6 +79,14 @@
       },
       dashboards: {
         type: Array
+      }
+    },
+    directives: {
+      focus: {
+        inserted: function (el) {
+          el.querySelector('input').focus();
+          // 通过querySelector()方法获取input元素
+        }
       }
     },
     data() {

@@ -26,8 +26,6 @@ public class GroupDashboardDTO {
 
     private Integer sort;
 
-    private String appId;
-
     private LocalDateTime createTime;
 
     private List<DashboardCreateDTO> list;
