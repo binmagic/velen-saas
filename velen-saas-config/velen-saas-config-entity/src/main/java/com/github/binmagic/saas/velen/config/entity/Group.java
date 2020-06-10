@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Document
 @Data
@@ -24,6 +25,10 @@ public class Group extends BaseEntity<Group> {
     private Integer sort;
 
     private String appId;
+
+    private Integer isPublic;
+
+    private List<String> dashboardId;
 
     @CreatedDate
     private LocalDateTime createTime;

@@ -29,7 +29,7 @@
 
 
 .main-content-container {
-
+  overflow-y: auto;
   .main-aside {
     min-width: $sideBarWidth !important;
     width: $sideBarWidth !important;
