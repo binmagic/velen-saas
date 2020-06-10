@@ -119,9 +119,7 @@ export default {
         comment: this.comment
       })
       this.saveData.data = JSON.stringify({
-        measures: [{
-          event_name: this.switchEvent, 'aggregator': 'general'
-        }],
+        measures: this.switchEvent,
         filter: {},
         chartsType: 'pie',
         rangeText: '',

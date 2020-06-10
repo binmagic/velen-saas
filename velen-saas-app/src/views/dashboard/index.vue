@@ -48,14 +48,14 @@
       </el-menu>
     </el-popover>
 
-    <!--    <div style="margin-top: 25vh">-->
-    <!--      <div>-->
-    <!--        <el-button type="success" style="display:block;margin:0 auto" @click="componentFlag.enableCreateComponent = true">新建组件</el-button>-->
-    <!--      </div>-->
-    <!--    </div>-->
+<!--    <div v-if="pre_data.dashboard.items.length < 1" style="margin-top: 25vh">-->
+<!--      <div>-->
+<!--        <el-button type="success" style="display:block;margin:0 auto" @click="componentFlag.enableCreateComponent = true">新建组件</el-button>-->
+<!--      </div>-->
+<!--    </div>-->
 
     <div class="component">
-      <component :is="item.type" v-for="item in pre_data.dashboard.items" />
+      <meta-event-analytics :bookmarks="getBookmarks(key)" :meta_props="pre_data.meta_props" :meta_events="pre_data.meta_events" :v-if="getBookmarks(key).type=='/meta_event_analytics/'" v-for="(config, key) in pre_data.dashboard.items"></meta-event-analytics>
     </div>
 
     <el-dialog
@@ -80,7 +80,9 @@
 import CustomHeader from '_c/custom-header'
 import { mapActions } from 'vuex'
 import MetaEventAnalytics from './bookmarks/meta-event-analytics'
-import {getDashboard} from '@/api/dashboard'
+import {getDashboard, updateDashboard} from '@/api/dashboard'
+import { getMetaEvent, getMetaEventProp } from '@/api/metadata'
+
 export default {
   name: 'Dashboard',
   components: {
@@ -105,7 +107,11 @@ export default {
         bookmarks: {},
         bookmarksIdMapping: {},
         dashboards: [],
-        dashboard: {}
+        dashboard: {
+          items: []
+        },
+        meta_props: [],
+        meta_events: []
       },
       save_data: {
 
@@ -113,10 +119,10 @@ export default {
     }
   },
   watch: {
-    $route() {
+    async $route() {
       this.query.id = this.$route.query.id
-      this.fetchBookmarks()
-      this.fetchDashboardInfo()
+      await this.fetchDashboardInfo()
+      this.$route.meta.title = this.pre_data.dashboard.name
     }
   },
   async mounted() {
@@ -126,15 +132,42 @@ export default {
       this.query.id = this.pre_data.dashboards[0]
     }
   },
-  created() {
+  async created() {
     this.fetchBookmarks()
-    this.fetchDashboardInfo()
+    await this.fetchDashboardInfo()
+    await this.fetchMetaEventProps()
+    await this.fetchMetaEvent()
   },
   methods: {
     ...mapActions(['getGroupBookmarks']),
-    fetchDashboardInfo(){
-      getDashboard(this.query.id).then(resp => {
-        this.pre_data.dashboard = resp
+    getBookmarks(id) {
+      console.log('sdsdsdsds')
+      return this.pre_data.bookmarksIdMapping[id]
+    },
+    fetchMetaEventProps() {
+      return new Promise((resolve, reject) => {
+        getMetaEventProp().then(resp => {
+          for (const index in resp.items) {
+            this.pre_data.meta_props[resp.items[index].id] = resp.items[index]
+          }
+          resolve()
+        })
+      })
+    },
+    fetchMetaEvent() {
+      return new Promise((resolve, reject) => {
+        getMetaEvent().then(resp => {
+          this.pre_data.meta_events = resp.items
+          resolve()
+        })
+      })
+    },
+    fetchDashboardInfo() {
+      return new Promise((resolve, reject) => {
+        getDashboard(this.query.id).then(resp => {
+          this.pre_data.dashboard = resp
+          resolve()
+        })
       })
     },
     fetchDashboards() {
@@ -144,6 +177,7 @@ export default {
     },
     fetchBookmarks() {
       this.getGroupBookmarks().then(resp => {
+        console.log('getGroupBookmarks')
         this.pre_data.bookmarks = resp
         for (const key in this.pre_data.bookmarks) {
           for (const index in this.pre_data.bookmarks[key]) {
@@ -173,6 +207,10 @@ export default {
     handleSelectBookmarks(id) {
       const _data = this.pre_data.bookmarksIdMapping[id]
       this.componentFlag.enableCreateFromBookmarks = false
+      this.pre_data.dashboard.items[id] = '{}'
+      updateDashboard(this.pre_data.dashboard).then(resp => {
+
+      })
     }
   }
 }

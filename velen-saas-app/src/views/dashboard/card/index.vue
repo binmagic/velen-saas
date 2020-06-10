@@ -1,8 +1,8 @@
 <template>
   <el-card class="box-card small_card">
     <div slot="header" class="clearfix">
-      <span><template slot="title" /></span>
-      <span><template slot="tools" /></span>
+      <slot name="title" />
+      <slot name="tools" />
       <el-dropdown style="float:right">
         <span class="el-dropdown-link">
           <i class="el-icon-more-outline el-icon--right"></i>
@@ -16,7 +16,7 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <template slot="content"></template>
+    <slot name="content" />
   </el-card>
 </template>
 <script>

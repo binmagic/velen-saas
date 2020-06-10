@@ -43,17 +43,17 @@ class DashboardController : BaseController() {
     }
 
     @PutMapping
-    suspend fun updateDashboard(dashboardUpdateDTO: DashboardUpdateDTO): DashboardInfoDTO {
+    suspend fun updateDashboard(@Validated @RequestBody dashboardUpdateDTO: DashboardUpdateDTO): DashboardInfoDTO {
 
         val dashboard = dashboardService.getDashboardById(dashboardUpdateDTO.id).awaitSingle()
 
         BeanUtils.copyProperties(dashboardUpdateDTO, dashboard)
 
-        dashboardService.updateDashboard(dashboard)
+        val updatedDashboard = dashboardService.updateDashboard(dashboard).awaitSingle()
 
         val dashboardInfoDTO = DashboardInfoDTO()
 
-        BeanUtils.copyProperties(dashboard, dashboardInfoDTO)
+        BeanUtils.copyProperties(updatedDashboard, dashboardInfoDTO)
 
         return dashboardInfoDTO
     }

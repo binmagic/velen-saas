@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 @Document
@@ -32,7 +33,7 @@ public class Dashboard extends BaseEntity<Dashboard>
 
 	private String appId;
 
-	private Map<String, String> items;
+	private Map<String, String> items = new HashMap<>();
 
 	private String config;
 

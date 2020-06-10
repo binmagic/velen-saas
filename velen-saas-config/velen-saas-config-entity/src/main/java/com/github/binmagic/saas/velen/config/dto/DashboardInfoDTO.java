@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -27,7 +28,7 @@ public class DashboardInfoDTO
 
 	private String userName;
 
-	private Map<String, String> items;
+	private Map<String, String> items = new HashMap<>();
 
 	private String config;
 
