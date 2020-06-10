@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container style="overflow-y: auto;">
     <el-header height="30px" class="manager-header">
       <h4 class="manager-h4">
         <i class="manager-icon el-icon-arrow-left" @click="turnToPage"/>
@@ -34,9 +34,8 @@
       </el-row>
       <el-row v-else style="padding-bottom: 18px;">
         <el-col>
-          <el-button size="mini">增加可访问成员</el-button>
+          <el-button size="mini" @click="dialogVisible=true">增加可访问成员</el-button>
           <el-button size="mini">重置分享设置</el-button>
-
           <el-popconfirm
             width="213"
             confirmButtonText='确定'
@@ -55,7 +54,7 @@
         <el-table-column type="selection"/>
         <el-table-column width="309" prop="name" label="名称"/>
         <el-table-column width="239" prop="typeName" label="所属分组"/>
-        <el-table-column width="742" label="共享给...">
+        <el-table-column width="725" label="共享给...">
           <template slot-scope="scope">
             <span v-if="scope.row.isPublic==0">仅自己可见</span>
             <span v-else>不是你创建的概览，须复制为自己的概览后，方可分享给Ta人</span>
@@ -109,9 +108,9 @@
       </el-table>
       <pagination
         :hidden="filterGroup.length<=0"
-        :total="filterGroup.length"
-        :page.sync="page"
-        :limit.sync="limit"
+        :total="pagination.total"
+        :page.sync="pagination.page"
+        :limit.sync="pagination.limit"
         @pagination="changePage"
       />
     </el-main>
@@ -129,7 +128,14 @@
         <p>设置后，此概览将仅可你自己查看。其他成员均不可查看。</p>
       </div>
       <div v-if="radio===3">
-        <el-input style="margin-top: 10px;" v-model="memberName" size="small" placeholder="搜索成员姓名"/>
+        <el-select style="margin-top: 10px;width: 100%;" filterable multiple v-model="memberName" size="small" placeholder="搜索成员姓名">
+          <el-option-group label="角色">
+            <el-option v-for="role in roles" :key="role" :label="role==='admin'?'管理员':'成员'" :value="role"></el-option>
+          </el-option-group>
+          <el-option-group label="账户">
+            <el-option v-for="account in accounts" :key="account.value" :label="account.label" :value="account.value"></el-option>
+          </el-option-group>
+        </el-select>
       </div>
       <div slot="footer" style="text-align: right;">
         <el-button size="small" @click="dialogVisible = false">取消</el-button>
@@ -142,7 +148,6 @@
       @update-group="findGroup"
       @close-sort="handleCloseSort"
     />
-
   </el-container>
 </template>
 
@@ -151,6 +156,7 @@
   import {updateDashboard, deleteDashboard} from "@/api/dashboard";
   import Sort from '@/components/main/components/side-menu/dashboard/components/sort'
   import Pagination from '@/components/Pagination'
+  import {getMemberInfo} from "@/api/app";
 
   export default {
     name: "DashboardManager",
@@ -160,8 +166,8 @@
     },
     data() {
       return {
-        page:1,
-        limit:10,
+        roles: [],
+        accounts: [],
         creator: null,
         creators: [],
         group: null,
@@ -170,7 +176,7 @@
         isChecked: true,
         dialogVisible: false,
         radio: 1,
-        memberName: '',
+        memberName: [],
         modal: {
           sortShow: false,
         },
@@ -180,12 +186,18 @@
         },
         filterGroup: [],
         filterName: '',
-        selectDel:false,
-        selectionGroup:[],
+        selectDel: false,
+        selectionGroup: [],
+        pagination: {
+          page: 1,
+          limit: 10,
+          total: 0,
+        },
       }
     },
     created() {
       this.findGroup()
+      this.findMember()
     },
     methods: {
       findGroup() {
@@ -200,11 +212,24 @@
             })
             this.dashboards = this.dashboards.concat(this.groups[key].list)
           }
-          this.filterGroup = JSON.parse(JSON.stringify(this.dashboards))
+          //this.filterGroup = JSON.parse(JSON.stringify(this.dashboards))
+          this.filterGroup = this.dashboards.slice((this.pagination.page - 1) * this.pagination.limit, this.pagination.limit)
+          this.pagination.total = this.dashboards.length
           this.dashboards.some(item => {
             if (this.creators.indexOf(item.userName)) {
               this.creators.push(item.userName)
             }
+          })
+        })
+      },
+      findMember() {
+        getMemberInfo().then(resp => {
+          resp.some(item => {
+            if (this.roles.indexOf(item.role)<=-1){
+              this.roles.push(item.role)
+            }
+            var account={label:item.account,value:item.id}
+            this.accounts.push(account)
           })
         })
       },
@@ -224,7 +249,7 @@
         this.modal.sortShow = false
       },
       selectionChange(selection) {
-        this.selectionGroup=selection
+        this.selectionGroup = selection
         if (selection.length > 0) {
           this.isChecked = false
         } else {
@@ -234,20 +259,21 @@
       filterTable() {
         this.filterGroup = JSON.parse(JSON.stringify(this.dashboards))
         if (this.creator != null && this.creator != '') {
-          this.filterGroup = this.filterGroup.filter(item => {
+          this.filterGroup = this.dashboards.filter(item => {
             return item.userName == this.creator
           })
         }
         if (this.group != null && this.group != '') {
-          this.filterGroup = this.filterGroup.filter(item => {
+          this.filterGroup = this.dashboards.filter(item => {
             return item.type == this.group
           })
         }
         if (this.filterName != null && this.filterName != '') {
-          this.filterGroup = this.filterGroup.filter(item => {
+          this.filterGroup = this.dashboards.filter(item => {
             return item.name.indexOf(this.filterName) > -1
           })
         }
+        this.pagination.total = this.filterGroup.length
       },
       popoverInfo(dashboard) {
         this.edit.dashboardName = JSON.parse(JSON.stringify(dashboard.name))
@@ -270,14 +296,22 @@
         })
         this.findGroup()
       },
-      delSelectDashboard(){
-        for (let key in this.selectionGroup){
-          deleteDashboard(this.selectionGroup[key].id).then(resp=>{})
+      delSelectDashboard() {
+        for (let key in this.selectionGroup) {
+          deleteDashboard(this.selectionGroup[key].id).then(resp => {
+          })
         }
         this.findGroup()
       },
-      changePage(){
+      querySearch() {
 
+      },
+      changePage(val) {
+        if (this.dashboards.length - ((val.page - 1) * val.limit) < val.limit) {
+          this.filterGroup = this.dashboards.slice((val.page - 1) * val.limit)
+        } else {
+          this.filterGroup = this.dashboards.slice((val.page - 1) * val.limit, val.limit)
+        }
       }
     }
   }

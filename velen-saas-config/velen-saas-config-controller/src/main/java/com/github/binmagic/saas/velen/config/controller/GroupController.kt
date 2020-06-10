@@ -62,7 +62,6 @@ class GroupController : BaseController() {
                 shareDashboardCreate.isPublic = 1
                 list.add(shareDashboardCreate)
             }
-
             list.sortBy { it.sort }
             groupDashboardDTO.list = list
             groupDashboardDTOs.add(groupDashboardDTO)
@@ -93,7 +92,6 @@ class GroupController : BaseController() {
 
     @PutMapping
     suspend fun updateGroup(@Validated @RequestBody groupDashboardDTOs: List<GroupDashboardDTO>) {
-        println(groupDashboardDTOs)
         for (groupDashboardDTO in groupDashboardDTOs) {
             val group = Group()
             BeanUtils.copyProperties(groupDashboardDTO, group)
@@ -109,7 +107,6 @@ class GroupController : BaseController() {
                         dashboardService.updateDashboard(dashboard).awaitSingle()
                     }
                 }
-
             }
         }
     }
