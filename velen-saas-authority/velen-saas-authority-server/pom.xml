@@ -40,8 +40,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<executable>true</executable>
-					<mainClass>${MainClass}</mainClass>
-					<!-- <mainClass>com.nepxion.discovery.guide.service.DiscoveryGuideServiceA1</mainClass> -->
+					<mainClass>com.github.binmagic.saas.velen.authority.App</mainClass>
 					<layout>JAR</layout>
 				</configuration>
 				<executions>
