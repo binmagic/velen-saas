@@ -60,7 +60,6 @@
 			<groupId>jdk.tools</groupId>
 			<artifactId>jdk.tools</artifactId>
 			<version>${java.version}</version>
-			<scope>system</scope>
 		</dependency>
 
 		<!--		<dependency>-->

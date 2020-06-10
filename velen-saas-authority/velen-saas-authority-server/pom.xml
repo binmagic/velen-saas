@@ -59,6 +59,7 @@
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<configuration>
+					<dockerHost>${DockerHost}</dockerHost>
 					<imageName>${ImageName}</imageName>
 					<baseImage>openjdk:8-jre-alpine</baseImage>
 					<entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
