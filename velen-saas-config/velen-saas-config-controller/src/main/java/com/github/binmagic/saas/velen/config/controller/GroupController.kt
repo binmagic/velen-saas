@@ -8,14 +8,12 @@ import com.github.binmagic.saas.velen.config.entity.Group
 import com.github.binmagic.saas.velen.config.service.DashboardService
 import com.github.binmagic.saas.velen.config.service.GroupService
 import com.github.binmagic.saas.velen.config.service.ShareDashboardService
-import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Mono
 
 
 @RestController
@@ -47,21 +45,21 @@ class GroupController : BaseController() {
         for (group in groups) {
             val groupDashboardDTO = GroupDashboardDTO()
             BeanUtils.copyProperties(group, groupDashboardDTO)
-            val dashboards = dashboardService.getDashboardByType(group.id).collectList().awaitSingle()
+            val dashboards = dashboardService.getDashboardByType(appId, group.id).collectList().awaitSingle()
             val list: ArrayList<DashboardCreateDTO> = ArrayList()
             for (dashboard in dashboards) {
                 val dashboardCreate = DashboardCreateDTO()
                 BeanUtils.copyProperties(dashboard, dashboardCreate)
-                dashboardCreate.isPublic=0
+                dashboardCreate.isPublic = 0
                 list.add(dashboardCreate)
             }
             val shareDashboards = shareDashboardService.getShareDashboardByType(group.id).collectList().awaitSingle()
             for (shareDashboard in shareDashboards) {
                 val shareDashboardDTO = dashboardService.getDashboardById(shareDashboard.dashboardId).awaitSingle()
                 shareDashboardDTO.name += shareDashboard.userName
-                val shareDashboardCreate=DashboardCreateDTO()
-                BeanUtils.copyProperties(shareDashboardDTO,shareDashboardCreate)
-                shareDashboardCreate.isPublic=1
+                val shareDashboardCreate = DashboardCreateDTO()
+                BeanUtils.copyProperties(shareDashboardDTO, shareDashboardCreate)
+                shareDashboardCreate.isPublic = 1
                 list.add(shareDashboardCreate)
             }
 
@@ -101,7 +99,7 @@ class GroupController : BaseController() {
             BeanUtils.copyProperties(groupDashboardDTO, group)
             val result = groupService.getGroupById(group.id).awaitFirstOrNull()
             if (result == null) {
-               createGroup(groupDashboardDTO)
+                createGroup(groupDashboardDTO)
             } else {
                 groupService.updateGroup(group)
                 if (!groupDashboardDTO.list.isNullOrEmpty()) {

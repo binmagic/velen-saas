@@ -2,7 +2,27 @@
   <div class="app-container">
     <custom-header :show-name="$route.meta.title">
       <div slot="tools">
-        <i class="el-icon-s-order">保存</i>
+        <el-popover
+          placement="bottom"
+          width="200"
+          trigger="click"
+        >
+          <el-button slot="reference" icon="el-icon-folder-add" />
+
+          <el-form :model="formData">
+            <el-form-item label="书签名">
+              <el-input v-model="formData.name" />
+            </el-form-item>
+            <el-form-item label="备注">
+              <el-input v-model="formData.comment" type="textarea" />
+            </el-form-item>
+            <el-form-item>
+              <el-button>取消</el-button>
+              <el-button type="primary" @click="submitData">确定</el-button>
+            </el-form-item>
+          </el-form>
+        </el-popover>
+
       </div>
     </custom-header>
     <el-container class="main">
@@ -30,11 +50,9 @@
           <el-col :span="8" style="text-align: center;">
             <h4>{{ getMetaEventName() }}</h4>
           </el-col>
-          <el-col :span="8">
-
-          </el-col>
+          <el-col :span="8" />
         </el-row>
-        <custom-table :columns="columns" :value="data"/>
+        <custom-table :columns="columns" :value="data" />
       </el-main>
     </el-container>
   </div>
@@ -53,9 +71,10 @@
 
 import CustomTable from '_c/custom-table'
 import CustomHeader from '_c/custom-header'
-import {reportMetaEvent} from '@/api/query'
+import { reportMetaEvent } from '@/api/query'
 
 import { getMetaEvent, getMetaEventProp } from '@/api/metadata'
+import { create } from '@/api/bookmarks'
 
 export default {
   components: {
@@ -75,6 +94,16 @@ export default {
       },
       originQuery: {
         dateRange: []
+      },
+      formData: {
+        name: '',
+        comment: ''
+      },
+      saveData: {
+        data: '',
+        name: '',
+        config: '',
+        type: '/meta_event_analytics/'
       }
     }
   },
@@ -83,6 +112,25 @@ export default {
     this.fetchMetaEvent()
   },
   methods: {
+    submitData() {
+      console.log('xxxxxsubmitdata')
+      this.saveData.name = this.formData.name
+      this.saveData.config = JSON.stringify({
+        comment: this.comment
+      })
+      this.saveData.data = JSON.stringify({
+        measures: [{
+          event_name: this.switchEvent, 'aggregator': 'general'
+        }],
+        filter: {},
+        chartsType: 'pie',
+        rangeText: '',
+        from_date: '2020-06-08', to_date: '2020-06-09'
+      })
+      create(this.saveData).then(resp => {
+        this.id = resp.id
+      })
+    },
     fetchData() {
       reportMetaEvent(this.query).then(resp => {
         this.data = resp.items

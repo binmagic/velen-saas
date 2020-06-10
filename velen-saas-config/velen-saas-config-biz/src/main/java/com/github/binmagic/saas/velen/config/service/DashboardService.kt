@@ -6,9 +6,9 @@ import reactor.core.publisher.Mono
 
 interface DashboardService {
 
-    suspend fun getDashboardService() : Flux<Dashboard>
+    suspend fun getDashboards(appId : String) : Flux<Dashboard>
 
-    suspend fun getDashboardByType(type : String) : Flux<Dashboard>
+    suspend fun getDashboardByType(appId : String, type : String) : Flux<Dashboard>
 
     suspend fun getDashboardById(id:String) : Mono<Dashboard>
 

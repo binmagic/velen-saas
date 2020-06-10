@@ -1,6 +1,5 @@
 package com.github.binmagic.saas.velen.config.service.impl
 
-import cn.hutool.core.util.IdUtil
 import com.github.binmagic.saas.velen.config.entity.Dashboard
 import com.github.binmagic.saas.velen.config.repository.DashboardRepository
 import com.github.binmagic.saas.velen.config.service.DashboardService
@@ -17,15 +16,15 @@ class DashboardServiceImpl : DashboardService {
     lateinit var dashboardRepository: DashboardRepository
 
 
-    override suspend fun getDashboardService(): Flux<Dashboard> {
+    override suspend fun getDashboards(appId : String): Flux<Dashboard> {
 
-        return dashboardRepository.findAll()
+        return dashboardRepository.findByAppId(appId)
 
     }
 
-    override suspend fun getDashboardByType(type: String): Flux<Dashboard> {
+    override suspend fun getDashboardByType(appId : String, type: String): Flux<Dashboard> {
 
-        return dashboardRepository.findByType(type)
+        return dashboardRepository.findByAppIdAndType(appId, type)
 
     }
 
@@ -37,7 +36,6 @@ class DashboardServiceImpl : DashboardService {
     override suspend fun createDashboard(dashboard: Dashboard): Mono<Dashboard> {
         val now: LocalDateTime = LocalDateTime.now()
         dashboard.createTime = now
-        dashboard.id = IdUtil.fastSimpleUUID()
         return dashboardRepository.insert(dashboard)
     }
 

@@ -6,6 +6,7 @@ import settings from './modules/settings'
 import user from './modules/user'
 import router from './modules/router'
 import role from './modules/role'
+import bookmarks from "./modules/bookmarks";
 
 Vue.use(Vuex)
 
@@ -15,7 +16,8 @@ const store = new Vuex.Store({
     settings,
     user,
     router,
-    role
+    role,
+    bookmarks
   },
   getters
 })

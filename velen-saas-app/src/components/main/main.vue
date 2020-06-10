@@ -54,6 +54,7 @@ export default {
   },
   methods: {
     turnToPage(route) {
+      console.log(route)
       let { name, params, query } = {}
       if (typeof route === 'string') {
         name = route
@@ -68,11 +69,14 @@ export default {
       }
       if (!query) {
         query = this.$route.query
+      } else {
+        query = Object.assign({}, this.$route.query, query)
       }
+      const newQuery = JSON.parse(JSON.stringify(query))
       this.$router.push({
         name,
         params,
-        query
+        query: newQuery
       })
     }
   }

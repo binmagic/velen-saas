@@ -4,6 +4,7 @@ import com.github.binmagic.saas.velen.common.component.controller.BaseController
 import com.github.binmagic.saas.velen.common.entity.Page
 import com.github.binmagic.saas.velen.config.dto.BookmarksListDTO
 import com.github.binmagic.saas.velen.config.dto.BookmarksSaveDTO
+import com.github.binmagic.saas.velen.config.dto.BookmarksSaveRespDTO
 import com.github.binmagic.saas.velen.config.dto.BookmarksUpdateDTO
 import com.github.binmagic.saas.velen.config.entity.Bookmarks
 import com.github.binmagic.saas.velen.config.service.BookmarksService
@@ -43,7 +44,7 @@ class BookmarksController : BaseController() {
     }
 
     @PostMapping
-    suspend fun create(@Validated @RequestBody bookmarksSaveDTO: BookmarksSaveDTO) {
+    suspend fun create(@Validated @RequestBody bookmarksSaveDTO: BookmarksSaveDTO) : BookmarksSaveRespDTO{
 
         val bookmarks = Bookmarks()
         bookmarks.appId = currentAppId.awaitSingle()
@@ -51,6 +52,11 @@ class BookmarksController : BaseController() {
 
         BeanUtils.copyProperties(bookmarksSaveDTO, bookmarks)
         bookmarksService.create(bookmarks).awaitSingle()
+
+        val bookmarksSaveRespDTO = BookmarksSaveRespDTO()
+        BeanUtils.copyProperties(bookmarks, bookmarksSaveRespDTO)
+
+        return bookmarksSaveRespDTO
     }
 
     @PutMapping

@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function getDashboard(id){
+  return request({
+    url: `/dashboard/${id}`,
+    method: 'get'
+  })
+}
+
 export function addDashboard(data) {
   return request({
     url: '/dashboard',

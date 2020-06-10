@@ -60,22 +60,22 @@
       </el-table-column>
       <el-table-column label="统计时段" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.createTime }}</span>
+          <span>{{ row.data | formatAnalyze }}</span>
         </template>
       </el-table-column>
       <el-table-column label="类型" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.owner }}</span>
+          <span>{{ row.type | formatType }}</span>
         </template>
       </el-table-column>
       <el-table-column label="已添加到下列概览中" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.owner }}</span>
+          <span>{{ row.dashboards | formatDashboard }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.owner }}</span>
+          <span>{{ row.createTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="#" align="center" class-name="small-padding fixed-width">
@@ -100,7 +100,7 @@ import { create, update, all } from '@/api/bookmarks'
 import CustomHeader from '_c/custom-header'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import waves from '@/directive/waves' // waves directive
-
+import consts from '@/consts'
 export default {
   components: {
     CustomHeader,
@@ -108,6 +108,29 @@ export default {
   },
   directives: {
     waves
+  },
+  filters: {
+    formatAnalyze(data) {
+      const jsonData = JSON.parse(data)
+      if (jsonData.toDate) {
+        return `${jsonData.fromDate}至${jsonData.toDate}`
+      } else {
+        return '实时统计'
+      }
+    },
+    formatDashboard(dashboards) {
+      if (dashboards.length < 1) {
+        return '尚未加入任何概览'
+      }
+    },
+    formatType(type) {
+      const event_type = consts.event_type[type]
+      if (event_type) {
+        return event_type.cname
+      } else {
+        return '未知类型'
+      }
+    }
   },
   data() {
     return {
@@ -125,7 +148,7 @@ export default {
         command: 'meta-event',
         name: 'menu-analyze-meta-event',
         desc: '元数据详细查询分析',
-        icon: 'el-icon-help'
+        icon: 'el-icon-hel'
       }]
     }
   },

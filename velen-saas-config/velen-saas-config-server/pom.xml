@@ -13,7 +13,7 @@
 	<artifactId>velen-saas-config-server</artifactId>
 
 	<properties>
-		<java.version>11</java.version>
+		<java.version>8</java.version>
 	</properties>
 
 	<dependencies>
@@ -55,8 +55,8 @@
 		<dependency>
 			<groupId>jdk.tools</groupId>
 			<artifactId>jdk.tools</artifactId>
+			<version>${java.version}</version>
 			<scope>system</scope>
-			<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
 		</dependency>
 
 		<!--		<dependency>-->
@@ -90,8 +90,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<executable>true</executable>
-					<mainClass>${MainClass}</mainClass>
-					<!-- <mainClass>com.nepxion.discovery.guide.service.DiscoveryGuideServiceA1</mainClass> -->
+					<mainClass>com.github.binmagic.saas.velen.config.App</mainClass>
 					<layout>JAR</layout>
 				</configuration>
 				<executions>
@@ -109,6 +108,7 @@
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<configuration>
+					<dockerHost>${DockerHost}</dockerHost>
 					<imageName>${ImageName}</imageName>
 					<baseImage>openjdk:8-jre-alpine</baseImage>
 					<entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
