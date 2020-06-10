@@ -84,7 +84,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
           <executable>true</executable>
-          <mainClass>${MainClass}</mainClass>
+          <mainClass>com.github.binmagic.saas.velen.gateway.App</mainClass>
           <layout>JAR</layout>
         </configuration>
         <executions>
