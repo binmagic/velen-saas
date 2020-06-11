@@ -2,7 +2,6 @@ package com.github.binmagic.saas.velen.gateway.filter
 
 import cn.hutool.core.util.ObjectUtil
 import cn.hutool.core.util.URLUtil
-import com.github.binmagic.saas.velen.authority.api.VerifyApi
 import com.github.binmagic.saas.velen.common.config.JWTConfig
 import com.github.binmagic.saas.velen.common.constant.Constant
 import com.github.binmagic.saas.velen.gateway.config.AuthConfig
@@ -12,7 +11,6 @@ import org.apache.commons.lang3.StringUtils
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.gateway.filter.GatewayFilterChain
-import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
@@ -22,11 +20,6 @@ import reactor.core.publisher.Mono
 @Component
 @Slf4j
 class PermissionFilter : SuspendFilter() {
-    @Autowired
-    lateinit var template: StringRedisTemplate
-
-    @Autowired
-    lateinit var verifyApi: VerifyApi
 
     @Autowired
     lateinit var jwtConfig: JWTConfig
@@ -89,16 +82,17 @@ class PermissionFilter : SuspendFilter() {
             return chain.filter(exchange.mutate().request(build).build())
         }
 
-        val appId: String = getHeader(Constant.APP_ID, request) ?: return Mono.error(IllegalStateException("illegal access"))
+        val appId: String? = getHeader(Constant.APP_ID, request)
 
         if(!authInfo.isSuperuser)
         {
-            var flag = accessProvider.getVerify(appId, authInfo.account, path, request.method!!.name)
+            var flag = accessProvider.getVerify(appId!!, authInfo.account, path, request.method!!.name)
 
             if (!flag)
             {
                 return Mono.error(IllegalAccessException("illegal access"))
             }
+
         }
 
         addHeader(mutate, Constant.APP_ID, appId)

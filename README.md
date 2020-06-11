@@ -162,5 +162,24 @@ npm run lint -- --fix
 - 所有样式有可读的名字
 - 样式少时可以定义在页面最下方，当样式多时增加scss文件定义
 
+
+
+
+##DOCKER部署指南
+*-server模块包含打包docker镜像的插件
+执行maven命令打包并上传Image
+- 根目录 mvn clean install
+- mvn docker:build -DImageName=velen-config -DDockerHost=http://192.168.1.85:2375 -DExposePort=6001 -X
+###MVN编译参数
+| 目录名 | 描述 |
+| ---  | ---- |
+| ImageName | 镜像名称，如需设置tag加冒号xxx:1.0 |
+| DockerHost | 推送镜像到远程仓库 |
+###DOCKER运行设置系统参数
+| 目录名 | 描述 |
+| ---  | ---- |
+| middleware.host | nacos远程地址 |
+
+
 ##常见错误
 [Command line is too long. Shorten command line](https://my.oschina.net/u/921876/blog/2995478)

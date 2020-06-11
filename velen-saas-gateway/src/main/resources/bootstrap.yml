@@ -18,6 +18,15 @@ spring:
     name: velen-saas-gateway
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+            allow-credentials: true
+            max-age: 3600
+
       disconvery:
         locator:
           enable: false
@@ -76,5 +85,6 @@ auth:
   - /api/accounts/register1
   skipAccessUrl:
   - /api/accounts/app/my
+
 jwt:
   token_secret: pXFb4i%*834gfdh96(3df&%18iodGq4ODQyMzc4lz7yI6ImF1dG
