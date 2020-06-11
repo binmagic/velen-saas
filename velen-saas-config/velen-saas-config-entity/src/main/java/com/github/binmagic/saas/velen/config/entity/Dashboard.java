@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Document
@@ -26,6 +27,8 @@ public class Dashboard extends BaseEntity<Dashboard>
 
 	@CreatedDate
 	private LocalDateTime createTime;
+
+	private List<String> shareUserId;
 
 	private String userId;
 

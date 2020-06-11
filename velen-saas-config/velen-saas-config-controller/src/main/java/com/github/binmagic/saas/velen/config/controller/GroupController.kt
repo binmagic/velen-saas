@@ -33,7 +33,7 @@ class GroupController : BaseController() {
     suspend fun getGroup(): List<GroupDashboardDTO> {
         val appId = currentAppId.awaitSingle()
         val userId = currentUserId.awaitSingle()
-        val list = groupService.getGroupByUserIdAndAppId(userId, appId).collectList().awaitSingle()
+        val list = groupService.getGroup(userId, appId,0).collectList().awaitSingle()
         if (list.isNullOrEmpty()) {
             val groupInfo = GroupDashboardDTO()
             groupInfo.name = "分享给我的概览"
@@ -56,7 +56,7 @@ class GroupController : BaseController() {
             val shareDashboards = shareDashboardService.getShareDashboardByType(group.id).collectList().awaitSingle()
             for (shareDashboard in shareDashboards) {
                 val shareDashboardDTO = dashboardService.getDashboardById(shareDashboard.dashboardId).awaitSingle()
-                shareDashboardDTO.name += shareDashboard.userName
+                shareDashboardDTO.name =shareDashboardDTO.name+ "(" + shareDashboard.userName+")"
                 val shareDashboardCreate = DashboardCreateDTO()
                 BeanUtils.copyProperties(shareDashboardDTO, shareDashboardCreate)
                 shareDashboardCreate.isPublic = 1
@@ -69,19 +69,55 @@ class GroupController : BaseController() {
         return groupDashboardDTOs
     }
 
+    suspend fun getGroupV2() : List<GroupDashboardDTO>{
+        val appId=currentAppId.awaitSingle()
+        val userId=currentUserId.awaitSingle()
+        val list = groupService.getGroup(userId,appId,0).collectList().awaitSingle()
+        if (list.isNullOrEmpty()) {
+            val groupInfo = GroupDashboardDTO()
+            groupInfo.name = "分享给我的概览"
+            createGroup(groupInfo)
+        }
+        val groups = groupService.getGroup(userId,appId,0).collectList().awaitSingle()
+        val groupDashboardDTOs:ArrayList<GroupDashboardDTO> = ArrayList()
+        groups.sortBy { it.sort }
+        for (group in groups){
+            val groupDashboardDTO=GroupDashboardDTO()
+            BeanUtils.copyProperties(group,groupDashboardDTO)
+            if (!group.dashboardId.isNullOrEmpty()){
+                for (id in group.dashboardId){
+                    val dashboard = dashboardService.getDashboardById(id).awaitSingle()
+                    val dashboardCreateDTO=DashboardCreateDTO()
+                    BeanUtils.copyProperties(dashboard,dashboardCreateDTO)
+                    if (dashboard.userId==userId){
+                        dashboardCreateDTO.isPublic=0
+                    }else{
+                        dashboardCreateDTO.name=dashboard.name+"("+dashboard.userName+")"
+                        dashboardCreateDTO.isPublic=1
+                    }
+                    groupDashboardDTO.list.add(dashboardCreateDTO)
+                }
+            }
+            groupDashboardDTOs.add(groupDashboardDTO)
+        }
+        return groupDashboardDTOs
+    }
+
     @PostMapping
     suspend fun createGroup(@Validated @RequestBody groupDashboardDTO: GroupDashboardDTO): GroupDashboardDTO {
         val group = Group()
         BeanUtils.copyProperties(groupDashboardDTO, group)
         group.appId = currentAppId.awaitSingle()
         group.userId = currentUserId.awaitSingle()
-        group.sort = groupService.countGroupByUserIdAndAppId(group.userId, group.appId).awaitSingle().toInt()
+        group.isPublic=0
+        group.sort = groupService.countGroup(group.userId, group.appId,group.isPublic).awaitSingle().toInt()
         val dashboards = groupDashboardDTO.list
         if (!dashboards.isNullOrEmpty()) {
             for (dashboardCreate in dashboards) {
                 dashboardCreate.type = group.id
                 val dashboard = Dashboard()
                 BeanUtils.copyProperties(dashboardCreate, dashboard)
+                dashboard.appId=currentAppId.awaitSingle()
                 dashboardService.updateDashboard(dashboard).awaitSingle()
             }
         }
@@ -95,15 +131,18 @@ class GroupController : BaseController() {
         for (groupDashboardDTO in groupDashboardDTOs) {
             val group = Group()
             BeanUtils.copyProperties(groupDashboardDTO, group)
+            group.appId=currentAppId.awaitSingle()
+            group.isPublic=0
             val result = groupService.getGroupById(group.id).awaitFirstOrNull()
             if (result == null) {
                 createGroup(groupDashboardDTO)
             } else {
-                groupService.updateGroup(group)
+                groupService.updateGroup(group).awaitSingle()
                 if (!groupDashboardDTO.list.isNullOrEmpty()) {
                     for (dashboardCreate in groupDashboardDTO.list) {
                         var dashboard = Dashboard()
                         BeanUtils.copyProperties(dashboardCreate, dashboard)
+                        dashboard.appId=currentAppId.awaitSingle()
                         dashboardService.updateDashboard(dashboard).awaitSingle()
                     }
                 }

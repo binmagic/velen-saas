@@ -38,11 +38,22 @@ class GroupServiceImpl : GroupService {
         return groupRepository.deleteById(id)
     }
 
-    override suspend fun countGroupByUserIdAndAppId(userId: String, appId: String): Mono<Long> {
-        return groupRepository.countByUserIdAndAppId(userId, appId)
+    override suspend fun countGroup(userId: String, appId: String,isPublic: Int): Mono<Long> {
+        return groupRepository.countByUserIdAndAppIdAndIsPublic(userId,appId,isPublic)
     }
 
+    override suspend fun countCommonGroup(appId: String,isPublic: Int): Mono<Long> {
+        return groupRepository.countByAppIdAndIsPublic(appId,isPublic)
+    }
     override suspend fun getGroupById(id: String): Mono<Group> {
         return groupRepository.findById(id)
+    }
+
+    override suspend fun getGroup(userId: String, appId: String, isPublic: Int): Flux<Group> {
+        return groupRepository.findByUserIdAndAppIdAndIsPublic(userId, appId, isPublic)
+    }
+
+    override suspend fun getCommonGroup(appId: String, isPublic: Int): Flux<Group> {
+        return groupRepository.findByAppIdAndIsPublic(appId, isPublic)
     }
 }

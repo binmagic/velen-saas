@@ -1,77 +1,116 @@
 package com.github.binmagic.saas.velen.config.controller
 
 import com.github.binmagic.saas.velen.common.component.controller.BaseController
-import com.github.binmagic.saas.velen.config.dto.CommonGroupDashboardDTO
-import com.github.binmagic.saas.velen.config.entity.CommonDashboard
-import com.github.binmagic.saas.velen.config.entity.CommonGroup
-import com.github.binmagic.saas.velen.config.entity.QCommonGroup.commonGroup
-import com.github.binmagic.saas.velen.config.service.CommonDashboardService
-import com.github.binmagic.saas.velen.config.service.CommonGroupService
+import com.github.binmagic.saas.velen.config.dto.DashboardCreateDTO
+import com.github.binmagic.saas.velen.config.dto.GroupDashboardDTO
+import com.github.binmagic.saas.velen.config.entity.Dashboard
+import com.github.binmagic.saas.velen.config.entity.Group
+import com.github.binmagic.saas.velen.config.service.DashboardService
+import com.github.binmagic.saas.velen.config.service.GroupService
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Mono
-import javax.ws.rs.Path
 
 @RestController
 @RequestMapping("/dashboard/commonGroup")
-class CommonGroupController:BaseController() {
+class CommonGroupController : BaseController() {
 
     @Autowired
-    lateinit var commonGroupService: CommonGroupService
+    lateinit var groupService: GroupService
 
     @Autowired
-    lateinit var commonDashboardService:CommonDashboardService
+    lateinit var dashboardService: DashboardService
 
     @GetMapping
-    suspend fun getCommonGroup() :List<CommonGroupDashboardDTO>{
-        val appId=currentAppId.awaitSingle()
-        val commonGroups = commonGroupService.getCommonGroupByAppId(appId).collectList().awaitSingle()
-        val commonGroupDashboardDTOs : ArrayList<CommonGroupDashboardDTO> = ArrayList()
-        commonGroups.sortBy { it.sort }
-        for (commonGroup in commonGroups){
-            val commonGroupDashboardDTO = CommonGroupDashboardDTO()
-            BeanUtils.copyProperties(commonGroup,commonGroupDashboardDTO)
-            val commonDashboards = commonDashboardService.getCommonDashboardServiceByType(commonGroup.id).collectList().awaitSingle()
+    suspend fun getCommonGroup(): List<GroupDashboardDTO> {
+        val appId = currentAppId.awaitSingle()
+        val userId = currentUserId.awaitSingle()
+        val groups = groupService.getCommonGroup(appId, 1).collectList().awaitSingle()
+        val commonGroupDashboardDTOs: ArrayList<GroupDashboardDTO> = ArrayList()
+        groups.sortBy { it.sort }
+        for (group in groups) {
+            val commonGroupDashboardDTO = GroupDashboardDTO()
+            BeanUtils.copyProperties(group, commonGroupDashboardDTO)
+            val commonDashboards = dashboardService.getDashboardByType(appId, group.id).collectList().awaitSingle()
             commonDashboards.sortBy { it.sort }
-            commonGroupDashboardDTO.list=commonDashboards
+            for (commonDashboard in commonDashboards) {
+                val dashboardCreateDTO = DashboardCreateDTO()
+                BeanUtils.copyProperties(commonDashboard, dashboardCreateDTO)
+                commonGroupDashboardDTO.list.add(dashboardCreateDTO)
+            }
             commonGroupDashboardDTOs.add(commonGroupDashboardDTO)
         }
         return commonGroupDashboardDTOs
     }
 
+    suspend fun getCommonGroupV2(): List<GroupDashboardDTO> {
+        val appId = currentAppId.awaitSingle()
+        val groups = groupService.getCommonGroup(appId, 1).collectList().awaitSingle()
+        val commonGroupDashboardDTOs: ArrayList<GroupDashboardDTO> = ArrayList()
+        groups.sortBy { it.sort }
+        for (group in groups) {
+            val groupDashboardDTO = GroupDashboardDTO()
+            BeanUtils.copyProperties(group, groupDashboardDTO)
+            if (!group.dashboardId.isNullOrEmpty()) {
+                for (id in group.dashboardId) {
+                    val dashboard = dashboardService.getDashboardById(id).awaitSingle()
+                    val dashboardCreatDTO = DashboardCreateDTO()
+                    BeanUtils.copyProperties(dashboard, dashboardCreatDTO)
+                    groupDashboardDTO.list.add(dashboardCreatDTO)
+                }
+            }
+            commonGroupDashboardDTOs.add(groupDashboardDTO)
+        }
+        return commonGroupDashboardDTOs
+    }
 
     @PostMapping
-    suspend fun createCommonGroup(@Validated @RequestBody commonGroupDashboardDTO: CommonGroupDashboardDTO) : CommonGroupDashboardDTO{
-        val commonGroup = CommonGroup()
-        BeanUtils.copyProperties(commonGroupDashboardDTO,commonGroup)
-        val appId= currentAppId.awaitSingle()
-        commonGroup.appId=appId
-        commonGroup.sort = commonGroupService.countCommonGroupByAppId(appId).awaitSingle().toInt()
-        val result= commonGroupService.createCommonGroup(commonGroup).awaitSingle()
-        BeanUtils.copyProperties(result,commonGroupDashboardDTO)
-        return commonGroupDashboardDTO
+    suspend fun createCommonGroup(@Validated @RequestBody groupDashboardDTO: GroupDashboardDTO): GroupDashboardDTO {
+        val group = Group()
+        BeanUtils.copyProperties(groupDashboardDTO, group)
+        group.appId = currentAppId.awaitSingle()
+        group.isPublic = 1
+        group.sort = groupService.countCommonGroup(group.appId, group.isPublic).awaitSingle().toInt()
+        val dashboards = groupDashboardDTO.list
+        if (!dashboards.isNullOrEmpty()) {
+            for (dashboardCreate in dashboards) {
+                dashboardCreate.type = group.id
+                val dashboard = Dashboard()
+                BeanUtils.copyProperties(dashboardCreate, dashboard)
+                dashboardService.updateDashboard(dashboard).awaitSingle()
+            }
+        }
+        val result = groupService.createGroup(group).awaitSingle()
+        BeanUtils.copyProperties(result, groupDashboardDTO)
+        return groupDashboardDTO
     }
 
     @PutMapping
-    suspend fun updateCommonGroup(@Validated @RequestBody commonGroupDashboardDTO: CommonGroupDashboardDTO) :CommonGroupDashboardDTO{
-        val commonGroup=CommonGroup()
-        BeanUtils.copyProperties(commonGroupDashboardDTO,commonGroup)
-        val result = commonGroupService.updateCommonGroup(commonGroup).awaitSingle()
-        BeanUtils.copyProperties(result,commonGroupDashboardDTO)
-        return commonGroupDashboardDTO
+    suspend fun updateCommonGroup(@Validated @RequestBody groupDashboardDTOs: List<GroupDashboardDTO>) {
+        for (groupDashboardDTO in groupDashboardDTOs) {
+            val group = Group()
+            BeanUtils.copyProperties(groupDashboardDTO, group)
+            val result = groupService.getGroupById(group.id).awaitFirstOrNull()
+            if (result == null) {
+                createCommonGroup(groupDashboardDTO)
+            } else {
+                groupService.updateGroup(group).awaitSingle()
+                if (!groupDashboardDTO.list.isNullOrEmpty()) {
+                    for (dashboardCreate in groupDashboardDTO.list) {
+                        var dashboard = Dashboard()
+                        BeanUtils.copyProperties(dashboardCreate, dashboard)
+                        dashboardService.updateDashboard(dashboard).awaitSingle()
+                    }
+                }
+            }
+        }
     }
 
-    @DeleteMapping("{id}")
-    suspend fun deleteCommonGroupById(@PathVariable id:String) : Mono<Void>{
-        val commonGroups = commonGroupService.getCommonGroupByAppId(currentAppId.awaitSingle()).collectList().awaitSingle()
-        val commonDashboards = commonDashboardService.getCommonDashboardServiceByType(id).collectList().awaitSingle()
-        for (commonDashboard in commonDashboards){
-            commonDashboard.commonType=commonGroups[0].id
-            commonDashboardService.updateCommonDashboard(commonDashboard)
-        }
-        return commonGroupService.deleteCommonGroupById(id)
+    @DeleteMapping("/{id}")
+    suspend fun deleteCommonGroup(@PathVariable("id") id: String) {
+        groupService.deleteGroupById(id).awaitFirstOrNull()
     }
 }

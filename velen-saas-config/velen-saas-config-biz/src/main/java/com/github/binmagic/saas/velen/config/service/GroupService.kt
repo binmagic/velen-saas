@@ -15,7 +15,13 @@ interface GroupService {
 
     suspend fun deleteGroupById(id: String) : Mono<Void>
 
-    suspend fun countGroupByUserIdAndAppId(userId: String,appId: String) :Mono<Long>
+    suspend fun countGroup(userId: String,appId: String,isPublic: Int) :Mono<Long>
+
+    suspend fun countCommonGroup(appId: String,isPublic: Int) :Mono<Long>
 
     suspend fun getGroupById(id: String) : Mono<Group>
+
+    suspend fun getGroup(userId: String,appId: String,isPublic:Int) : Flux<Group>
+
+    suspend fun getCommonGroup(appId: String,isPublic: Int) : Flux<Group>
 }

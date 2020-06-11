@@ -5,6 +5,9 @@ import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -20,6 +23,7 @@ public class DashboardCreateDTO
     @NotEmpty
     private String name;
 
+    @NotEmpty
     private String type;
 
     private Integer sort;
@@ -29,4 +33,10 @@ public class DashboardCreateDTO
     private LocalDateTime createTime;
 
     private String userName;
+
+    private List<String> shareUserId;
+
+    private Map<String, String> items = new HashMap<>();
+
+    private String config;
 }

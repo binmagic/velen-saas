@@ -66,7 +66,7 @@
             <span>{{data.name}}</span>
           </el-col>
           <el-col :span="8">
-              <span style="float: right;margin-right: 5px;" v-show="data.show">
+              <span style="float: right;margin-right: 5px;" v-if="data.name!=='分享给我的概览'" v-show="data.show">
                 <el-button type="text" size="small" @click.stop="$set(data, 'rename', true)">重命名</el-button>
                 <el-popover
                   trigger="click"
@@ -106,7 +106,7 @@
                   </div>
                   <el-button type="text" size="small"
                              @click.stop="data.del?$set(data,'del',true):$set(data,'del',false)"
-                             style="color: red;" v-if="data.name!=='分享给我的概览'" slot="reference">删除</el-button>
+                             style="color: red;"  slot="reference">删除</el-button>
                 </el-popover>
               </span>
           </el-col>
