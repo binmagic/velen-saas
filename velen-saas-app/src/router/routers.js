@@ -112,6 +112,12 @@ export const routerApp = [
         meta: {title: '元数据管理', icon: 'form', hideHeader: false, hideAside: false}
       },
       {
+        path:'/meta-rule-setting',
+        name:'menu-metadata-rule',
+        component:() =>import('@/views/metadata/meta-rule'),
+        meta: {title:'入库校验规则设置',icon:'form',hideHeader: false, hideAside: false}
+      },
+      {
         path: '/meta-event-prop',
         name: 'menu-metadata-event-prop',
         component: () => import('@/views/metadata/meta-event-prop/index'),
