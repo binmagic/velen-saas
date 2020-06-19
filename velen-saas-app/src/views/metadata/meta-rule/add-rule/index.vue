@@ -1,5 +1,6 @@
 <template>
-  <el-dialog :visible.sync="visible" :before-close="handleClose" width="20%">
+  <el-dialog :visible.sync="visible" :before-close="handleClose" width="20%" @open="openDialog"
+             append-to-body>
     <template slot="title">
       <p>添加解释器</p>
     </template>
@@ -28,7 +29,7 @@
       type: {
         required: true,
         type: String
-      }
+      },
     },
     data() {
       return {
@@ -39,13 +40,17 @@
       }
     },
     methods: {
+      openDialog() {
+        this.form.name = ''
+        this.form.rule = ''
+      },
       handleClose() {
         this.$emit('close-add-rule')
       },
       addRule() {
-        if (this.type=='event'){
+        if (this.type == 'event') {
           this.$emit('add-event-rule', this.form)
-        }else if (this.type=='profile'){
+        } else if (this.type == 'profile') {
           this.$emit('add-profile-rule', this.form)
         }
         this.$emit('close-add-rule')

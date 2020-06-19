@@ -21,7 +21,7 @@
                 <template slot-scope="scope">
                   <span v-if="!scope.row.update">{{scope.row.rule}}
                   </span>
-                  <el-input v-else v-model="scope.row.rule" @blur="$set(scope.row,'update',false)" v-focus></el-input>
+                  <el-input v-else v-model="scope.row.rule" @blur="updEventRule(scope.row)" v-focus></el-input>
                 </template>
               </el-table-column>
               <el-table-column label="操作">
@@ -44,15 +44,14 @@
           <el-row>
             <el-col v-for="event in events" :span="4" style="margin-right: 50px;">
               <span>{{event.label}}</span>
-              <p class="meta-key-desc">{{event.desc}}</p>
+              <p>Key规则</p>
+              <el-link type="primary" @click="showParserTable(event.name,event.keyRule,'event')">显示匹配规则</el-link>
+              <!--<el-input type="textarea" :autosize="{ minRows:2,maxRows:4 }" style="width: 80%;margin-top: 10px;"></el-input>-->
+              <!--<p>入库规则</p>
+              <el-input type="textarea" :autosize="{ minRows:2,maxRows:4 }" v-model="event.rule"
+                        @change="updEventKeyRule(event)"/>-->
             </el-col>
           </el-row>
-          <p>Key规则
-            <el-link type="primary" @click="keyVisible=true">默认规则</el-link>
-          </p>
-          <p>入库规则
-            <el-link type="primary" @click="ruleVisible=true">未设置任意格式ID均可上报入库</el-link>
-          </p>
         </el-form>
       </div>
     </el-card>
@@ -72,9 +71,9 @@
               <el-table-column prop="name" label="解析器类型"/>
               <el-table-column prop="rule" label="规则">
                 <template slot-scope="scope">
-                  <span v-if="!scope.row.update">{{scope.row.rule}}
+                  <span v-if="!scope.row.update">{{ scope.row.rule }}
                   </span>
-                  <el-input v-else v-model="scope.row.rule" @blur="$set(scope.row,'update',false)" v-focus></el-input>
+                  <el-input v-else v-model="scope.row.rule" @blur="updProfileRule(scope.row)" v-focus></el-input>
                 </template>
               </el-table-column>
               <el-table-column label="操作">
@@ -97,46 +96,58 @@
           <el-row>
             <el-col v-for="profile in profiles" :span="4" style="margin-right: 50px;">
               <span>{{profile.label}}</span>
-              <p class="meta-key-desc">{{profile.desc}}</p>
+              <p>Key规则</p>
+              <el-link type="primary" @click="showParserTable(profile.name,profile.keyRule,'profile')">显示匹配规则</el-link>
+              <!--<el-input type="textarea" :autosize="{ minRows:2,maxRows:4 }" style="width: 80%;margin-top: 10px;"></el-input>-->
+              <!--<p>入库规则</p>
+              <el-input type="textarea" :autosize="{ minRows:2,maxRows:4 }" v-model="profile.rule"
+                        @change="updProfileKeyRule(profile)"/>-->
             </el-col>
           </el-row>
-          <p>Key规则
-            <el-link type="primary" @click="keyVisible=true">默认规则</el-link>
-          </p>
-          <p>入库规则
-            <el-link type="primary" @click="ruleVisible=true">未设置任意格式ID均可上报入库</el-link>
-          </p>
         </el-form>
       </div>
     </el-card>
-    <key-dialog
-      :visible="keyVisible"
-      @close-key-rule="handleCloseKey"
-    />
-    <rule-dialog
-      :visible="ruleVisible"
-      @close-rule="handleCloseRule"
+    <parser-table
+      :visible="parserVisible"
+      :type="type"
+      :data="data"
+      :keyName="keyName"
+      @find-event-data="findEvenKeyRule"
+      @find-profile-data="findProfileKeyRule"
+      @close-parser-table="handleParserClose"
     />
     <add-dialog
       :visible="addVisible"
       :type="type"
       @close-add-rule="handleAddClose"
-      @add-event-rule="addEventRule"
-      @add-profile-rule="addProfileRule"
+      @add-event-rule="insertEventRule"
+      @add-profile-rule="insertProfileRule"
     />
   </div>
 </template>
 
 <script>
-  import KeyDialog from './key-dialog'
-  import RuleDialog from './rule-dialog'
   import AddDialog from './add-rule'
+  import ParserTable from './parser-table'
+  import {
+    getEventRule,
+    addEventRule,
+    updateEventRule,
+    deleteEventRule,
+    getEventKeyRule
+  } from "@/api/eventRule";
+  import {
+    getProfileRule,
+    addProfileRule,
+    updateProfileRule,
+    deleteProfileRule,
+    getProfileKeyRule
+  } from "@/api/profileRule";
 
   export default {
     components: {
-      KeyDialog,
-      RuleDialog,
-      AddDialog
+      AddDialog,
+      ParserTable
     },
     directives: {
       focus: {
@@ -150,103 +161,156 @@
         eventCheck: false,
         userCheck: false,
         addVisible: false,
+        parserVisible: false,
         type: '',
-        keyVisible: false,
-        ruleVisible: false,
-        eventTable: [{
-          name: '正则解释器',
-          rule: '.*'
-        }, {
-          name: 'JSON',
-          rule: ''
-        }],
-        profileTable: [{
-          name: '正则解释器',
-          rule: '.*'
-        }, {
-          name: 'JSON',
-          rule: ''
-        }],
+        keyName: '',
+        eventTable: [],
+        profileTable: [],
+        profileRule: '',
+        data: [],
         events: [{
-          label: '接收用户「登录ID」',
-          value: 'distinct_id',
-          desc: '用户在产品内的唯一标识,不符合以下规则时,不能入库'
-        }, {
           label: '接收用户「设备ID」',
-          value: 'device_id',
-          desc: '不符合以下规则时,不能入库'
+          name: 'device_id',
+          keyRule: []
         }, {
-          label: '接收事件「事件时间」',
-          value: 'time',
-          desc: '不符合以下规则时,不能入库'
+          label: '接收用户「用户ID」',
+          name: 'distinct_id',
+          keyRule: []
         }, {
-          label: '接收事件「事件名」',
-          value: 'event',
-          desc: '不符合以下规则时,不能入库'
+          label: '接收事件「发生时间」',
+          name: 'time',
+          keyRule: []
+        }, {
+          label: '接收事件「名称」',
+          name: 'event',
+          keyRule: []
         }, {
           label: '接收事件「项目ID」',
-          value: 'project',
-          desc: '不符合以下规则时,不能入库'
-        },],
+          name: 'project',
+          keyRule: []
+        }],
         profiles: [{
-          label: '接收用户「登录ID」',
-          value: 'distinct_id',
-          desc: '用户在产品内的唯一标识,不符合以下规则时,不能入库'
-        }, {
           label: '接收用户「设备ID」',
-          value: 'device_id',
-          desc: '不符合以下规则时,不能入库'
+          name: 'device_id',
+          keyRule: []
         }, {
-          label: '接收用户「时间」',
-          value: 'time',
-          desc: '不符合以下规则时,不能入库'
+          label: '接收用户「用户ID」',
+          name: 'distinct_id',
+          keyRule: []
+        }, {
+          label: '接收用户「发生时间」',
+          name: 'time',
+          keyRule: []
         }, {
           label: '接收用户「项目ID」',
-          value: 'project',
-          desc: '不符合以下规则时,不能入库'
+          name: 'project',
+          keyRule: []
         }, {
-          label: '接收用户「Type」',
-          value: 'profile_user',
-          desc: '不符合以下规则时,不能入库'
-        },],
-        themeSet: '',
+          label: '接收用户「type」',
+          name: 'profile_user',
+          keyRule: []
+        }],
       }
     },
+    created() {
+      this.findEventRule()
+      this.findProfileRule()
+      this.findEvenKeyRule()
+      this.findProfileKeyRule()
+    },
     methods: {
-      handleCloseKey() {
-        this.keyVisible = false
+      findEventRule() {
+        getEventRule().then(resp => {
+          this.eventTable = resp
+        })
       },
-      handleCloseRule() {
-        this.ruleVisible = false
+      findProfileRule() {
+        getProfileRule().then(resp => {
+          this.profileTable = resp
+        })
+      },
+      findEvenKeyRule() {
+
+        getEventKeyRule().then(resp => {
+          for (let key in this.events) {
+            this.events[key].keyRule = []
+            resp.some(item => {
+              if (this.events[key].name === item.key) {
+                this.events[key].keyRule.push(item)
+              }
+            })
+          }
+          console.log(this.events)
+        })
+      },
+      findProfileKeyRule() {
+        getProfileKeyRule().then(resp => {
+          for (let key in this.profiles) {
+            this.profiles[key].keyRule = []
+            resp.some(item => {
+              if (this.profiles[key].name === item.key) {
+                this.profiles[key].keyRule.push(item)
+              }
+            })
+          }
+          console.log(this.profiles)
+        })
       },
       handleAddClose() {
         this.addVisible = false
+      },
+      handleParserClose() {
+        this.parserVisible = false
       },
       addTableRow(type) {
         this.addVisible = true
         this.type = type
       },
-      addEventRule(val) {
-        this.eventTable.push(val)
+      showParserTable(key, data, type) {
+        this.keyName = key
+        this.data = data
+        this.parserVisible = true
+        this.type = type
       },
-      addProfileRule(val) {
+      insertEventRule(val) {
+        addEventRule(val).then(resp => {
+        })
+        this.findEventRule()
+      },
+      insertProfileRule(val) {
         this.profileTable.push(val)
+        addProfileRule(val).then(resp => {
+        })
+        this.findProfileRule()
       },
       updateRow(row) {
-        if (row.name !== 'JSON')
+        if (row.name !== 'JSON解析器')
           this.$set(row, 'update', true)
+      },
+      updEventRule(row) {
+        this.$set(row, 'update', false)
+        updateEventRule(row).then(resp => {
+        })
+        this.findEventRule()
+      },
+      updProfileRule(row) {
+        this.$set(row, 'update', false)
+        updateProfileRule(row).then(resp => {
+        })
+        this.findProfileRule()
       },
       delRow(row, type) {
         if (type === 'event') {
-          this.eventTable = this.eventTable.filter(item => {
-            return item !== row
+          deleteEventRule(row.id).then(resp => {
           })
+          this.findEventRule()
         } else if (type === 'profile') {
-          this.profileTable = this.profileTable.filter(item => {
-            return item !== row
+          deleteProfileRule(row.id).then(resp => {
           })
+          this.findProfileRule()
         }
-      }
+      },
+
     }
   }
 </script>
