@@ -51,10 +51,26 @@
 		<ImpalaJDBC41.version>2.6.3</ImpalaJDBC41.version>
 		<hive-jdbc.version>3.1.2</hive-jdbc.version>
 		<hadoop-common.version>3.2.1</hadoop-common.version>
+
+		<velen-etl.version>0.0.2-SNAPSHOT</velen-etl.version>
+
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+
+			<dependency>
+				<groupId>com.github.binmagic</groupId>
+				<artifactId>velen-etl-generator-api</artifactId>
+				<version>${velen-etl.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.github.binmagic</groupId>
+				<artifactId>velen-etl-verification-api</artifactId>
+				<version>${velen-etl.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>com.cloudera</groupId>
 				<artifactId>ImpalaJDBC41</artifactId>
@@ -373,5 +389,23 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<profile.active>dev</profile.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<profile.active>prod</profile.active>
+			</properties>
+		</profile>
+	</profiles>
 
 </project>

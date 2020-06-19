@@ -42,7 +42,7 @@ class PermissionFilter : SuspendFilter() {
     private fun getHeader(headerName: String, request: ServerHttpRequest): String? {
         val headers = request.headers
         var token: String? = StringUtils.EMPTY
-        if (headers == null || headers.isEmpty()) {
+        if (headers.isEmpty()) {
             return token
         }
         token = headers.getFirst(headerName)
