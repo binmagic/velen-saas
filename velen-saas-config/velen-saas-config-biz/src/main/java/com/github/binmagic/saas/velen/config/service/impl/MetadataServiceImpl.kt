@@ -9,6 +9,7 @@ import com.github.binmagic.saas.velen.config.entity.MetaEventProp
 import com.github.binmagic.saas.velen.config.repository.MetaEventPropRepository
 import com.github.binmagic.saas.velen.config.repository.MetaEventRepository
 import com.github.binmagic.saas.velen.config.service.MetadataService
+import com.velen.etl.generator.api.ProfileTableApi
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,7 +26,6 @@ import java.util.ArrayList
 @Service
 class MetadataServiceImpl : MetadataService {
 
-
     @Autowired
     lateinit var metaEventPropRepository: MetaEventPropRepository
 
@@ -33,7 +33,6 @@ class MetadataServiceImpl : MetadataService {
     lateinit var metaEventRepository: MetaEventRepository
 
     override suspend fun findMetaEventPropByPage(query: Page.Query, appId : String): Mono<Page.Result<MetaEventProp>> {
-
         val orderList: MutableList<Sort.Order> = ArrayList(query.sorts.size)
 
         for ((key, value) in query.sorts) {
@@ -62,6 +61,8 @@ class MetadataServiceImpl : MetadataService {
 
         metaEventProp.createTime = LocalDateTime.now()
         metaEventProp.updateTime = LocalDateTime.now()
+
+
 
         return metaEventPropRepository.insert(metaEventProp)
     }

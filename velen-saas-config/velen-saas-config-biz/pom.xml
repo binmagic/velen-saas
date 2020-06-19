@@ -18,5 +18,15 @@
 			<artifactId>velen-saas-config-entity</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.github.binmagic</groupId>
+			<artifactId>velen-etl-generator-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.binmagic</groupId>
+			<artifactId>velen-etl-verification-api</artifactId>
+		</dependency>
+
 	</dependencies>
 </project>
