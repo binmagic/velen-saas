@@ -21,7 +21,7 @@
             icon="el-icon-info"
             iconColor="red"
             title="删除该解析器?"
-            @onConfirm="delRow(scope.row,'event')"
+            @onConfirm="delRow(scope.row)"
           >
             <el-button slot="reference" type="text" style="color: red;">删除</el-button>
           </el-popconfirm>
@@ -29,7 +29,7 @@
       </el-table-column>
     </el-table>
     <add-dialog
-      :visible="addVisible"
+      :visible.sync="addVisible"
       :type="type"
       @close-add-rule="handleAddClose"
       @add-event-rule="insertEventKeyRule"
@@ -83,52 +83,48 @@
         this.addVisible = true
       },
       updateRow(row) {
-        if (row.name !== 'JSON解析器')
+        if (row.name.toLowerCase().indexOf('json')<=-1)
           this.$set(row, 'update', true)
       },
       updRule(row) {
         if (row.type === 'event') {
           updateEventKeyRule(row).then(resp => {
-            console.log(resp)
+            this.$emit("find-event-data")
           })
-          this.$emit("find-event-data")
         } else {
           updateProfileKeyRule(row).then(resp => {
-            console.log(resp)
+            this.$emit("find-profile-data")
           })
-          this.$emit("find-profile-data")
         }
+        this.$set(row, 'update', false)
       },
-      delRow(row, type) {
-        if (type == 'event') {
+      delRow(row) {
+        if (row.type == 'event') {
           deleteEventKeyRule(row.id).then(resp => {
+            this.$emit("find-event-data")
           })
-          this.$emit("find-event-data")
         } else {
           deleteProfileKeyRule(row.id).then(resp => {
+            this.$emit("find-profile-data")
           })
-          this.$emit("find-profile-data")
         }
       },
       handleAddClose() {
         this.addVisible = false
       },
       insertEventKeyRule(val) {
-        console.log(this.data)
         val.key = this.keyName
         val.type = 'event'
         addEventKeyRule(val).then(resp => {
-          console.log(resp)
+          this.$emit("find-event-data")
         })
-        this.$emit("find-event-data")
       },
       insertProfileKeyRule(val) {
         val.key = this.keyName
         val.type = 'profile'
         addProfileKeyRule(val).then(resp => {
-          console.log(resp)
+          this.$emit("find-profile-data")
         })
-        this.$emit("find-profile-data")
       }
     }
   }

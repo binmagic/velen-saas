@@ -18,18 +18,17 @@ class ProfileRuleController : BaseController() {
     lateinit var parserRuleService: ParserRuleService
 
 
-
     @GetMapping
     suspend fun getEventRule(): List<ParserRule> {
         val appId = currentAppId.awaitSingle()
-        return parserRuleService.getEventRule(appId,"profile").collectList().awaitSingle()
+        return parserRuleService.getEventRule(appId, "profile").collectList().awaitSingle()
     }
 
     @PostMapping
     suspend fun addEventRule(@Validated @RequestBody parserRule: ParserRule): ParserRule {
         val appId = currentAppId.awaitSingle()
         parserRule.appId = appId
-        parserRule.type="profile"
+        parserRule.type = "profile"
         return parserRuleService.addEventRule(parserRule).awaitSingle()
     }
 

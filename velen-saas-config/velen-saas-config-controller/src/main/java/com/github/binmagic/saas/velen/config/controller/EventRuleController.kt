@@ -17,19 +17,17 @@ class EventRuleController : BaseController() {
     @Autowired
     lateinit var parserRuleService: ParserRuleService
 
-
-
     @GetMapping
     suspend fun getEventRule(): List<ParserRule> {
         val appId = currentAppId.awaitSingle()
-        return parserRuleService.getEventRule(appId,"event").collectList().awaitSingle()
+        return parserRuleService.getEventRule(appId, "event").collectList().awaitSingle()
     }
 
     @PostMapping
     suspend fun addEventRule(@Validated @RequestBody parserRule: ParserRule): ParserRule {
         val appId = currentAppId.awaitSingle()
         parserRule.appId = appId
-        parserRule.type="event"
+        parserRule.type = "event"
         return parserRuleService.addEventRule(parserRule).awaitSingle()
     }
 
@@ -42,9 +40,5 @@ class EventRuleController : BaseController() {
     suspend fun deleteEventRule(@PathVariable id: String) {
         parserRuleService.deleteEventRule(id).awaitFirstOrNull()
     }
-
-
-
-
 
 }

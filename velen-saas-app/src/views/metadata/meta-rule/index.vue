@@ -108,16 +108,16 @@
       </div>
     </el-card>
     <parser-table
-      :visible="parserVisible"
+      :visible.sync="parserVisible"
       :type="type"
-      :data="data"
+      :data.sync="data"
       :keyName="keyName"
       @find-event-data="findEvenKeyRule"
       @find-profile-data="findProfileKeyRule"
       @close-parser-table="handleParserClose"
     />
     <add-dialog
-      :visible="addVisible"
+      :visible.sync="addVisible"
       :type="type"
       @close-add-rule="handleAddClose"
       @add-event-rule="insertEventRule"
@@ -230,30 +230,27 @@
         })
       },
       findEvenKeyRule() {
-
         getEventKeyRule().then(resp => {
           for (let key in this.events) {
-            this.events[key].keyRule = []
+            this.events[key].keyRule.splice(0)
             resp.some(item => {
               if (this.events[key].name === item.key) {
                 this.events[key].keyRule.push(item)
               }
             })
           }
-          console.log(this.events)
         })
       },
       findProfileKeyRule() {
         getProfileKeyRule().then(resp => {
           for (let key in this.profiles) {
-            this.profiles[key].keyRule = []
+            this.profiles[key].keyRule.splice(0)
             resp.some(item => {
               if (this.profiles[key].name === item.key) {
                 this.profiles[key].keyRule.push(item)
               }
             })
           }
-          console.log(this.profiles)
         })
       },
       handleAddClose() {
@@ -284,7 +281,7 @@
         this.findProfileRule()
       },
       updateRow(row) {
-        if (row.name !== 'JSON解析器')
+        if (row.name.toLowerCase().indexOf('json')<=-1)
           this.$set(row, 'update', true)
       },
       updEventRule(row) {
