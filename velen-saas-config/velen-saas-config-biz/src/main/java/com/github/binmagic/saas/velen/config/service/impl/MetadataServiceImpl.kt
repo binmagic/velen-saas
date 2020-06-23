@@ -2,21 +2,21 @@ package com.github.binmagic.saas.velen.config.service.impl
 
 import cn.hutool.core.bean.BeanUtil
 import com.github.binmagic.saas.velen.common.entity.Page
-import com.github.binmagic.saas.velen.config.dto.MetaEventPropSaveDTO
-import com.github.binmagic.saas.velen.config.entity.Bookmarks
+import com.github.binmagic.saas.velen.config.dto.MetaEventETLDTO
+import com.github.binmagic.saas.velen.config.etl.ProfileTableApi
 import com.github.binmagic.saas.velen.config.entity.MetaEvent
 import com.github.binmagic.saas.velen.config.entity.MetaEventProp
 import com.github.binmagic.saas.velen.config.repository.MetaEventPropRepository
 import com.github.binmagic.saas.velen.config.repository.MetaEventRepository
 import com.github.binmagic.saas.velen.config.service.MetadataService
-import com.velen.etl.generator.api.ProfileTableApi
+import com.velen.etl.generator.dto.EventTableTDO
 import kotlinx.coroutines.reactive.awaitSingle
-import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.ExampleMatcher
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
@@ -25,6 +25,9 @@ import java.util.ArrayList
 
 @Service
 class MetadataServiceImpl : MetadataService {
+
+    @Autowired
+    lateinit var profileTableApi: ProfileTableApi;
 
     @Autowired
     lateinit var metaEventPropRepository: MetaEventPropRepository
@@ -99,6 +102,15 @@ class MetadataServiceImpl : MetadataService {
         metaEvent.createTime = now
         metaEvent.updateTime = now
 
+        val metaEventETLDTO = MetaEventETLDTO()
+
+        val res = profileTableApi.create(metaEvent.appId, ProfileTableApi.Convert.toEventTableDTO(metaEventETLDTO), "CREATE")
+
+
+
+
         return metaEventRepository.insert(metaEvent)
     }
+
+
 }

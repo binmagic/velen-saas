@@ -1,35 +1,7 @@
-middleware:
-  host: localhost
-ribbon:
-  ConnectTimeout: 60000
-  ReadTimeout: 60000
-  maxAutoRetries: 3
-  maxAutoRetriesNextServer: 3
-  okToRetryOnAllOperations: true
-server:
-  port: 6003
 spring:
-  devtools:
-    restart:
-      enabled: true
+  profiles:
+    active: @profile.active@
   application:
     name: velen-saas-config
-  cloud:
-    nacos:
-      discovery:
-        metadata:
-          group: velen-saas-group
-          version: 1.0
-        server-addr: ${middleware.host}:8848
-  data:
-    mongodb:
-      database: velen-saas-config
-      host: localhost
-      port: 27017
-
-
-jwt:
-  token_secret: pXFb4i%*834gfdh96(3df&%18iodGq4ODQyMzc4lz7yI6ImF1dG
-
-rxjdbc:
-    url: jdbc:hive2://119.254.118.20:10000/%s
+  main:
+    allow-bean-definition-overriding: true
