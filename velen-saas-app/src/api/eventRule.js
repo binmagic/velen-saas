@@ -59,3 +59,33 @@ export function deleteEventKeyRule(id) {
     method:'delete'
   })
 }
+
+export function getEventCheckRule() {
+  return request({
+    url:'/dashboard/eventCheckRule',
+    method:'get'
+  })
+}
+
+export function addEventCheckRule(data) {
+  return request({
+    url:'/dashboard/eventCheckRule',
+    method:'post',
+    data
+  })
+}
+
+export function updateEventCheckRule(data) {
+  return request({
+    url:'/dashboard/eventCheckRule',
+    method:'put',
+    data
+  })
+}
+
+export function deleteEventCheckRule(id) {
+  return request({
+    url:`/dashboard/eventCheckRule/${id}`,
+    method:'delete'
+  })
+}

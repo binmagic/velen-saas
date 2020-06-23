@@ -45,11 +45,17 @@
             <el-col v-for="event in events" :span="4" style="margin-right: 50px;">
               <span>{{event.label}}</span>
               <p>Key规则</p>
-              <el-link type="primary" @click="showParserTable(event.name,event.keyRule,'event')">显示匹配规则</el-link>
-              <!--<el-input type="textarea" :autosize="{ minRows:2,maxRows:4 }" style="width: 80%;margin-top: 10px;"></el-input>-->
-              <!--<p>入库规则</p>
-              <el-input type="textarea" :autosize="{ minRows:2,maxRows:4 }" v-model="event.rule"
-                        @change="updEventKeyRule(event)"/>-->
+              <el-link type="primary"
+                       @click="showParserTable(event.name,event.keyRule,'event')"
+              >
+                {{event.keyRule.length<=0?'未设置':'显示匹配规则'}}
+              </el-link>
+              <p>入库规则</p>
+              <el-link type="primary"
+                       @click="showCheckTable(event.name,event.rule,'event')"
+              >
+                {{event.rule.length<=0?'未设置 任意格式均可上报入库':'显示入库规则'}}
+              </el-link>
             </el-col>
           </el-row>
         </el-form>
@@ -97,11 +103,16 @@
             <el-col v-for="profile in profiles" :span="4" style="margin-right: 50px;">
               <span>{{profile.label}}</span>
               <p>Key规则</p>
-              <el-link type="primary" @click="showParserTable(profile.name,profile.keyRule,'profile')">显示匹配规则</el-link>
-              <!--<el-input type="textarea" :autosize="{ minRows:2,maxRows:4 }" style="width: 80%;margin-top: 10px;"></el-input>-->
-              <!--<p>入库规则</p>
-              <el-input type="textarea" :autosize="{ minRows:2,maxRows:4 }" v-model="profile.rule"
-                        @change="updProfileKeyRule(profile)"/>-->
+              <el-link type="primary"
+                       @click="showParserTable(profile.name,profile.keyRule,'profile')">
+                {{profile.keyRule.length<=0?'未设置':'显示匹配规则'}}
+              </el-link>
+              <p>入库规则</p>
+              <el-link type="primary"
+                       @click="showCheckTable(profile.name,profile.rule,'profile')"
+              >
+                {{profile.rule.length<=0?'未设置 任意格式均可上报入库':'显示入库规则'}}
+              </el-link>
             </el-col>
           </el-row>
         </el-form>
@@ -116,6 +127,15 @@
       @find-profile-data="findProfileKeyRule"
       @close-parser-table="handleParserClose"
     />
+    <check-table
+      :visible.sync="checkVisible"
+      :type="type"
+      :data.sync="data"
+      :keyName="keyName"
+      @find-event-data="findEventCheckRule"
+      @find-profile-data="findProfileCheckRule"
+      @close-check-table="handleCheckClose"
+    />
     <add-dialog
       :visible.sync="addVisible"
       :type="type"
@@ -129,25 +149,29 @@
 <script>
   import AddDialog from './add-rule'
   import ParserTable from './parser-table'
+  import CheckTable from './check-table'
   import {
     getEventRule,
     addEventRule,
     updateEventRule,
     deleteEventRule,
-    getEventKeyRule
+    getEventKeyRule,
+    getEventCheckRule,
   } from "@/api/eventRule";
   import {
     getProfileRule,
     addProfileRule,
     updateProfileRule,
     deleteProfileRule,
-    getProfileKeyRule
+    getProfileKeyRule,
+    getProfileCheckRule
   } from "@/api/profileRule";
 
   export default {
     components: {
       AddDialog,
-      ParserTable
+      ParserTable,
+      CheckTable
     },
     directives: {
       focus: {
@@ -162,6 +186,7 @@
         userCheck: false,
         addVisible: false,
         parserVisible: false,
+        checkVisible:false,
         type: '',
         keyName: '',
         eventTable: [],
@@ -171,44 +196,54 @@
         events: [{
           label: '接收用户「设备ID」',
           name: 'device_id',
-          keyRule: []
+          keyRule: [],
+          rule: []
         }, {
           label: '接收用户「用户ID」',
           name: 'distinct_id',
-          keyRule: []
+          keyRule: [],
+          rule: []
         }, {
           label: '接收事件「发生时间」',
           name: 'time',
-          keyRule: []
+          keyRule: [],
+          rule: []
         }, {
           label: '接收事件「名称」',
           name: 'event',
-          keyRule: []
+          keyRule: [],
+          rule: []
         }, {
           label: '接收事件「项目ID」',
           name: 'project',
-          keyRule: []
+          keyRule: [],
+          rule: []
         }],
         profiles: [{
           label: '接收用户「设备ID」',
           name: 'device_id',
-          keyRule: []
+          keyRule: [],
+          rule: []
         }, {
           label: '接收用户「用户ID」',
           name: 'distinct_id',
-          keyRule: []
+          keyRule: [],
+          rule: []
         }, {
           label: '接收用户「发生时间」',
           name: 'time',
-          keyRule: []
+          keyRule: [],
+          rule: []
         }, {
           label: '接收用户「项目ID」',
           name: 'project',
-          keyRule: []
+          keyRule: [],
+          rule: []
         }, {
           label: '接收用户「type」',
           name: 'profile_user',
-          keyRule: []
+          keyRule: [],
+          rule: []
         }],
       }
     },
@@ -217,6 +252,8 @@
       this.findProfileRule()
       this.findEvenKeyRule()
       this.findProfileKeyRule()
+      this.findEventCheckRule()
+      this.findProfileCheckRule()
     },
     methods: {
       findEventRule() {
@@ -253,11 +290,38 @@
           }
         })
       },
+      findEventCheckRule() {
+        getEventCheckRule().then(resp => {
+          for (let key in this.events) {
+            this.events[key].rule.splice(0)
+            resp.some(item => {
+              if (this.events[key].name === item.key) {
+                this.events[key].rule.push(item)
+              }
+            })
+          }
+        })
+      },
+      findProfileCheckRule() {
+        getProfileCheckRule().then(resp => {
+          for (let key in this.profiles) {
+            this.profiles[key].rule.splice(0)
+            resp.some(item => {
+              if (this.profiles[key].name === item.key) {
+                this.profiles[key].rule.push(item)
+              }
+            })
+          }
+        })
+      },
       handleAddClose() {
         this.addVisible = false
       },
       handleParserClose() {
         this.parserVisible = false
+      },
+      handleCheckClose(){
+        this.checkVisible=false
       },
       addTableRow(type) {
         this.addVisible = true
@@ -267,6 +331,12 @@
         this.keyName = key
         this.data = data
         this.parserVisible = true
+        this.type = type
+      },
+      showCheckTable(key, data, type){
+        this.keyName = key
+        this.data = data
+        this.checkVisible = true
         this.type = type
       },
       insertEventRule(val) {
@@ -281,7 +351,7 @@
         this.findProfileRule()
       },
       updateRow(row) {
-        if (row.name.toLowerCase().indexOf('json')<=-1)
+        if (row.name.toLowerCase().indexOf('json') <= -1)
           this.$set(row, 'update', true)
       },
       updEventRule(row) {
@@ -291,6 +361,9 @@
         this.findEventRule()
       },
       updProfileRule(row) {
+        if (row.rule.split(' ').join('').length == 0) {
+          row.rule = ""
+        }
         this.$set(row, 'update', false)
         updateProfileRule(row).then(resp => {
         })

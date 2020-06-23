@@ -59,3 +59,33 @@ export function deleteProfileKeyRule(id) {
     method:'delete'
   })
 }
+
+export function getProfileCheckRule() {
+  return request({
+    url:'/dashboard/profileCheckRule',
+    method:'get'
+  })
+}
+
+export function addProfileCheckRule(data) {
+  return request({
+    url:'/dashboard/profileCheckRule',
+    method:'post',
+    data
+  })
+}
+
+export function updateProfileCheckRule(data) {
+  return request({
+    url:'/dashboard/profileCheckRule',
+    method:'put',
+    data
+  })
+}
+
+export function deleteProfileCheckRule(id) {
+  return request({
+    url:`/dashboard/profileCheckRule/${id}`,
+    method:'delete'
+  })
+}
