@@ -61,13 +61,7 @@
 
 			<dependency>
 				<groupId>com.github.binmagic</groupId>
-				<artifactId>velen-etl-generator-api</artifactId>
-				<version>${velen-etl.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.github.binmagic</groupId>
-				<artifactId>velen-etl-verification-api</artifactId>
+				<artifactId>velen-etl-api</artifactId>
 				<version>${velen-etl.version}</version>
 			</dependency>
 
@@ -398,6 +392,12 @@
 			</activation>
 			<properties>
 				<profile.active>dev</profile.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>test</id>
+			<properties>
+				<profile.active>test</profile.active>
 			</properties>
 		</profile>
 		<profile>

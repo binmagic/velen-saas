@@ -1,9 +1,9 @@
 package com.github.binmagic.saas.velen.config.etl;
 
 import com.github.binmagic.saas.velen.config.dto.MetaEventETLDTO;
-import com.velen.etl.generator.dto.EventTableColumnTDO;
-import com.velen.etl.generator.dto.EventTableTDO;
 import com.velen.etl.generator.entity.GenerateEnum;
+import com.velen.etl.generator.tdo.EventTableColumnTDO;
+import com.velen.etl.generator.tdo.EventTableTDO;
 import org.springframework.cloud.openfeign.FeignClient;
 
 @FeignClient("velen-etl-generator")

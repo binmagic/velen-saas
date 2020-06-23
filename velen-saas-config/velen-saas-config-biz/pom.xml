@@ -20,12 +20,7 @@
 
 		<dependency>
 			<groupId>com.github.binmagic</groupId>
-			<artifactId>velen-etl-generator-api</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.github.binmagic</groupId>
-			<artifactId>velen-etl-verification-api</artifactId>
+			<artifactId>velen-etl-api</artifactId>
 		</dependency>
 
 	</dependencies>

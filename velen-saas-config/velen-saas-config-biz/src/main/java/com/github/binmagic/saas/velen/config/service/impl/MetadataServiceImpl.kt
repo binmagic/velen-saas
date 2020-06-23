@@ -9,7 +9,6 @@ import com.github.binmagic.saas.velen.config.entity.MetaEventProp
 import com.github.binmagic.saas.velen.config.repository.MetaEventPropRepository
 import com.github.binmagic.saas.velen.config.repository.MetaEventRepository
 import com.github.binmagic.saas.velen.config.service.MetadataService
-import com.velen.etl.generator.dto.EventTableTDO
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Example
