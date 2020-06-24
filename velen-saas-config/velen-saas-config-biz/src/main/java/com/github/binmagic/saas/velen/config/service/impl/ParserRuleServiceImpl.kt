@@ -1,9 +1,14 @@
 package com.github.binmagic.saas.velen.config.service.impl
 
+import com.github.binmagic.saas.velen.config.dto.ParserRuleDTO
 import com.github.binmagic.saas.velen.config.entity.ParserRule
+import com.github.binmagic.saas.velen.config.event.Deploy
+import com.github.binmagic.saas.velen.config.event.SetInputParse
 import com.github.binmagic.saas.velen.config.repository.ParserRuleRepository
 import com.github.binmagic.saas.velen.config.service.ParserRuleService
+import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -13,8 +18,19 @@ class ParserRuleServiceImpl : ParserRuleService {
     @Autowired
     lateinit var parserRuleRepository: ParserRuleRepository
 
-    override suspend fun getEventRule(appId:String,type:String): Flux<ParserRule> {
-        return parserRuleRepository.findByAppIdAndType(appId,type)
+    @Autowired
+    lateinit var applicationContext: ApplicationContext
+
+    override suspend fun getEventRule(appId: String, type: String): Flux<ParserRule> {
+        val mono = parserRuleRepository.findByAppIdAndType(appId, type)
+        val parserRuleDTO = ParserRuleDTO()
+        val list =mono.collectList() as List<ParserRule>
+        mono.subscribe {
+            applicationContext.publishEvent(SetInputParse( appId, list, "admin"))
+
+            applicationContext.publishEvent(Deploy(appId,"admin"))
+        }
+        return mono
     }
 
     override suspend fun addEventRule(parserRule: ParserRule): Mono<ParserRule> {

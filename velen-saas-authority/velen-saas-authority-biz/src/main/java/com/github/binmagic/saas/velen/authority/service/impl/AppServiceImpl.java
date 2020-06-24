@@ -5,11 +5,14 @@ import com.github.binmagic.saas.velen.authority.dto.AppAddMemberDTO;
 import com.github.binmagic.saas.velen.authority.dto.AppMemberInfoDTO;
 import com.github.binmagic.saas.velen.authority.entity.App;
 import com.github.binmagic.saas.velen.authority.entity.AppMember;
+import com.github.binmagic.saas.velen.authority.event.CreateApp;
+import com.github.binmagic.saas.velen.authority.event.Deploy;
 import com.github.binmagic.saas.velen.authority.repository.AppMemberRepository;
 import com.github.binmagic.saas.velen.authority.repository.AppRepository;
 import com.github.binmagic.saas.velen.authority.service.AppService;
 import com.github.binmagic.saas.velen.common.constant.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -26,6 +29,9 @@ public class AppServiceImpl implements AppService
 
 	@Autowired
 	AppMemberRepository appMemberRepository;
+
+	@Autowired
+	ApplicationContext applicationContext;
 
 	public Flux<App> findApp(String account)
 	{
@@ -45,10 +51,16 @@ public class AppServiceImpl implements AppService
 				.setState(App.DRAFT)
 				.setUpdateTime(now)
 				.setCreateTime(now);
-
-		return appRepository.insert(app).flatMap(_app -> appMemberRepository
+		Mono<App> mono=appRepository.insert(app).flatMap(_app -> appMemberRepository
 				.insert(new AppMember(_app.getId(), app.getOwner(), Constant.ROLE_MANAGER))
 				.thenReturn(_app));
+		mono.subscribe(app1->{
+			applicationContext.publishEvent(new CreateApp(app.getId(),false,"admin"));
+			applicationContext.publishEvent(new Deploy(app.getId(),"admin"));
+		});
+
+
+		return mono;
 	}
 
 	@Override

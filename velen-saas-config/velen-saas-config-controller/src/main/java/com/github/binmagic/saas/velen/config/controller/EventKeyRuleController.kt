@@ -17,7 +17,8 @@ class EventKeyRuleController : BaseController() {
 
     @GetMapping
     suspend fun getEventKeyRule(): List<KeyRule> {
-        return keyRuleService.getKeyRule("event").collectList().awaitSingle()
+        val appId=currentAppId.awaitSingle()
+        return keyRuleService.getKeyRule(appId,"event").collectList().awaitSingle()
     }
 
     @PostMapping

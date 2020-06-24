@@ -6,11 +6,13 @@ import com.github.binmagic.saas.velen.config.dto.MetaEventETLDTO
 import com.github.binmagic.saas.velen.config.etl.ProfileTableApi
 import com.github.binmagic.saas.velen.config.entity.MetaEvent
 import com.github.binmagic.saas.velen.config.entity.MetaEventProp
+import com.github.binmagic.saas.velen.config.event.CreateMetaEvent
 import com.github.binmagic.saas.velen.config.repository.MetaEventPropRepository
 import com.github.binmagic.saas.velen.config.repository.MetaEventRepository
 import com.github.binmagic.saas.velen.config.service.MetadataService
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationContext
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.ExampleMatcher
 import org.springframework.data.domain.PageRequest
@@ -34,7 +36,11 @@ class MetadataServiceImpl : MetadataService {
     @Autowired
     lateinit var metaEventRepository: MetaEventRepository
 
-    override suspend fun findMetaEventPropByPage(query: Page.Query, appId : String): Mono<Page.Result<MetaEventProp>> {
+
+    @Autowired
+    lateinit var applicationContext: ApplicationContext
+
+    override suspend fun findMetaEventPropByPage(query: Page.Query, appId: String): Mono<Page.Result<MetaEventProp>> {
         val orderList: MutableList<Sort.Order> = ArrayList(query.sorts.size)
 
         for ((key, value) in query.sorts) {
@@ -58,7 +64,6 @@ class MetadataServiceImpl : MetadataService {
     }
 
 
-
     override suspend fun createMetaEventProp(metaEventProp: MetaEventProp): Mono<MetaEventProp> {
 
         metaEventProp.createTime = LocalDateTime.now()
@@ -69,7 +74,7 @@ class MetadataServiceImpl : MetadataService {
         return metaEventPropRepository.insert(metaEventProp)
     }
 
-    override suspend fun findMetaEventByPage(query: Page.Query, appId : String): Mono<Page.Result<MetaEvent>> {
+    override suspend fun findMetaEventByPage(query: Page.Query, appId: String): Mono<Page.Result<MetaEvent>> {
 
         val orderList: MutableList<Sort.Order> = ArrayList(query.sorts.size)
 
@@ -97,18 +102,19 @@ class MetadataServiceImpl : MetadataService {
 
     override suspend fun createMetaEvent(metaEvent: MetaEvent): Mono<MetaEvent> {
 
-        val now =  LocalDateTime.now()
+        val now = LocalDateTime.now()
         metaEvent.createTime = now
         metaEvent.updateTime = now
 
         val metaEventETLDTO = MetaEventETLDTO()
 
-        val res = profileTableApi.create(metaEvent.appId, ProfileTableApi.Convert.toEventTableDTO(metaEventETLDTO), "CREATE")
+        val mono = metaEventRepository.insert(metaEvent)
 
+        mono.subscribe {
+            applicationContext.publishEvent(CreateMetaEvent(metaEvent.appId, metaEvent.createUser, metaEventETLDTO))
+        }
 
-
-
-        return metaEventRepository.insert(metaEvent)
+        return mono
     }
 
 

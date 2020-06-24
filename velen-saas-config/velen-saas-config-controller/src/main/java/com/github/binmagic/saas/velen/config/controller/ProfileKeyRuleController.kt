@@ -17,7 +17,8 @@ class ProfileKeyRuleController : BaseController() {
 
     @GetMapping
     suspend fun getProfileKeyRule(): List<KeyRule> {
-        return keyRuleService.getKeyRule("profile").collectList().awaitSingle()
+        val appId=currentAppId.awaitSingle()
+        return keyRuleService.getKeyRule(appId,"profile").collectList().awaitSingle()
     }
 
     @PostMapping
