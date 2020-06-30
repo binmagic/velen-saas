@@ -1,6 +1,5 @@
 package com.github.binmagic.saas.velen.config.event;
 
-import com.github.binmagic.saas.velen.config.dto.ParserRuleDTO;
 import com.github.binmagic.saas.velen.config.entity.ParserRule;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;

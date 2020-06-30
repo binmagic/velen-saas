@@ -1,6 +1,5 @@
 package com.github.binmagic.saas.velen.config.service.impl
 
-import com.github.binmagic.saas.velen.config.dto.ParserRuleDTO
 import com.github.binmagic.saas.velen.config.entity.ParserRule
 import com.github.binmagic.saas.velen.config.event.Deploy
 import com.github.binmagic.saas.velen.config.event.SetInputParse
@@ -23,8 +22,7 @@ class ParserRuleServiceImpl : ParserRuleService {
 
     override suspend fun getEventRule(appId: String, type: String): Flux<ParserRule> {
         val mono = parserRuleRepository.findByAppIdAndType(appId, type)
-        val parserRuleDTO = ParserRuleDTO()
-        val list =mono.collectList() as List<ParserRule>
+        val list =mono.collectList().awaitSingle()
         mono.subscribe {
             applicationContext.publishEvent(SetInputParse( appId, list, "admin"))
 

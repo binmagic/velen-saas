@@ -1,7 +1,5 @@
 package com.github.binmagic.saas.velen.config.listener;
 
-import com.github.binmagic.saas.velen.config.dto.KeyRuleDTO;
-import com.github.binmagic.saas.velen.config.dto.ParserRuleDTO;
 import com.github.binmagic.saas.velen.config.entity.KeyRule;
 import com.github.binmagic.saas.velen.config.entity.ParserRule;
 import com.github.binmagic.saas.velen.config.etl.ProjectApi;

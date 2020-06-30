@@ -1,5 +1,5 @@
 middleware:
-  host: localhost
+  host: 192.168.1.85
 ribbon:
   ConnectTimeout: 60000
   ReadTimeout: 60000

@@ -1,7 +1,5 @@
 package com.github.binmagic.saas.velen.config.etl;
 
-import com.github.binmagic.saas.velen.config.dto.KeyRuleDTO;
-import com.github.binmagic.saas.velen.config.dto.ParserRuleDTO;
 import com.github.binmagic.saas.velen.config.entity.KeyRule;
 import com.github.binmagic.saas.velen.config.entity.ParserRule;
 import com.velen.etl.verification.entity.VerifyEnum;

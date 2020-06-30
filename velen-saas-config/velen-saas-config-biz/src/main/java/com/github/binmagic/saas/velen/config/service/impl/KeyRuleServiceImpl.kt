@@ -22,7 +22,6 @@ class KeyRuleServiceImpl :KeyRuleService {
 
     override suspend fun getKeyRule(appId:String,type: String): Flux<KeyRule> {
         val mono=keyRuleRepository.findByType(type)
-        val keyRule=KeyRule()
         val list = mono.collectList().awaitSingle()
         mono.subscribe {
             applicationContext.publishEvent(SetFieldRule(appId,list,"admin"))

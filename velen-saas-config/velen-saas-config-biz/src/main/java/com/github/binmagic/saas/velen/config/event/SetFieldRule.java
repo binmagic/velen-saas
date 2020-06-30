@@ -1,6 +1,5 @@
 package com.github.binmagic.saas.velen.config.event;
 
-import com.github.binmagic.saas.velen.config.dto.KeyRuleDTO;
 import com.github.binmagic.saas.velen.config.entity.KeyRule;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
