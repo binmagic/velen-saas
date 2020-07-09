@@ -1,18 +1,21 @@
-package com.github.binmagic.saas.velen.config.event;
+package com.github.binmagic.saas.velen.authority.event;
 
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
 @Getter
-public class Deploy extends ApplicationEvent {
+public class DeployApp extends ApplicationEvent {
 
     private String appId;
 
+    private String type;
+
     private String operator;
 
-    public Deploy( String appId, String operator) {
+    public DeployApp(String appId, String type, String operator) {
         super(appId);
         this.appId = appId;
+        this.type = type;
         this.operator = operator;
     }
 

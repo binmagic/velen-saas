@@ -2,7 +2,7 @@ package com.github.binmagic.saas.velen.authority.listener;
 
 import com.github.binmagic.saas.velen.authority.etl.ProjectApi;
 import com.github.binmagic.saas.velen.authority.event.CreateApp;
-import com.github.binmagic.saas.velen.authority.event.Deploy;
+import com.github.binmagic.saas.velen.authority.event.DeployApp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -21,21 +21,20 @@ public class Listener {
         @Override
         public void onApplicationEvent(CreateApp createApp) {
 
-            ResponseEntity res = projectApi.create(createApp.getAppId(), createApp.getEnforced(), createApp.getOperator());
+            ResponseEntity res = projectApi.create(createApp.getAppId(), createApp.getTopic() ,createApp.getEnforced(), createApp.getOperator());
 
-            log.info(res.toString());
         }
     }
 
     @Component
-    public static class DeployListener implements ApplicationListener<Deploy> {
+    public static class DeployListener implements ApplicationListener<DeployApp> {
 
         @Autowired
         ProjectApi projectApi;
 
         @Override
-        public void onApplicationEvent(Deploy deploy) {
-            projectApi.deploy(deploy.getAppId(), deploy.getOperator());
+        public void onApplicationEvent(DeployApp deployApp) {
+            //projectApi.deployApp(deployApp.getAppId(), deployApp.getType(), deployApp.getOperator());
         }
     }
 

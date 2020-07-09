@@ -6,7 +6,7 @@ import com.github.binmagic.saas.velen.authority.dto.AppMemberInfoDTO;
 import com.github.binmagic.saas.velen.authority.entity.App;
 import com.github.binmagic.saas.velen.authority.entity.AppMember;
 import com.github.binmagic.saas.velen.authority.event.CreateApp;
-import com.github.binmagic.saas.velen.authority.event.Deploy;
+import com.github.binmagic.saas.velen.authority.event.DeployApp;
 import com.github.binmagic.saas.velen.authority.repository.AppMemberRepository;
 import com.github.binmagic.saas.velen.authority.repository.AppRepository;
 import com.github.binmagic.saas.velen.authority.service.AppService;
@@ -54,9 +54,13 @@ public class AppServiceImpl implements AppService
 		Mono<App> mono=appRepository.insert(app).flatMap(_app -> appMemberRepository
 				.insert(new AppMember(_app.getId(), app.getOwner(), Constant.ROLE_MANAGER))
 				.thenReturn(_app));
+
 		mono.subscribe(app1->{
-			applicationContext.publishEvent(new CreateApp(app.getId(),false,"admin"));
-			applicationContext.publishEvent(new Deploy(app.getId(),"admin"));
+
+			applicationContext.publishEvent(new CreateApp(app.getId(), "topic",false,"admin"));
+
+			applicationContext.publishEvent(new DeployApp(app.getId(),"type" ,"admin"));
+
 		});
 
 

@@ -1,7 +1,7 @@
 package com.github.binmagic.saas.velen.config.service.impl
 
 import com.github.binmagic.saas.velen.config.entity.ParserRule
-import com.github.binmagic.saas.velen.config.event.Deploy
+import com.github.binmagic.saas.velen.config.event.DeployApp
 import com.github.binmagic.saas.velen.config.event.SetInputParse
 import com.github.binmagic.saas.velen.config.repository.ParserRuleRepository
 import com.github.binmagic.saas.velen.config.service.ParserRuleService
@@ -26,7 +26,7 @@ class ParserRuleServiceImpl : ParserRuleService {
         mono.subscribe {
             applicationContext.publishEvent(SetInputParse( appId, list, "admin"))
 
-            applicationContext.publishEvent(Deploy(appId,"admin"))
+            applicationContext.publishEvent(DeployApp(appId, "type","admin"))
         }
         return mono
     }

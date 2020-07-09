@@ -19,6 +19,8 @@ public class MetaEventETLDTO
 
 	private String remark;
 
+	private String appId;
+
 	private List<MetaEventETLPropDTO> props = new ArrayList<>();
 
 	@Data
@@ -30,6 +32,8 @@ public class MetaEventETLDTO
 		private String name;
 
 		private String type;
+
+		private Integer index;
 
 		private String comment;
 	}

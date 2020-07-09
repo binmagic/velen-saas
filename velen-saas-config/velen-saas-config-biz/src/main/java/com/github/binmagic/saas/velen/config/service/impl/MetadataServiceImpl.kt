@@ -11,6 +11,7 @@ import com.github.binmagic.saas.velen.config.repository.MetaEventPropRepository
 import com.github.binmagic.saas.velen.config.repository.MetaEventRepository
 import com.github.binmagic.saas.velen.config.service.MetadataService
 import kotlinx.coroutines.reactive.awaitSingle
+import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.data.domain.Example
@@ -26,9 +27,6 @@ import java.util.ArrayList
 
 @Service
 class MetadataServiceImpl : MetadataService {
-
-    @Autowired
-    lateinit var profileTableApi: ProfileTableApi;
 
     @Autowired
     lateinit var metaEventPropRepository: MetaEventPropRepository
@@ -107,6 +105,18 @@ class MetadataServiceImpl : MetadataService {
         metaEvent.updateTime = now
 
         val metaEventETLDTO = MetaEventETLDTO()
+
+        BeanUtils.copyProperties(metaEvent, metaEventETLDTO)
+
+        for (propId in metaEvent.propIds) {
+            val prop = metaEventPropRepository.findById(propId).awaitSingle()
+            val list = metaEventPropRepository.findAll().collectList().awaitSingle()
+            val index = list.indexOf(prop)
+            val metaEventETLPropDTO = MetaEventETLDTO.MetaEventETLPropDTO()
+            BeanUtils.copyProperties(prop, metaEventETLPropDTO)
+            metaEventETLPropDTO.index = index
+            metaEventETLDTO.props.add(metaEventETLPropDTO)
+        }
 
         val mono = metaEventRepository.insert(metaEvent)
 

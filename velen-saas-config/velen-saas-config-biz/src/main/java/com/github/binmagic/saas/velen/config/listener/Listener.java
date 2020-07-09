@@ -3,7 +3,7 @@ package com.github.binmagic.saas.velen.config.listener;
 import com.github.binmagic.saas.velen.config.entity.KeyRule;
 import com.github.binmagic.saas.velen.config.entity.ParserRule;
 import com.github.binmagic.saas.velen.config.etl.ProjectApi;
-import com.github.binmagic.saas.velen.config.event.Deploy;
+import com.github.binmagic.saas.velen.config.event.DeployApp;
 import com.github.binmagic.saas.velen.config.event.SetFieldRule;
 import com.github.binmagic.saas.velen.config.event.SetInputParse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +16,14 @@ import java.util.List;
 public class Listener {
 
     @Component
-    public static class DeployListener implements ApplicationListener<Deploy> {
+    public static class DeployListener implements ApplicationListener<DeployApp> {
 
         @Autowired
         ProjectApi projectApi;
 
         @Override
-        public void onApplicationEvent(Deploy deploy) {
-            projectApi.deploy(deploy.getAppId(), deploy.getOperator());
+        public void onApplicationEvent(DeployApp deployApp) {
+            //projectApi.deployApp(deployApp.getAppId(), deployApp.getType(), deployApp.getOperator());
         }
     }
 

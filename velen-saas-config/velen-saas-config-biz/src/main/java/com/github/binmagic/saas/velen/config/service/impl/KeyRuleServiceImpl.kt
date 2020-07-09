@@ -1,7 +1,7 @@
 package com.github.binmagic.saas.velen.config.service.impl
 
 import com.github.binmagic.saas.velen.config.entity.KeyRule
-import com.github.binmagic.saas.velen.config.event.Deploy
+import com.github.binmagic.saas.velen.config.event.DeployApp
 import com.github.binmagic.saas.velen.config.event.SetFieldRule
 import com.github.binmagic.saas.velen.config.repository.KeyRuleRepository
 import com.github.binmagic.saas.velen.config.service.KeyRuleService
@@ -26,7 +26,7 @@ class KeyRuleServiceImpl :KeyRuleService {
         mono.subscribe {
             applicationContext.publishEvent(SetFieldRule(appId,list,"admin"))
 
-            applicationContext.publishEvent(Deploy(appId,"admin"))
+            applicationContext.publishEvent(DeployApp(appId,"type","admin"))
         }
         return mono
 
