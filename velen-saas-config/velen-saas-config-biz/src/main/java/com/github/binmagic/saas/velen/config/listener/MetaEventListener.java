@@ -15,9 +15,6 @@ public class MetaEventListener implements ApplicationListener<CreateMetaEvent> {
 
 
     @Autowired
-    ProfileTableApi profileTableApi;
-
-    @Autowired
     TableMetadataApi tableMetadataApi;
 
     @Override
@@ -25,7 +22,7 @@ public class MetaEventListener implements ApplicationListener<CreateMetaEvent> {
 
         MetaEventETLDTO metaEventETLDTO = createMetaEvent.getMetaEventETLDTO();
 
-        tableMetadataApi.createMeta(createMetaEvent.getAppId(),createMetaEvent.getUserName(),
+        tableMetadataApi.createTable(createMetaEvent.getAppId(),createMetaEvent.getUserName(),
                 TableMetadataApi.Convert.toEventMetadataTDO(metaEventETLDTO));
 
         //profileTableApi.create(createMetaEvent.getAppId(), ProfileTableApi.Convert.toEventTableDTO(metaEventETLDTO), "CREATE");

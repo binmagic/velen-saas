@@ -23,7 +23,9 @@ public class Listener {
 
         @Override
         public void onApplicationEvent(DeployApp deployApp) {
+
             //projectApi.deployApp(deployApp.getAppId(), deployApp.getType(), deployApp.getOperator());
+
         }
     }
 
@@ -35,8 +37,11 @@ public class Listener {
 
         @Override
         public void onApplicationEvent(SetInputParse setInputParse) {
+
             List<ParserRule> parserRulesDTO = setInputParse.getParserRulesDTO();
+
             projectApi.setInputParse(setInputParse.getAppId(), ProjectApi.Convert.toParseFormatTDO(parserRulesDTO), setInputParse.getOperator());
+
         }
     }
 
@@ -48,8 +53,11 @@ public class Listener {
 
         @Override
         public void onApplicationEvent(SetFieldRule setFieldRule) {
+
             List<KeyRule> fieldRulesTDO=setFieldRule.getFieldRulesTDO();
+
             projectApi.setFieldRule(setFieldRule.getAppId(),ProjectApi.Convert.toFieldRuleTDO(fieldRulesTDO),setFieldRule.getOperator());
+
         }
     }
 
