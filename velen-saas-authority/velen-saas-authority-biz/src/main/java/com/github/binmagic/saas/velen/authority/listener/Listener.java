@@ -13,18 +13,19 @@ import org.springframework.stereotype.Component;
 
 
 public class Listener {
-    @Component
+   /* @Component
     @Slf4j
     public static class CreateAppListener implements ApplicationListener<CreateApp> {
 
         @Autowired
         ProjectApi projectApi;
 
+        @Autowired
+        TableMetadataApi tableMetadataApi;
+
         @Override
         public void onApplicationEvent(CreateApp createApp) {
-
             ResponseEntity res = projectApi.create(createApp.getAppId(), createApp.getTopic(), createApp.getEnforced(), createApp.getOperator());
-
         }
     }
 
@@ -48,9 +49,13 @@ public class Listener {
 
         @Override
         public void onApplicationEvent(CreateDashboard createDashboard) {
-            tableMetadataApi.createApp(createDashboard.getAppId(), createDashboard.getOperator());
+           ResponseEntity responseEntity = tableMetadataApi.createApp(createDashboard.getAppId(), createDashboard.getOperator());
+
+            System.out.println(responseEntity);
+
+
         }
     }
-
+*/
 
 }

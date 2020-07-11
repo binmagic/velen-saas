@@ -91,6 +91,7 @@ export default {
   },
   data() {
     return {
+      chartName: '测试',
       query: {
         id: '',
         dateRange: []

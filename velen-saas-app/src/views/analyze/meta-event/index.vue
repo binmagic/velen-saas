@@ -53,6 +53,9 @@
           <el-col :span="8" />
         </el-row>
         <custom-table :columns="columns" :value="data" />
+        <custom-charts
+          :chartName="chartName"
+        ></custom-charts>
       </el-main>
     </el-container>
   </div>
@@ -71,6 +74,7 @@
 
 import CustomTable from '_c/custom-table'
 import CustomHeader from '_c/custom-header'
+import CustomCharts from '_c/custom-charts'
 import { reportMetaEvent } from '@/api/query'
 
 import { getMetaEvent, getMetaEventProp } from '@/api/metadata'
@@ -79,7 +83,8 @@ import { create } from '@/api/bookmarks'
 export default {
   components: {
     CustomTable,
-    CustomHeader
+    CustomHeader,
+    CustomCharts
   },
   data() {
     return {
@@ -104,7 +109,8 @@ export default {
         name: '',
         config: '',
         type: '/meta_event_analytics/'
-      }
+      },
+      chartName:'测试'
     }
   },
   created() {

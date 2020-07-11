@@ -1,14 +1,10 @@
 package com.github.binmagic.saas.velen.authority.controller
 
-import com.github.binmagic.saas.velen.authority.dto.AppMemberInfoDTO
 import com.github.binmagic.saas.velen.authority.service.AppService
-import com.github.binmagic.saas.velen.authority.service.RoleService
-import com.github.binmagic.saas.velen.authority.service.UserService
 import com.github.binmagic.saas.velen.authority.service.VerifyService
 import com.github.binmagic.saas.velen.common.component.controller.BaseController
 import com.github.binmagic.saas.velen.common.config.SecretConfig
 import com.github.binmagic.saas.velen.common.entity.Error
-import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -17,7 +13,6 @@ import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/permission/verify")

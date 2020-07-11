@@ -235,6 +235,11 @@ export default {
         this.$message.success('success')
         this.$emit('on-create-event')
       }).catch(reason => {
+        this.$notify({
+          message: reason,
+          type: 'error',
+          duration: 2000
+        })
         this.componentFlag.createLoading = false
       })
     },

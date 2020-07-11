@@ -4,20 +4,14 @@ import com.github.binmagic.saas.velen.authority.dto.*
 import com.github.binmagic.saas.velen.authority.entity.App
 import com.github.binmagic.saas.velen.authority.service.AppService
 import com.github.binmagic.saas.velen.common.component.controller.BaseController
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
-import kotlinx.coroutines.reactor.asFlux
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.adapter.rxjava.toFlowable
-import reactor.util.function.Tuple3
 
 @RestController
 @RequestMapping("/accounts/app")
@@ -78,6 +72,11 @@ class AppController : BaseController(){
         val appInfoDTO = AppInfoDTO()
         BeanUtils.copyProperties(app, appInfoDTO)
         return appInfoDTO
+    }
+
+    @DeleteMapping("/{id}")
+    suspend fun deleteApp(@PathVariable id:String){
+        appService.deleteApp(id).awaitFirstOrNull()
     }
 
     @PostMapping("/member")

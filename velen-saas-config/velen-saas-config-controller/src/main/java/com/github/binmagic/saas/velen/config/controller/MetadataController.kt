@@ -20,7 +20,7 @@ class MetadataController : BaseController() {
     lateinit var metadataService: MetadataService
 
     @GetMapping("event")
-    suspend fun findPageMetaEvent(query : Page.Query) : Page.Result<MetaEventDTO>{
+    suspend fun findPageMetaEvent(query: Page.Query): Page.Result<MetaEventDTO> {
 
         val appId = currentAppId.awaitSingle()
 
@@ -29,7 +29,7 @@ class MetadataController : BaseController() {
         val result = Page.Result<MetaEventDTO>()
         result.total = pageResult.total
 
-        for(entry in pageResult.items){
+        for (entry in pageResult.items) {
             val metaEventDTO = MetaEventDTO()
             BeanUtils.copyProperties(entry, metaEventDTO)
             result.items.add(metaEventDTO)
@@ -40,7 +40,7 @@ class MetadataController : BaseController() {
 
 
     @PostMapping("event")
-    suspend fun createMetaEvent(@Validated @RequestBody metaEventSaveDTO : MetaEventSaveDTO){
+    suspend fun createMetaEvent(@Validated @RequestBody metaEventSaveDTO: MetaEventSaveDTO) {
 
         val metaEvent = MetaEvent()
         metaEvent.appId = currentAppId.awaitSingle()
@@ -53,7 +53,7 @@ class MetadataController : BaseController() {
 
 
     @GetMapping("/event/prop")
-    suspend fun findPageMetaEventProp(query : Page.Query) : Page.Result<MetaEventPropDTO>{
+    suspend fun findPageMetaEventProp(query: Page.Query): Page.Result<MetaEventPropDTO> {
 
         val appId = currentAppId.awaitSingle()
 
@@ -62,7 +62,7 @@ class MetadataController : BaseController() {
         val result = Page.Result<MetaEventPropDTO>()
         result.total = pageResult.total
 
-        for(entry in pageResult.items){
+        for (entry in pageResult.items) {
 
             val metaEventPropDTO = MetaEventPropDTO()
             BeanUtils.copyProperties(entry, metaEventPropDTO)
@@ -73,7 +73,7 @@ class MetadataController : BaseController() {
     }
 
     @PostMapping("/event/prop")
-    suspend fun createMetaEventProp(@Validated @RequestBody metaEventPropSaveDTO : MetaEventPropSaveDTO) {
+    suspend fun createMetaEventProp(@Validated @RequestBody metaEventPropSaveDTO: MetaEventPropSaveDTO) {
 
         val metaEventProp = MetaEventProp()
 
@@ -83,6 +83,20 @@ class MetadataController : BaseController() {
         metaEventProp.createUser = currentUserId.awaitSingle()
 
         metadataService.createMetaEventProp(metaEventProp).awaitSingle()
+    }
+
+    @PutMapping("event")
+    suspend fun updateMetaEvent(@Validated @RequestBody metaEventDTO: MetaEventDTO) {
+        val metaEvent = MetaEvent()
+        metaEvent.appId = currentAppId.awaitSingle()
+        metaEvent.createUser = currentUserId.awaitSingle()
+        BeanUtils.copyProperties(metaEventDTO, metaEvent)
+        metadataService.updateMetaEvent(metaEvent)
+    }
+
+    @DeleteMapping("event/{id}")
+    suspend fun deleteMetaEvent(@PathVariable id: String) {
+        metadataService.deleteMetaEvent(id)
     }
 
 }

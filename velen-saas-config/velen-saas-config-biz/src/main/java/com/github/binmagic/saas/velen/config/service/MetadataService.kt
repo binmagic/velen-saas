@@ -14,4 +14,8 @@ interface MetadataService {
     suspend fun findMetaEventByPage(query: Page.Query, appId : String): Mono<Page.Result<MetaEvent>>
 
     suspend fun createMetaEvent(metaEvent: MetaEvent): Mono<MetaEvent>
+
+    suspend fun updateMetaEvent(metaEvent: MetaEvent): Mono<MetaEvent>
+
+    suspend fun deleteMetaEvent(id:String) : Mono<Void>
 }

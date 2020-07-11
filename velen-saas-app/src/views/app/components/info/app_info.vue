@@ -7,14 +7,14 @@
       <el-form-item :label="$t('app.label.desc')">
         <el-input v-model="temp.desc" />
       </el-form-item>
-      <el-form-item :label="$t('app.label.appId')">
-        <el-input v-model="temp.id" />
+      <el-form-item  :label="$t('app.label.appId')">
+        <el-input :disabled="true" v-model="temp.id" />
       </el-form-item>
-      <el-form-item :label="$t('app.label.appKey')">
-        <el-input v-model="temp.appKey" />
+      <el-form-item  :label="$t('app.label.appKey')">
+        <el-input :disabled="true" v-model="temp.appKey" />
       </el-form-item>
-      <el-form-item :label="$t('app.label.owner')">
-        <el-input v-model="temp.owner" />
+      <el-form-item  :label="$t('app.label.owner')">
+        <el-input :disabled="true" v-model="temp.owner" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">

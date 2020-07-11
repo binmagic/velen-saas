@@ -3,9 +3,9 @@ package com.github.binmagic.saas.velen.config.service.impl
 import cn.hutool.core.bean.BeanUtil
 import com.github.binmagic.saas.velen.common.entity.Page
 import com.github.binmagic.saas.velen.config.dto.MetaEventETLDTO
-import com.github.binmagic.saas.velen.config.etl.ProfileTableApi
 import com.github.binmagic.saas.velen.config.entity.MetaEvent
 import com.github.binmagic.saas.velen.config.entity.MetaEventProp
+import com.github.binmagic.saas.velen.config.etl.TableMetadataApi
 import com.github.binmagic.saas.velen.config.event.CreateMetaEvent
 import com.github.binmagic.saas.velen.config.repository.MetaEventPropRepository
 import com.github.binmagic.saas.velen.config.repository.MetaEventRepository
@@ -18,12 +18,12 @@ import org.springframework.data.domain.Example
 import org.springframework.data.domain.ExampleMatcher
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.http.ResponseEntity
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import java.time.LocalDateTime
-import java.util.ArrayList
+import java.util.*
 
 @Service
 class MetadataServiceImpl : MetadataService {
@@ -34,6 +34,8 @@ class MetadataServiceImpl : MetadataService {
     @Autowired
     lateinit var metaEventRepository: MetaEventRepository
 
+    @Autowired
+    lateinit var tableMetadataApi: TableMetadataApi
 
     @Autowired
     lateinit var applicationContext: ApplicationContext
@@ -118,13 +120,22 @@ class MetadataServiceImpl : MetadataService {
             metaEventETLDTO.props.add(metaEventETLPropDTO)
         }
 
-        val mono = metaEventRepository.insert(metaEvent)
-
-        mono.subscribe {
-            applicationContext.publishEvent(CreateMetaEvent(metaEvent.appId, metaEvent.createUser, metaEventETLDTO))
+        val responseEntity = tableMetadataApi.createTable(metaEvent.appId, metaEvent.createUser, TableMetadataApi.Convert.toEventMetadataTDO(metaEventETLDTO))
+        if (responseEntity.statusCode != HttpStatus.OK) {
+            return Mono.error(RuntimeException())
         }
 
-        return mono
+        return metaEventRepository.insert(metaEvent)
+    }
+
+    override suspend fun updateMetaEvent(metaEvent: MetaEvent): Mono<MetaEvent> {
+
+        return metaEventRepository.save(metaEvent)
+    }
+
+    override suspend fun deleteMetaEvent(id: String): Mono<Void> {
+
+        return metaEventRepository.deleteById(id)
     }
 
 

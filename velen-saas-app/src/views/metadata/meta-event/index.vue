@@ -180,7 +180,8 @@ export default {
       }
     },
     handleCreatedEvent(){
-
+      this.componentFlag.enableDrawer = false
+      this.fetchData()
     }
   }
 }

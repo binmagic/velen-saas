@@ -39,7 +39,7 @@
           <el-button type="primary" size="mini" @click="goDetail(row)">
             {{ $t('app.button.setting') }}
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row)">
+          <el-button v-if="row.status!='deleted'" :loading="loading" size="mini" type="danger" @click="handleDelete(row)">
             {{ $t('app.button.del') }}
           </el-button>
         </template>
@@ -89,7 +89,8 @@ export default {
         type: [{ required: true, message: 'type is required', trigger: 'change' }],
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         title: [{ required: true, message: 'title is required', trigger: 'blur' }]
-      }
+      },
+      loading: false
     }
   },
   created() {
@@ -136,13 +137,22 @@ export default {
       })
     },
     handleDelete(row) {
+      this.loading = true
       delApp(row.id).then(response => {
         this.$notify({
           message: '删除成功',
           type: 'success',
           duration: 2000
         })
+        this.loading = false
         this.fetchData()
+      }).catch(err => {
+        this.$notify({
+          message: err,
+          type: 'error',
+          duration: 2000
+        })
+        this.loading = false
       })
     },
     createData() {
@@ -157,6 +167,12 @@ export default {
               duration: 2000
             })
             this.fetchData()
+          }).catch(err => {
+            this.$notify({
+              message: err,
+              type: 'error',
+              duration: 2000
+            })
           })
         }
       })
