@@ -26,7 +26,6 @@ public interface TableMetadataApi extends com.velen.etl.generator.api.TableMetad
                 propertyMetadataTDO.setName(metaEventETLPropDTO.getName());
                 propertyMetadataTDO.setType(metaEventETLPropDTO.getType());
                 propertyMetadataTDO.setIndex(metaEventETLPropDTO.getIndex());
-                propertyMetadataTDO.setRequire(false);
                 propertyMetadataTDOS.add(propertyMetadataTDO);
                 tableMetadataTDO.setProperties(propertyMetadataTDOS);
             }

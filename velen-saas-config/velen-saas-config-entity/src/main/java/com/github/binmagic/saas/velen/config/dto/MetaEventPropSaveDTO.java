@@ -20,7 +20,9 @@ public class MetaEventPropSaveDTO
 
 	private String type;
 
-	private boolean isPublic;
+	private Boolean isPublic;
+
+	private Boolean isVisible;
 
 	private List<String> platform = new ArrayList<>();
 

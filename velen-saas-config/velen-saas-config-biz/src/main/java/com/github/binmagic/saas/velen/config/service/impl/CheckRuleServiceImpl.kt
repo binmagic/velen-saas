@@ -13,8 +13,8 @@ class CheckRuleServiceImpl :CheckRuleService {
     @Autowired
     lateinit var checkRuleRepository:CheckRuleRepository
 
-    override suspend fun getCheckRule(type: String): Flux<CheckRule> {
-        return checkRuleRepository.findByType(type)
+    override suspend fun getCheckRule(appId:String,type: String): Flux<CheckRule> {
+        return checkRuleRepository.findByAppIdAndType(appId,type)
     }
 
     override suspend fun updateCheckRule(checkRule: CheckRule): Mono<CheckRule> {

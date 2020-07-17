@@ -18,11 +18,16 @@ class ProfileKeyRuleController : BaseController() {
     @GetMapping
     suspend fun getProfileKeyRule(): List<KeyRule> {
         val appId=currentAppId.awaitSingle()
-        return keyRuleService.getKeyRule(appId,"profile").collectList().awaitSingle()
+        val user = currentUserAccount.awaitSingle()
+        return keyRuleService.getKeyRule(appId,user,"profile").collectList().awaitSingle()
     }
 
     @PostMapping
     suspend fun insertProfileKeyRule(@Validated @RequestBody keyRule: KeyRule): KeyRule {
+        val appId = currentAppId.awaitSingle()
+        val user = currentUserAccount.awaitSingle()
+        keyRule.appId = appId
+        keyRule.createUser = user
         return keyRuleService.insertKeyRule(keyRule).awaitSingle()
     }
 

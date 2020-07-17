@@ -30,6 +30,8 @@ public class MetaEventDTO
 
 	private String remark;
 
+	private Boolean isVisible;
+
 	private LocalDateTime createTime;
 
 	private LocalDateTime updateTime;

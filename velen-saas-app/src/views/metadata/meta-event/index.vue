@@ -19,17 +19,10 @@
           <el-input />
         </el-form-item>
         <el-form-item label="显示状态">
-          <el-select value="11">
-            <el-option label="全部" value="shanghai" />
-            <el-option label="显示" value="beijing" />
-            <el-option label="隐藏" value="beijing" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="数据类型">
-          <el-select value="22">
-            <el-option label="全部" value="shanghai" />
-            <el-option label="NUMBER" value="beijing" />
-            <el-option label="STRING" value="beijing" />
+          <el-select @change="fetchData" v-model="visible">
+            <el-option label="全部" value=""/>
+            <el-option label="显示" :value="true"/>
+            <el-option label="隐藏" :value="false"/>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -46,6 +39,7 @@
     </div>
 
     <event-create :enable.sync="componentFlag.enableDrawer" @on-create-event="handleCreatedEvent" />
+    <event-update :event="event" :enable.sync="componentFlag.updateDrawer" @on-update-event="handleUpdateEvent" />
 
     <el-table
       v-loading="listLoading"
@@ -112,7 +106,7 @@
       </el-table-column>
       <el-table-column fixed="right" label="#" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <i class="el-icon-edit" />
+          <i class="el-icon-edit" @click="showEventCreate(row)"/>
           <i class="el-icon-more" />
         </template>
       </el-table-column>
@@ -131,17 +125,19 @@
 
 </template>
 <script>
-import { getMetaEvent } from '@/api/metadata'
+import { getMetaEvent,all } from '@/api/metadata'
 import CustomHeader from '_c/custom-header'
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves'
 import EventCreate from './create'
+import EventUpdate from './update'
 
 export default {
   components: {
     CustomHeader,
     Pagination,
-    EventCreate
+    EventCreate,
+    EventUpdate
   },
   directives: {
     waves
@@ -151,12 +147,24 @@ export default {
       total: 0,
       list: [],
       listLoading: false,
+      visible:'',
       query: {
         page: 1,
         limit: 10
       },
       componentFlag: {
-        enableDrawer: false
+        enableDrawer: false,
+        updateDrawer:false,
+      },
+      event:{
+        platform: [],
+        timing: '',
+        example: '',
+        type: '',
+        name: '',
+        showName: '',
+        tag: [],
+        propIds: []
       }
     }
   },
@@ -171,6 +179,10 @@ export default {
         this.list = resp.items
         this.listLoading = false
       })
+
+      all().then(resp =>{
+
+      })
     },
     handleClickPlus(command) {
       switch (command) {
@@ -182,6 +194,14 @@ export default {
     handleCreatedEvent(){
       this.componentFlag.enableDrawer = false
       this.fetchData()
+    },
+    handleUpdateEvent(){
+      this.componentFlag.updateDrawer = false
+      this.fetchData()
+    },
+    showEventCreate(row){
+      this.componentFlag.enableDrawer = true
+      this.event = row
     }
   }
 }

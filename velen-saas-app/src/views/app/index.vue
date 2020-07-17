@@ -90,6 +90,7 @@ export default {
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
+      createLoading: false,
       loading: false
     }
   },
@@ -158,8 +159,10 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          this.createLoading = true
           console.log(this.temp)
           addApp(this.temp).then(() => {
+            this.createLoading = false
             this.dialogFormVisible = false
             this.$notify({
               message: '创建成功',

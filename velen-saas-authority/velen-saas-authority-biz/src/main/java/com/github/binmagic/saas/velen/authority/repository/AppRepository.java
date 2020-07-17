@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface AppRepository extends BaseRepository<App>
 {
-	Flux<App> findByIdIn(List<String> ids);
+	Flux<App> findByIdInAndState(List<String> ids,Integer state);
 
 	Mono<App> findByName(String name);
 }

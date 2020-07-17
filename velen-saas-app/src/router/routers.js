@@ -97,7 +97,7 @@ export const routerApp = [
         path: '/bookmarks',
         name: 'menu-bookmarks',
         component: () => import('@/views/bookmarks/index'),
-        meta: {title: '元数据分析', icon: 'form', hideHeader: false, hideAside: true}
+        meta: {title: '书签', icon: 'form', hideHeader: false, hideAside: true}
       }
     ]
   },
@@ -124,7 +124,7 @@ export const routerApp = [
         meta: {title: '事件属性', icon: 'form', hideHeader: false, hideAside: false}
       },
       {
-        path: '/meta-event',
+        path: '/meta-event  ',
         name: 'menu-metadata-event',
         component: () => import('@/views/metadata/meta-event/index'),
         meta: {title: '元事件', icon: 'form', hideHeader: false, hideAside: false}
@@ -134,12 +134,12 @@ export const routerApp = [
   {
     path: '/more',
     component: Main,
-    meta: {title: '更多', icon: 'form'},
     children: [
       {
-        path: '/dashboard',
-        name: '产品设置',
-        redirect: '/app'
+        path: '/more-setting',
+        name: 'menu-more-setting',
+        component: () => import('@/views/more/basic-setting/index'),
+        meta: {title: '基本设置', icon: 'form', hideHeader: false, hideAside: false}
       }
     ]
   }]

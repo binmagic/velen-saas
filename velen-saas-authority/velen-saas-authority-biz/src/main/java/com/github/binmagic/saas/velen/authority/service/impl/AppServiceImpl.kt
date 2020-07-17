@@ -10,7 +10,9 @@ import com.github.binmagic.saas.velen.authority.etl.TableMetadataApi
 import com.github.binmagic.saas.velen.authority.repository.AppMemberRepository
 import com.github.binmagic.saas.velen.authority.repository.AppRepository
 import com.github.binmagic.saas.velen.authority.service.AppService
+import com.github.binmagic.saas.velen.common.config.EnumUtil
 import com.github.binmagic.saas.velen.common.constant.Constant
+import com.velen.etl.ResultCode
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.BeanUtils
@@ -43,7 +45,7 @@ class AppServiceImpl : AppService {
         for (item in list) {
             apps.add(item.appId)
         }
-        return appRepository.findByIdIn(apps)
+        return appRepository.findByIdInAndState(apps,1)
     }
 
     override suspend fun createApp(app: App): Mono<App> {
@@ -59,13 +61,13 @@ class AppServiceImpl : AppService {
         }
 
         val resp1 = tableMetadataApi.createApp(app.id, app.owner)
-        if (resp1.statusCode != HttpStatus.OK) {
-            return Mono.error(RuntimeException())
+        if (EnumUtil.isInResultCode(resp1.statusCodeValue)) {
+            return Mono.error(RuntimeException(ResultCode.valueOf(resp1.statusCodeValue).message()))
         }
-        /*val resp2 = projectApi.create(app.id, "topic", false, app.owner)
-        if (resp2.statusCode != HttpStatus.OK) {
-            return Mono.error(RuntimeException())
-        }*/
+        val resp2 = projectApi.create(app.id, false, app.owner)
+        if (EnumUtil.isInResultCode(resp2.statusCodeValue)){
+            return Mono.error(RuntimeException(ResultCode.valueOf(resp2.statusCodeValue).message()))
+        }
         appMemberRepository.insert(AppMember(app.id, app.owner, Constant.ROLE_MANAGER)).awaitSingle()
         appRepository.insert(app).awaitSingle()
 
@@ -125,10 +127,20 @@ class AppServiceImpl : AppService {
 
     override suspend fun deleteApp(appId: String): Mono<Void> {
         val app = getApp(appId).awaitSingle()
+        app.state = 0
         val resp = tableMetadataApi.dropApp(appId, app.owner)
-        if (resp.statusCode != HttpStatus.OK) {
-            return Mono.error(RuntimeException())
+        if (resp.statusCodeValue == ResultCode.GENERATOR_DATABASE_NOT_EXISTS.code()){
+            return appRepository.save(app).then()
         }
-        return appRepository.deleteById(appId)
+        if (EnumUtil.isInResultCode(resp.statusCodeValue)) {
+            return Mono.error(RuntimeException(ResultCode.valueOf(resp.statusCodeValue).message()))
+        }
+
+        val resp2 = projectApi.destroy(appId)
+        if (EnumUtil.isInResultCode(resp2.statusCodeValue)){
+            return Mono.error(RuntimeException(ResultCode.valueOf(resp2.statusCodeValue).message()))
+        }
+
+        return appRepository.save(app).then()
     }
 }

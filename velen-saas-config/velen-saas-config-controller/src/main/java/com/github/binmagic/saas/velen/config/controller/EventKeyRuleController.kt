@@ -17,12 +17,17 @@ class EventKeyRuleController : BaseController() {
 
     @GetMapping
     suspend fun getEventKeyRule(): List<KeyRule> {
-        val appId=currentAppId.awaitSingle()
-        return keyRuleService.getKeyRule(appId,"event").collectList().awaitSingle()
+        val appId = currentAppId.awaitSingle()
+        val user = currentUserAccount.awaitSingle()
+        return keyRuleService.getKeyRule(appId, user, "event").collectList().awaitSingle()
     }
 
     @PostMapping
     suspend fun insertKeyRule(@Validated @RequestBody keyRule: KeyRule): KeyRule {
+        val appId = currentAppId.awaitSingle()
+        val user = currentUserAccount.awaitSingle()
+        keyRule.appId = appId
+        keyRule.createUser = user
         return keyRuleService.insertKeyRule(keyRule).awaitSingle()
     }
 

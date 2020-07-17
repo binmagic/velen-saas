@@ -54,7 +54,7 @@ npm run lint
 npm run lint -- --fix
 ```
 
-Refer to [Documentation](https://panjiachen.github.io/vue-element-admin-site/guide/essentials/deploy.html) for more information
+Refer to [Documentation](https://panjiachen.github.io/vue-element-admin-site/guide/essentials/deployApp.html) for more information
 
 ## Demo
 

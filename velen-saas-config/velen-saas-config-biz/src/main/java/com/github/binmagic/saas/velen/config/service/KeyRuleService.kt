@@ -5,7 +5,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface KeyRuleService {
-    suspend fun getKeyRule(appId:String,type: String): Flux<KeyRule>
+    suspend fun getKeyRule(appId:String,user:String,type: String): Flux<KeyRule>
 
     suspend fun insertKeyRule(keyRule: KeyRule): Mono<KeyRule>
 

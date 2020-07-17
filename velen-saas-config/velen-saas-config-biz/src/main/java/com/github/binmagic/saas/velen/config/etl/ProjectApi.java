@@ -17,7 +17,7 @@ public interface ProjectApi extends com.velen.etl.verification.api.ProjectApi {
             List<ParseFormatTDO> parseFormatsTDO=new ArrayList<>();
             for (ParserRule parserRuleDTO : parserRulesDTO) {
                 ParseFormatTDO parseFormatTDO = new ParseFormatTDO();
-                parseFormatTDO.setInputParseType(VerifyEnum.InputParseType.parse(1));
+                parseFormatTDO.setInputParseType(VerifyEnum.InputParseType.parse(parserRuleDTO.getRuleKey()));
                 parseFormatTDO.setFormula(parserRuleDTO.getRule());
                 parseFormatsTDO.add(parseFormatTDO);
             }
@@ -30,7 +30,7 @@ public interface ProjectApi extends com.velen.etl.verification.api.ProjectApi {
                 FieldRuleTDO fieldRuleTDO = new FieldRuleTDO();
                 fieldRuleTDO.setFieldName(keyRuleDTO.getName());
                 fieldRuleTDO.setKeyRule(keyRuleDTO.getRule());
-                fieldRuleTDO.setKeyRuleType(VerifyEnum.FieldRuleType.parse(1));
+                fieldRuleTDO.setKeyRuleType(VerifyEnum.FieldRuleType.parse(keyRuleDTO.getRuleKey()));
                 fieldRulesTDO.add(fieldRuleTDO);
             }
             return fieldRulesTDO;

@@ -23,6 +23,8 @@ public class MetaEventProp extends BaseEntity<MetaEventProp>
 
 	private Boolean isPublish;
 
+	private Boolean isVisible;
+
 	private Boolean isInUse;
 
 	private List<String> platform;

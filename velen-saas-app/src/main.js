@@ -17,6 +17,11 @@ import md5 from 'js-md5' // md5
 
 import * as filters from './filters' // global filters
 
+import echarts from 'echarts'
+
+Vue.prototype.$echarts = echarts
+
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

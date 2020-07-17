@@ -18,11 +18,16 @@ class EventCheckRuleController :BaseController() {
 
     @GetMapping
     suspend fun getEventCheckRule():List<CheckRule>{
-        return checkRuleService.getCheckRule("event").collectList().awaitSingle()
+        val appId= currentAppId.awaitSingle()
+        return checkRuleService.getCheckRule(appId,"event").collectList().awaitSingle()
     }
 
     @PostMapping
     suspend fun addEventCheckRule(@Validated @RequestBody checkRule: CheckRule):CheckRule{
+        val appId = currentAppId.awaitSingle()
+        val user = currentUserAccount.awaitSingle()
+        checkRule.appId = appId
+        checkRule.createUser = user
         return checkRuleService.insertCheckRule(checkRule).awaitSingle()
     }
 

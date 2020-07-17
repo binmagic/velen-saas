@@ -11,7 +11,7 @@
         上报事件属性的类型与「事件属性」已有事件的类型不一致时，系统将按规则尝试自动转换，如无法完成则视为异常数据不能入库。
       </p>
       <div class="meta-card-form">
-        <el-checkbox v-model="eventCheck">强校验模式</el-checkbox>
+        <el-checkbox v-model="eventCheck" @change="setVerify">强校验模式</el-checkbox>
         <el-form label-position="top">
           <el-form-item label="解析格式:">
             <el-button type="primary" @click="addTableRow('event')">添加</el-button>
@@ -139,6 +139,7 @@
     <add-dialog
       :visible.sync="addVisible"
       :type="type"
+      :parse-type="inputParseType"
       @close-add-rule="handleAddClose"
       @add-event-rule="insertEventRule"
       @add-profile-rule="insertProfileRule"
@@ -157,6 +158,7 @@
     deleteEventRule,
     getEventKeyRule,
     getEventCheckRule,
+    getInputParseType,
   } from "@/api/eventRule";
   import {
     getProfileRule,
@@ -166,6 +168,7 @@
     getProfileKeyRule,
     getProfileCheckRule
   } from "@/api/profileRule";
+  import {getAppVerify,updateAppVerify} from "@/api/appVerify"
 
   export default {
     components: {
@@ -245,6 +248,8 @@
           keyRule: [],
           rule: []
         }],
+        inputParseType:[],
+
       }
     },
     created() {
@@ -254,6 +259,8 @@
       this.findProfileKeyRule()
       this.findEventCheckRule()
       this.findProfileCheckRule()
+      this.findInputParseType()
+      this.findAppVerify()
     },
     methods: {
       findEventRule() {
@@ -264,6 +271,16 @@
       findProfileRule() {
         getProfileRule().then(resp => {
           this.profileTable = resp
+        })
+      },
+      findInputParseType(){
+        getInputParseType().then(resp =>{
+          this.inputParseType = resp
+        })
+      },
+      findAppVerify(){
+        getAppVerify().then(resp =>{
+          this.eventCheck = resp.verify
         })
       },
       findEvenKeyRule() {
@@ -380,7 +397,15 @@
           this.findProfileRule()
         }
       },
-
+      setVerify(value){
+        const appVerify = {verify:value}
+        updateAppVerify(appVerify).then(resp =>{
+          console.log(resp)
+          this.eventCheck = resp.verify
+        }).catch(r =>{
+          this.eventCheck = !this.eventCheck
+        })
+      }
     }
   }
 </script>

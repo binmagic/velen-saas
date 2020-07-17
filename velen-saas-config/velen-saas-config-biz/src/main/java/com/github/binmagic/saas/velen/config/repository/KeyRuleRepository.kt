@@ -8,6 +8,6 @@ import reactor.core.publisher.Flux
 @Repository
 interface KeyRuleRepository :BaseRepository<KeyRule>{
 
-    fun findByType(type:String) :Flux<KeyRule>
+    fun findByAppIdAndType(appId:String ,type:String) :Flux<KeyRule>
 
 }

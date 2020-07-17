@@ -15,9 +15,13 @@ public class ParserRule extends BaseEntity<ParserRule> {
 
     private String name;
 
+    private Integer ruleKey;
+
     private String rule;
 
     private String type;
 
     private String appId;
+
+    private String createUser;
 }

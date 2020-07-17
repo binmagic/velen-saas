@@ -6,6 +6,7 @@ import com.github.binmagic.saas.velen.config.dto.*
 import com.github.binmagic.saas.velen.config.entity.MetaEvent
 import com.github.binmagic.saas.velen.config.entity.MetaEventProp
 import com.github.binmagic.saas.velen.config.service.MetadataService
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,8 +24,9 @@ class MetadataController : BaseController() {
     suspend fun findPageMetaEvent(query: Page.Query): Page.Result<MetaEventDTO> {
 
         val appId = currentAppId.awaitSingle()
+        val user = currentUserAccount.awaitSingle()
 
-        val pageResult = metadataService.findMetaEventByPage(query, appId).awaitSingle()
+        val pageResult = metadataService.findMetaEventByPage(query, appId, user).awaitSingle()
 
         val result = Page.Result<MetaEventDTO>()
         result.total = pageResult.total
@@ -45,7 +47,7 @@ class MetadataController : BaseController() {
         val metaEvent = MetaEvent()
         metaEvent.appId = currentAppId.awaitSingle()
         metaEvent.createUser = currentUserId.awaitSingle()
-
+        metaEvent.isVisible = true
         BeanUtils.copyProperties(metaEventSaveDTO, metaEvent)
 
         metadataService.createMetaEvent(metaEvent).awaitSingle()
@@ -54,7 +56,6 @@ class MetadataController : BaseController() {
 
     @GetMapping("/event/prop")
     suspend fun findPageMetaEventProp(query: Page.Query): Page.Result<MetaEventPropDTO> {
-
         val appId = currentAppId.awaitSingle()
 
         val pageResult = metadataService.findMetaEventPropByPage(query, appId).awaitSingle()
@@ -91,12 +92,30 @@ class MetadataController : BaseController() {
         metaEvent.appId = currentAppId.awaitSingle()
         metaEvent.createUser = currentUserId.awaitSingle()
         BeanUtils.copyProperties(metaEventDTO, metaEvent)
-        metadataService.updateMetaEvent(metaEvent)
+        metadataService.updateMetaEvent(metaEvent).awaitFirstOrNull()
     }
 
-    @DeleteMapping("event/{id}")
-    suspend fun deleteMetaEvent(@PathVariable id: String) {
-        metadataService.deleteMetaEvent(id)
+    @PutMapping("/event/prop")
+    suspend fun updateMetaEventProp(@Validated @RequestBody metaEventPropDTO: MetaEventPropDTO) {
+        val metaEventProp = MetaEventProp()
+
+        metaEventProp.appId = currentAppId.awaitSingle()
+        metaEventProp.createUser = currentUserId.awaitSingle()
+
+        BeanUtils.copyProperties(metaEventPropDTO,metaEventProp)
+        metadataService.updateMetaEventProp(metaEventProp).awaitFirstOrNull()
     }
 
+    @DeleteMapping("/event/prop/{id}")
+    suspend fun deleteMetaEventProp(@PathVariable id : String) {
+        val appId= currentAppId.awaitSingle()
+        metadataService.deleteMetaEventProp(appId, id).awaitFirstOrNull()
+    }
+
+    @GetMapping("/all")
+    suspend fun all(){
+        val appId = currentAppId.awaitSingle()
+        val user = currentUserAccount.awaitSingle()
+        metadataService.all(appId, user)
+    }
 }

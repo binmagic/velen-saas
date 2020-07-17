@@ -108,3 +108,15 @@
     width: 90%;
   }
 }
+
+.chart-header{
+  .el-date-editor--datetimerange{
+    width: 350px;
+  }
+
+  .el-date-editor{
+    .el-range-separator{
+      padding: 0;
+    }
+  }
+}

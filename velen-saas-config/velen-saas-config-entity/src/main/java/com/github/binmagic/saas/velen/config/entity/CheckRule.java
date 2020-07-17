@@ -16,8 +16,14 @@ public class CheckRule extends BaseEntity<CheckRule> {
 
     private String name;
 
+    private Integer ruleKey;
+
     private String rule;
 
     private String type;
+
+    private String appId;
+
+    private String createUser;
 
 }

@@ -27,4 +27,6 @@ public class MetaEventSaveDTO
 	private String remark;
 
 	private List<String> propIds;
+
+	private Boolean isVisible;
 }

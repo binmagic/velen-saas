@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 
 @Repository
-interface CheckRuleRepository :BaseRepository<CheckRule> {
-    fun findByType(type:String) : Flux<CheckRule>
+interface CheckRuleRepository : BaseRepository<CheckRule> {
+    fun findByAppIdAndType(appId: String, type: String): Flux<CheckRule>
 }

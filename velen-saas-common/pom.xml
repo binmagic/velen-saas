@@ -15,6 +15,16 @@
 
 
 	<dependencies>
+		<!--<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+			<optional>true</optional>
+		</dependency>-->
+
+		<dependency>
+			<groupId>com.github.binmagic</groupId>
+			<artifactId>velen-etl-api</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.alibaba.cloud</groupId>

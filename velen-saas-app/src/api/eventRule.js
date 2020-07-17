@@ -89,3 +89,17 @@ export function deleteEventCheckRule(id) {
     method:'delete'
   })
 }
+
+export function getInputParseType() {
+  return request({
+    url:'/dashboard/rule/inputParseType',
+    method:'get'
+  })
+}
+
+export function getFieldRuleType() {
+  return request({
+    url:'/dashboard/rule/fieldRuleType',
+    method:'get'
+  })
+}

@@ -31,6 +31,7 @@
     <add-dialog
       :visible.sync="addVisible"
       :type="type"
+      :parse-type="fieldRuleType"
       @close-add-rule="handleAddClose"
       @add-event-rule="insertEventKeyRule"
       @add-profile-rule="insertProfileKeyRule"
@@ -40,7 +41,7 @@
 
 <script>
   import AddDialog from '../add-rule'
-  import {addEventKeyRule, updateEventKeyRule, deleteEventKeyRule} from "@/api/eventRule";
+  import {addEventKeyRule, updateEventKeyRule, deleteEventKeyRule,getFieldRuleType} from "@/api/eventRule";
   import {addProfileKeyRule, updateProfileKeyRule, deleteProfileKeyRule} from "@/api/profileRule";
 
   export default {
@@ -73,9 +74,18 @@
     data() {
       return {
         addVisible: false,
+        fieldRuleType:[]
       }
     },
+    created() {
+      this.findFieldRuleType()
+    },
     methods: {
+      findFieldRuleType(){
+        getFieldRuleType().then(resp =>{
+          this.fieldRuleType = resp
+        })
+      },
       handleClose() {
         this.$emit('close-parser-table')
       },

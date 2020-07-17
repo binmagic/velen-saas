@@ -31,3 +31,33 @@ export function createMetaEventProp(data) {
     data
   })
 }
+
+export function updateMetaEvent(data) {
+  return request({
+    url: '/metadata/event',
+    method: 'put',
+    data
+  })
+}
+
+export function updateMetaEventProp(data) {
+  return request({
+    url: '/metadata/event/prop',
+    method: 'put',
+    data
+  })
+}
+
+export function deleteMetaEventProp(id) {
+  return request({
+    url: `/metadata/event/prop/${id}`,
+    method: 'delete',
+  })
+}
+
+export function all() {
+  return request({
+    url:'/metadata/all',
+    method:'get'
+  })
+}

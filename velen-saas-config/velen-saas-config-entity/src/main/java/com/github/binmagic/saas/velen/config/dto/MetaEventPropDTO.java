@@ -23,7 +23,11 @@ public class MetaEventPropDTO
 
 	private String type;
 
-	private boolean isPublish;
+	private Boolean isPublish;
+
+	private Boolean isInUser;
+
+	private Boolean isVisible;
 
 	private List<String> platform = new ArrayList<>();
 

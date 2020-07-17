@@ -30,6 +30,8 @@ public class MetaEvent extends BaseEntity<MetaEvent>
 
 	private String appId;
 
+	private Boolean isVisible;
+
 	private String createUser;
 
 	private LocalDateTime createTime;

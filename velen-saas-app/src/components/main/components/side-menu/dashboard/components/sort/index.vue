@@ -198,6 +198,9 @@
         }
       },
       allowDrop(draggingNode, dropNode, type) {
+        if (dropNode.data.name==='分享给我的概览'){
+          return false
+        }
         if (draggingNode.level == 1) {
           if (dropNode.level == 1) {
             return type !== 'inner'

@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono
 
 interface CheckRuleService {
 
-    suspend fun getCheckRule(type: String): Flux<CheckRule>
+    suspend fun getCheckRule(appId:String,type: String): Flux<CheckRule>
 
     suspend fun updateCheckRule(checkRule: CheckRule) : Mono<CheckRule>
 
