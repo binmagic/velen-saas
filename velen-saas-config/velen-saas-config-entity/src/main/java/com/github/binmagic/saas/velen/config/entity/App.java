@@ -1,4 +1,4 @@
-package com.github.binmagic.saas.velen.authority.entity;
+package com.github.binmagic.saas.velen.config.entity;
 
 import com.github.binmagic.saas.velen.common.entity.BaseEntity;
 import lombok.Data;
@@ -6,7 +6,6 @@ import lombok.experimental.Accessors;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
 @Document
@@ -33,6 +32,8 @@ public class App extends BaseEntity<App>
 	private String owner;
 
 	private Integer state;
+
+	private String extend;
 
 	@CreatedDate
 	private LocalDateTime createTime;

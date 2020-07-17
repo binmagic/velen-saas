@@ -1,4 +1,4 @@
-package com.github.binmagic.saas.velen.authority.dto;
+package com.github.binmagic.saas.velen.config.dto;
 
 import lombok.*;
 import lombok.experimental.Accessors;

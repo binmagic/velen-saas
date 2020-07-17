@@ -35,7 +35,6 @@ public class MetaEventProp extends BaseEntity<MetaEventProp>
 
 	private String example;
 
-
 	private String appId;
 
 	private String createUser;

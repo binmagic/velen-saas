@@ -7,7 +7,6 @@ import com.github.binmagic.saas.velen.config.dto.MetaEventETLDTO
 import com.github.binmagic.saas.velen.config.entity.MetaEvent
 import com.github.binmagic.saas.velen.config.entity.MetaEventProp
 import com.github.binmagic.saas.velen.config.etl.TableMetadataApi
-import com.github.binmagic.saas.velen.config.event.CreateMetaEvent
 import com.github.binmagic.saas.velen.config.repository.AppVerifyRepository
 import com.github.binmagic.saas.velen.config.repository.MetaEventPropRepository
 import com.github.binmagic.saas.velen.config.repository.MetaEventRepository
@@ -17,19 +16,15 @@ import com.velen.etl.generator.tdo.PropertyMetadataTDO
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.ApplicationContext
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.ExampleMatcher
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import java.time.LocalDateTime
-import java.util.*
-import kotlin.collections.ArrayList
 
 @Service
 class MetadataServiceImpl : MetadataService {
@@ -73,9 +68,10 @@ class MetadataServiceImpl : MetadataService {
 
     override suspend fun createMetaEventProp(metaEventProp: MetaEventProp): Mono<MetaEventProp> {
 
-        metaEventProp.createTime = LocalDateTime.now()
-        metaEventProp.updateTime = LocalDateTime.now()
-
+        val now = LocalDateTime.now()
+        metaEventProp.createTime = now
+        metaEventProp.updateTime = now
+        metaEventProp.id = null
 
 
         return metaEventPropRepository.insert(metaEventProp)
@@ -115,6 +111,7 @@ class MetadataServiceImpl : MetadataService {
         val now = LocalDateTime.now()
         metaEvent.createTime = now
         metaEvent.updateTime = now
+        metaEvent.id = null
 
         val metaEventETLDTO = MetaEventETLDTO()
 
@@ -240,6 +237,15 @@ class MetadataServiceImpl : MetadataService {
             tableMetadataApi.getTables(appId, user)
         }
         return Mono.just(list).then()
+    }
+
+    override suspend fun findAllMetaEvent(appId: String): Flux<MetaEvent> {
+
+        return metaEventRepository.findByAppId(appId)
+    }
+
+    override suspend fun findAllMetaEventProp(appId: String): Flux<MetaEventProp> {
+        return metaEventPropRepository.findByAppId(appId)
     }
 
 

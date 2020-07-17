@@ -47,12 +47,29 @@
     </el-table>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="top">
         <el-form-item :label="$t('app.label.name')">
           <el-input v-model="temp.name" />
         </el-form-item>
         <el-form-item :label="$t('app.label.desc')">
           <el-input v-model="temp.desc" />
+        </el-form-item>
+        <el-form-item label="模板">
+          <el-row :gutter="24">
+            <el-col :span="18">
+              <el-select style="width: 100%" :disabled="temp.isTemplate" v-model="temp.template" :label="$t('app.label.template')">
+                <el-option
+                  v-for="item in appTemplateList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="6">
+              <el-checkbox v-model="temp.isTemplate" label="设置为模板"/>
+            </el-col>
+          </el-row>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -65,7 +82,7 @@
 </template>
 
 <script>
-import { addApp, delApp, updateApp } from '@/api/app'
+import { addApp, delApp, updateApp, fetchTemplates } from '@/api/app'
 import waves from '@/directive/waves' // waves directive
 import { mapActions } from 'vuex'
 
@@ -78,8 +95,11 @@ export default {
       temp: {
         id: '',
         name: '',
-        desc: ''
+        desc: '',
+        template: '',
+        isTemplate: false
       },
+      appTemplateList: [],
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -99,6 +119,14 @@ export default {
   },
   methods: {
     ...mapActions(['getAppList']),
+
+    fetchAppTemplates() {
+      fetchTemplates().then(resp => {
+        this.appTemplateList = resp
+      }).catch(err => {
+
+      })
+    },
     fetchData() {
       this.listLoading = true
       this.list = []
@@ -118,13 +146,15 @@ export default {
       this.temp = {
         id: '',
         name: '',
-        desc: ''
+        desc: '',
+        isTemplate: false
       }
     },
     handleCreate() {
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
+      this.fetchAppTemplates()
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -160,8 +190,12 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.createLoading = true
-          console.log(this.temp)
-          addApp(this.temp).then(() => {
+          let data = Object.assign({}, this.temp)
+          if(this.temp.isTemplate) {
+            delete data.template
+          }
+          delete data.isTemplate
+          addApp(data).then(() => {
             this.createLoading = false
             this.dialogFormVisible = false
             this.$notify({

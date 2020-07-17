@@ -1,9 +1,10 @@
-package com.github.binmagic.saas.velen.authority.controller
+package com.github.binmagic.saas.velen.config.controller
 
-import com.github.binmagic.saas.velen.authority.dto.*
-import com.github.binmagic.saas.velen.authority.entity.App
-import com.github.binmagic.saas.velen.authority.service.AppService
 import com.github.binmagic.saas.velen.common.component.controller.BaseController
+import com.github.binmagic.saas.velen.config.dto.*
+import com.github.binmagic.saas.velen.config.entity.App
+import com.github.binmagic.saas.velen.config.service.AppService
+import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.BeanUtils
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/accounts/app")
+@RequestMapping("/app")
 class AppController : BaseController(){
 
     @Autowired
@@ -67,6 +68,7 @@ class AppController : BaseController(){
     suspend fun createApp(@Validated @RequestBody appSaveDTO: AppSaveDTO): AppInfoDTO {
         var app = App()
         app.owner = currentUserAccount.awaitSingle()
+        app.extend = appSaveDTO.template
         BeanUtils.copyProperties(appSaveDTO, app)
         app = appService.createApp(app).awaitSingle()
         val appInfoDTO = AppInfoDTO()
@@ -89,5 +91,22 @@ class AppController : BaseController(){
     suspend fun deleteMember(@PathVariable id: String): Mono<Void> {
         return appService.deleteMember(currentAppId.awaitSingle(), id)
     }
+
+
+    @GetMapping("/template")
+    suspend fun getAppTemplates(): List<AppInfoDTO>{
+        val apps =  appService.findAppTemplates().collectList().awaitSingle()
+
+        val appInfoDTOList = arrayListOf<AppInfoDTO>()
+
+        for(app in apps){
+            val appInfoDTO = AppInfoDTO()
+            BeanUtils.copyProperties(app, appInfoDTO)
+            appInfoDTOList.add(appInfoDTO)
+        }
+
+        return appInfoDTOList
+    }
+
 
 }

@@ -1,4 +1,4 @@
-package com.github.binmagic.saas.velen.authority.dto;
+package com.github.binmagic.saas.velen.config.dto;
 
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -10,11 +10,9 @@ import lombok.experimental.Accessors;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 @Builder
-public class AppUpdateDTO
+public class AppAddMemberDTO
 {
-	private String id;
+	private String account;
 
-	private String name;
-
-	private String desc;
+	private String role;
 }

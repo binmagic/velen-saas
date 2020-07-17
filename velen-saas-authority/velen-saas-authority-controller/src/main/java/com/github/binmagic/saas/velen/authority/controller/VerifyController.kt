@@ -1,6 +1,5 @@
 package com.github.binmagic.saas.velen.authority.controller
 
-import com.github.binmagic.saas.velen.authority.service.AppService
 import com.github.binmagic.saas.velen.authority.service.VerifyService
 import com.github.binmagic.saas.velen.common.component.controller.BaseController
 import com.github.binmagic.saas.velen.common.config.SecretConfig
@@ -24,11 +23,9 @@ class VerifyController : BaseController() {
     @Autowired
     lateinit var verifyService: VerifyService
 
-    @Autowired
-    lateinit var appService: AppService
 
     @PostMapping
-    suspend fun writeVerify(secretKey: String, account: String, appId: String): ResponseEntity<Any> {
+    suspend fun writeVerify(secretKey: String, account: String, appId: String, role: String): ResponseEntity<Any> {
 
         if (StringUtils.isEmpty(account)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Error(Error.ERROR_TYPE_FORBID, "userId is null"))
@@ -38,10 +35,10 @@ class VerifyController : BaseController() {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Error(Error.ERROR_TYPE_FORBID, "secret key not eq"));
         }
 
-        val roles : String = appService.getAppMemberRole(appId, account)
-                .awaitFirstOrNull()?:return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Error(Error.ERROR_TYPE_FORBID, "userId is null"));
+//        val roles : String = appService.getAppMemberRole(appId, account)
+//                .awaitFirstOrNull()?:return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Error(Error.ERROR_TYPE_FORBID, "userId is null"));
 
-        verifyService.writeVerify(account, appId, roles, true).awaitFirstOrNull()
+        verifyService.writeVerify(account, appId, role, true).awaitFirstOrNull()
 
         return ResponseEntity.ok().build()
     }

@@ -1,5 +1,5 @@
 middleware:
-  host: 192.168.1.85
+  host: localhost
 nacos:
   server-addr: ${middleware.host}:8848
 ribbon:
@@ -73,6 +73,12 @@ spring:
               - Path=/api/dispatch/**
             filters:
               - StripPrefix=1
+        -   id: velen-saas-app
+            uri: lb://velen-saas-config
+            predicates:
+              - Path=/api/app/**
+            filters:
+              - StripPrefix=1
     nacos:
       discovery:
         metadata:
@@ -90,7 +96,7 @@ auth:
     - /api/accounts/register
     - /api/accounts/register1
   skipAccessUrl:
-    - /api/accounts/app/my
+    - /api/app/my
 
 jwt:
   token_secret: pXFb4i%*834gfdh96(3df&%18iodGq4ODQyMzc4lz7yI6ImF1dG

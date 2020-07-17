@@ -1,6 +1,7 @@
 package com.github.binmagic.saas.velen.config.service
 
 import com.github.binmagic.saas.velen.common.entity.Page
+import com.github.binmagic.saas.velen.config.entity.App
 import com.github.binmagic.saas.velen.config.entity.MetaEvent
 import com.github.binmagic.saas.velen.config.entity.MetaEventProp
 import reactor.core.publisher.Flux
@@ -25,4 +26,9 @@ interface MetadataService {
     suspend fun deleteMetaEventProp(appId: String, id: String): Mono<Void>
 
     suspend fun all(appId: String,user: String):Mono<Void>
+
+    suspend fun findAllMetaEvent(appId: String): Flux<MetaEvent>
+
+    suspend fun findAllMetaEventProp(appId: String): Flux<MetaEventProp>
+
 }

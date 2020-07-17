@@ -1,5 +1,5 @@
 
-const app = {
+const App = {
   // op
   'app.button.add': '创建',
   // table
@@ -21,9 +21,11 @@ const app = {
   'app.button.invite': '邀请',
   'app.label.member': '成员',
   'app.label.role': '角色',
-
   'app.label.account': '账号',
+  'app.label.template': '模板',
+}
 
+const Function = {
   'function.label.name': '名称',
   'function.label.method': '方法',
   'function.label.uri': 'uri',
@@ -34,4 +36,4 @@ const app = {
   'function.button.del': '删除',
 }
 
-export default Object.assign({}, app)
+export default Object.assign({}, App, Function)

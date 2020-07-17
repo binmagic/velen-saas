@@ -1,7 +1,7 @@
-package com.github.binmagic.saas.velen.authority.repository;
+package com.github.binmagic.saas.velen.config.repository;
 
-import com.github.binmagic.saas.velen.authority.entity.AppMember;
 import com.github.binmagic.saas.velen.common.component.dao.BaseRepository;
+import com.github.binmagic.saas.velen.config.entity.AppMember;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
