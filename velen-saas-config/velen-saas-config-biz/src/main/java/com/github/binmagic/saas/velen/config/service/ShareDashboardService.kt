@@ -14,4 +14,6 @@ interface ShareDashboardService {
     suspend fun createShareDashboard(shareDashboard: ShareDashboard) : Mono<ShareDashboard>
 
     suspend fun upDateShareDashboard(shareDashboard: ShareDashboard) : Mono<ShareDashboard>
+
+    suspend fun findAllShareDashboard(appId: String):Flux<ShareDashboard>
 }

@@ -26,7 +26,7 @@ class GroupServiceImpl : GroupService {
     override suspend fun createGroup(group: Group) :Mono<Group> {
         val now:LocalDateTime=LocalDateTime.now()
         group.createTime=now
-        group.id=IdUtil.fastSimpleUUID()
+        group.id = null
         return groupRepository.insert(group)
     }
 
@@ -55,5 +55,9 @@ class GroupServiceImpl : GroupService {
 
     override suspend fun getCommonGroup(appId: String, isPublic: Int): Flux<Group> {
         return groupRepository.findByAppIdAndIsPublic(appId, isPublic)
+    }
+
+    override suspend fun findAllGroup(appId: String): Flux<Group> {
+        return groupRepository.findByAppId(appId)
     }
 }

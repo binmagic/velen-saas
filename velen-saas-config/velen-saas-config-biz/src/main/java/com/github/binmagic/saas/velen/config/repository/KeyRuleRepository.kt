@@ -10,4 +10,6 @@ interface KeyRuleRepository :BaseRepository<KeyRule>{
 
     fun findByAppIdAndType(appId:String ,type:String) :Flux<KeyRule>
 
+    fun findByAppId(appId: String):Flux<KeyRule>
+
 }

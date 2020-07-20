@@ -12,5 +12,5 @@ interface ShareDashboardRepository : BaseRepository<ShareDashboard> {
 
     fun findByType(type: String): Flux<ShareDashboard>
 
-
+    fun findByAppId(appId: String) :Flux<ShareDashboard>
 }

@@ -16,13 +16,13 @@ class DashboardServiceImpl : DashboardService {
     lateinit var dashboardRepository: DashboardRepository
 
 
-    override suspend fun getDashboards(appId : String): Flux<Dashboard> {
+    override suspend fun getDashboards(appId: String): Flux<Dashboard> {
 
         return dashboardRepository.findByAppId(appId)
 
     }
 
-    override suspend fun getDashboardByType(appId : String, type: String): Flux<Dashboard> {
+    override suspend fun getDashboardByType(appId: String, type: String): Flux<Dashboard> {
 
         return dashboardRepository.findByAppIdAndType(appId, type)
 
@@ -36,6 +36,7 @@ class DashboardServiceImpl : DashboardService {
     override suspend fun createDashboard(dashboard: Dashboard): Mono<Dashboard> {
         val now: LocalDateTime = LocalDateTime.now()
         dashboard.createTime = now
+        dashboard.id = null
         return dashboardRepository.insert(dashboard)
     }
 
@@ -49,6 +50,10 @@ class DashboardServiceImpl : DashboardService {
 
         return dashboardRepository.deleteById(id)
 
+    }
+
+    override suspend fun findAllDashboard(appId: String): Flux<Dashboard> {
+        return dashboardRepository.findByAppId(appId)
     }
 
 

@@ -26,7 +26,7 @@ class ShareDashboardServiceImpl : ShareDashboardService {
     lateinit var dashboardRepository: DashboardRepository
 
     override suspend fun getShareDashboardByUserIdAndAppId(userId: String, appId: String): Flux<ShareDashboard> {
-      return shareDashboardRepository.findByUserIdAndAppId(userId, appId)
+        return shareDashboardRepository.findByUserIdAndAppId(userId, appId)
     }
 
     override suspend fun getShareDashboardByType(type: String): Flux<ShareDashboard> {
@@ -34,15 +34,19 @@ class ShareDashboardServiceImpl : ShareDashboardService {
     }
 
 
-    override suspend fun createShareDashboard(shareDashboard: ShareDashboard) :Mono<ShareDashboard> {
-        val now:LocalDateTime= LocalDateTime.now()
+    override suspend fun createShareDashboard(shareDashboard: ShareDashboard): Mono<ShareDashboard> {
+        val now: LocalDateTime = LocalDateTime.now()
         shareDashboard.createTime = now
-        shareDashboard.id = IdUtil.fastSimpleUUID()
+        shareDashboard.id = null
         return shareDashboardRepository.insert(shareDashboard)
     }
 
-    override suspend fun upDateShareDashboard(shareDashboard: ShareDashboard) : Mono<ShareDashboard> {
-       return shareDashboardRepository.save(shareDashboard)
+    override suspend fun upDateShareDashboard(shareDashboard: ShareDashboard): Mono<ShareDashboard> {
+        return shareDashboardRepository.save(shareDashboard)
+    }
+
+    override suspend fun findAllShareDashboard(appId: String): Flux<ShareDashboard> {
+        return shareDashboardRepository.findByAppId(appId)
     }
 
 }

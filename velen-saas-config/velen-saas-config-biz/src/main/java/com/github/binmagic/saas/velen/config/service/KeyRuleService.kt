@@ -12,4 +12,6 @@ interface KeyRuleService {
     suspend fun updateKeyRule(keyRule: KeyRule): Mono<KeyRule>
 
     suspend fun deleteKeyRule(id: String): Mono<Void>
+
+    suspend fun findAllKeyRule(appId: String):Flux<KeyRule>
 }

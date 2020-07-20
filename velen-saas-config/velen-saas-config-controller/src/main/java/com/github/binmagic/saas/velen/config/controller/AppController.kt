@@ -69,8 +69,9 @@ class AppController : BaseController(){
         var app = App()
         app.owner = currentUserAccount.awaitSingle()
         app.extend = appSaveDTO.template
+        var userId = currentUserId.awaitSingle()
         BeanUtils.copyProperties(appSaveDTO, app)
-        app = appService.createApp(app).awaitSingle()
+        app = appService.createApp(app,userId).awaitSingle()
         val appInfoDTO = AppInfoDTO()
         BeanUtils.copyProperties(app, appInfoDTO)
         return appInfoDTO

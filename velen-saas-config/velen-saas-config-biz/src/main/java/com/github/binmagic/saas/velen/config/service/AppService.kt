@@ -10,7 +10,7 @@ interface AppService {
 
     suspend fun findApp(account : String) :Flux<App>
 
-    suspend fun createApp(app:App) :Mono<App>
+    suspend fun createApp(app:App,userId:String) :Mono<App>
 
     suspend fun submitToAuditor(appId : String) : Mono<Void>
 

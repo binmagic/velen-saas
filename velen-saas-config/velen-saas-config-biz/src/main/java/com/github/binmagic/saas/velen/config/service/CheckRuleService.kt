@@ -13,4 +13,6 @@ interface CheckRuleService {
     suspend fun insertCheckRule(checkRule: CheckRule) :Mono<CheckRule>
 
     suspend fun deleteCheckRule(id:String) :Mono<Void>
+
+    suspend fun findAllCheckRule(appId: String):Flux<CheckRule>
 }

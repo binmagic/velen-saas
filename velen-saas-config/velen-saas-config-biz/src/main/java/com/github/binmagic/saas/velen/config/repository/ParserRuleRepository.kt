@@ -8,4 +8,6 @@ import reactor.core.publisher.Flux
 @Repository
 interface ParserRuleRepository :BaseRepository<ParserRule> {
     fun findByAppIdAndType(appId: String,type:String) : Flux<ParserRule>
+
+    fun findByAppId(appId: String) :Flux<ParserRule>
 }

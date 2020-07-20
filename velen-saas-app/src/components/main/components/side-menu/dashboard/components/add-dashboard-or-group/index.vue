@@ -41,7 +41,8 @@
                   <el-form-item label="分组名称">
                     <el-row>
                       <el-col :span="24">
-                        <el-input v-model="groupName" style="width: 100%!important;" v-focus placeholder="请输入"></el-input>
+                        <el-input v-model="groupName" style="width: 100%!important;" v-focus
+                                  placeholder="请输入"></el-input>
                       </el-col>
                     </el-row>
                   </el-form-item>
@@ -103,27 +104,29 @@
         if (this.radio) {
           let dashboardCreate = {name: this.dashboardName, type: this.group}
           addDashboard(dashboardCreate).then(response => {
+            this.$emit('change-groups')
+            this.$emit("modal-switch", {show: !this.show})
             this.$notify({
-              title:'提示',
-              message:'创建概览成功',
-              type:'success'
+              title: '提示',
+              message: '创建概览成功',
+              type: 'success'
             })
           })
         } else {
-          var list=[]
-          this.dashboards.some(item=>{
-            this.dashboard.some(i=>{
-              if(item.id===i){
+          var list = []
+          this.dashboards.some(item => {
+            this.dashboard.some(i => {
+              if (item.id === i) {
                 list.push(item)
               }
             })
           })
           let groupCreate = {name: this.groupName, list: list}
           addGroup(groupCreate).then(response => {
+            this.$emit('change-groups')
+            this.$emit("modal-switch", {show: !this.show})
           })
         }
-        this.$emit('change-groups')
-        this.$emit("modal-switch", {show: !this.show})
       },
       showChange: function () {
         this.$emit("modal-switch", {show: !this.show})

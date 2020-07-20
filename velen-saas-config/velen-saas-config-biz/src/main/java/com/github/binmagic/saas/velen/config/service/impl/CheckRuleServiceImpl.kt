@@ -22,10 +22,15 @@ class CheckRuleServiceImpl :CheckRuleService {
     }
 
     override suspend fun insertCheckRule(checkRule: CheckRule): Mono<CheckRule> {
+        checkRule.id = null
         return checkRuleRepository.insert(checkRule)
     }
 
     override suspend fun deleteCheckRule(id: String): Mono<Void> {
         return checkRuleRepository.deleteById(id)
+    }
+
+    override suspend fun findAllCheckRule(appId: String): Flux<CheckRule> {
+        return checkRuleRepository.findByAppId(appId)
     }
 }

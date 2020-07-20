@@ -12,4 +12,6 @@ interface ParserRuleService {
     suspend fun updateEventRule(parserRule: ParserRule): Mono<ParserRule>
 
     suspend fun deleteEventRule(id: String): Mono<Void>
+
+    suspend fun findAllEventRule(appId: String):Flux<ParserRule>
 }

@@ -17,4 +17,6 @@ interface DashboardService {
     suspend fun updateDashboard(dashboard: Dashboard) : Mono<Dashboard>
 
     suspend fun deleteDashboardById(id : String) : Mono<Void>
+
+    suspend fun findAllDashboard(appId: String): Flux<Dashboard>
 }

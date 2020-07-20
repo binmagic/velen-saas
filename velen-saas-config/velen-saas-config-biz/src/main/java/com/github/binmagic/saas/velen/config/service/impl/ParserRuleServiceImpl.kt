@@ -30,7 +30,7 @@ class ParserRuleServiceImpl : ParserRuleService {
     }
 
     override suspend fun addEventRule(parserRule: ParserRule): Mono<ParserRule> {
-
+        parserRule.id = null
         val mono = parserRuleRepository.insert(parserRule)
         val list = parserRuleRepository.findByAppIdAndType(parserRule.appId,parserRule.type).collectList().awaitSingle()
         val resp = projectApi.setInputParse(parserRule.appId,ProjectApi.Convert.toParseFormatTDO(list),parserRule.createUser)
@@ -47,5 +47,9 @@ class ParserRuleServiceImpl : ParserRuleService {
 
     override suspend fun deleteEventRule(id: String): Mono<Void> {
         return parserRuleRepository.deleteById(id)
+    }
+
+    override suspend fun findAllEventRule(appId: String): Flux<ParserRule> {
+        return parserRuleRepository.findByAppId(appId)
     }
 }

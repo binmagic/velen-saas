@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono
 @Repository
 interface DashboardRepository : BaseRepository<Dashboard> {
 
-    fun findByAppIdAndType(appId : String, type : String): Flux<Dashboard>
+    fun findByAppIdAndType(appId: String, type: String): Flux<Dashboard>
 
-    fun findByAppId(appId : String): Flux<Dashboard>
+    fun findByAppId(appId: String): Flux<Dashboard>
 }

@@ -33,6 +33,7 @@ class KeyRuleServiceImpl : KeyRuleService {
     }
 
     override suspend fun insertKeyRule(keyRule: KeyRule): Mono<KeyRule> {
+        keyRule.id = null
         val mono = keyRuleRepository.insert(keyRule)
         val list = keyRuleRepository.findByAppIdAndType(keyRule.appId, keyRule.type).collectList().awaitSingle()
         val resp = projectApi.setFieldRule(keyRule.appId, ProjectApi.Convert.toFieldRuleTDO(list), keyRule.createUser)
@@ -49,6 +50,10 @@ class KeyRuleServiceImpl : KeyRuleService {
 
     override suspend fun deleteKeyRule(id: String): Mono<Void> {
         return keyRuleRepository.deleteById(id)
+    }
+
+    override suspend fun findAllKeyRule(appId: String): Flux<KeyRule> {
+        return keyRuleRepository.findByAppId(appId)
     }
 
 }
