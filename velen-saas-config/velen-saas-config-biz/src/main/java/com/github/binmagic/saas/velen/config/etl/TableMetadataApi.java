@@ -2,6 +2,7 @@ package com.github.binmagic.saas.velen.config.etl;
 
 import com.github.binmagic.saas.velen.config.dto.MetaEventETLDTO;
 
+import com.velen.etl.generator.entity.TableType;
 import com.velen.etl.generator.tdo.PropertyMetadataTDO;
 import com.velen.etl.generator.tdo.TableMetadataTDO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -18,7 +19,7 @@ public interface TableMetadataApi extends com.velen.etl.generator.api.TableMetad
 
             TableMetadataTDO tableMetadataTDO=new TableMetadataTDO();
             tableMetadataTDO.setDb(metaEventETLDTO.getAppId());
-            tableMetadataTDO.setTable("event");
+            tableMetadataTDO.setTable(TableType.valueOf(0).value());
             List<PropertyMetadataTDO> propertyMetadataTDOS = new ArrayList<>();
             for(MetaEventETLDTO.MetaEventETLPropDTO metaEventETLPropDTO : metaEventETLDTO.getProps())
             {

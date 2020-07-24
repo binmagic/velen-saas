@@ -2,6 +2,8 @@ package com.github.binmagic.saas.velen.config.etl;
 
 import com.github.binmagic.saas.velen.config.entity.KeyRule;
 import com.github.binmagic.saas.velen.config.entity.ParserRule;
+import com.velen.etl.verification.entity.FieldRuleType;
+import com.velen.etl.verification.entity.InputParseType;
 import com.velen.etl.verification.entity.VerifyEnum;
 import com.velen.etl.verification.tdo.FieldRuleTDO;
 import com.velen.etl.verification.tdo.ParseFormatTDO;
@@ -17,7 +19,7 @@ public interface ProjectApi extends com.velen.etl.verification.api.ProjectApi {
             List<ParseFormatTDO> parseFormatsTDO=new ArrayList<>();
             for (ParserRule parserRuleDTO : parserRulesDTO) {
                 ParseFormatTDO parseFormatTDO = new ParseFormatTDO();
-                parseFormatTDO.setInputParseType(VerifyEnum.InputParseType.parse(parserRuleDTO.getRuleKey()));
+                parseFormatTDO.setInputParseType(InputParseType.parse(parserRuleDTO.getRuleKey()));
                 parseFormatTDO.setFormula(parserRuleDTO.getRule());
                 parseFormatsTDO.add(parseFormatTDO);
             }
@@ -30,7 +32,7 @@ public interface ProjectApi extends com.velen.etl.verification.api.ProjectApi {
                 FieldRuleTDO fieldRuleTDO = new FieldRuleTDO();
                 fieldRuleTDO.setFieldName(keyRuleDTO.getName());
                 fieldRuleTDO.setKeyRule(keyRuleDTO.getRule());
-                fieldRuleTDO.setKeyRuleType(VerifyEnum.FieldRuleType.parse(keyRuleDTO.getRuleKey()));
+                fieldRuleTDO.setKeyRuleType(FieldRuleType.parse(keyRuleDTO.getRuleKey()));
                 fieldRulesTDO.add(fieldRuleTDO);
             }
             return fieldRulesTDO;

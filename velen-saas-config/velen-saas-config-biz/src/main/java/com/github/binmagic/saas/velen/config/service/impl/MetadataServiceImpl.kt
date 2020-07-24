@@ -99,9 +99,6 @@ class MetadataServiceImpl : MetadataService {
 
         val items = metaEventRepository.findAll(example, pageRequest).collectList().awaitSingle()
 
-        //tableMetadataApi.getTable(metaEvent.appId,metaEvent.name,metaEvent.createUser)
-        //tableMetadataApi.getTables(metaEvent.appId,metaEvent.createUser)
-
         return Page.Result(total, items).toMono()
 
     }
@@ -128,7 +125,7 @@ class MetadataServiceImpl : MetadataService {
         }
 
 
-        val responseEntity = tableMetadataApi.createTable(metaEvent.appId, metaEvent.createUser, TableMetadataApi.Convert.toEventMetadataTDO(metaEventETLDTO))
+        val responseEntity = tableMetadataApi.alterTable(metaEvent.appId, TableMetadataApi.Convert.toEventMetadataTDO(metaEventETLDTO), metaEvent.createUser)
         if (EnumUtil.isInResultCode(responseEntity.statusCodeValue)) {
             return Mono.error(RuntimeException(ResultCode.valueOf(responseEntity.statusCodeValue).message()))
         }
@@ -143,7 +140,7 @@ class MetadataServiceImpl : MetadataService {
         delProp.removeAll(metaEvent.propIds)
         addProp.removeAll(metaEventQuery.propIds)
 
-        val delList: MutableList<PropertyMetadataTDO> = ArrayList()
+        /*val delList: MutableList<PropertyMetadataTDO> = ArrayList()
         for (metaEventPropId in delProp) {
             val propertyMetadataTDO = PropertyMetadataTDO()
             val prop = metaEventPropRepository.findById(metaEventPropId).awaitSingle()
@@ -157,9 +154,9 @@ class MetadataServiceImpl : MetadataService {
         val resp = tableMetadataApi.removeProperties(metaEvent.appId, "event", delList)
         if (EnumUtil.isInResultCode(resp.statusCodeValue)) {
             return Mono.error(RuntimeException(ResultCode.valueOf(resp.statusCodeValue).message()))
-        }
+        }*/
 
-        val addList: MutableList<PropertyMetadataTDO> = ArrayList()
+        /*val addList: MutableList<PropertyMetadataTDO> = ArrayList()
         for (metaEventPropId in addProp) {
             val propertyMetadataTDO = PropertyMetadataTDO()
             val prop = metaEventPropRepository.findById(metaEventPropId).awaitSingle()
@@ -173,7 +170,7 @@ class MetadataServiceImpl : MetadataService {
         val responseEntity = tableMetadataApi.addProperties(metaEvent.appId, "event", addList)
         if (EnumUtil.isInResultCode(responseEntity.statusCodeValue)) {
             return Mono.error(RuntimeException(ResultCode.valueOf(responseEntity.statusCodeValue).message()))
-        }
+        }*/
 
         return metaEventRepository.save(metaEvent)
     }
@@ -196,10 +193,10 @@ class MetadataServiceImpl : MetadataService {
         propertyMetadataTDO.index = index
 
         list.add(propertyMetadataTDO)
-        val resp = tableMetadataApi.updateProperties(metaEventProp.appId, "event", list)
+        /*val resp = tableMetadataApi.updateProperties(metaEventProp.appId, "event", list)
         if (EnumUtil.isInResultCode(resp.statusCodeValue)) {
             return Mono.error(RuntimeException(ResultCode.valueOf(resp.statusCodeValue).message()))
-        }
+        }*/
 
         return metaEventPropRepository.save(metaEventProp)
     }
@@ -220,10 +217,10 @@ class MetadataServiceImpl : MetadataService {
                 delList.add(propertyMetadataTDO)
             }
         }
-        val resp = tableMetadataApi.removeProperties(appId, "event", delList)
+        /*val resp = tableMetadataApi.removeProperties(appId, "event", delList)
         if (EnumUtil.isInResultCode(resp.statusCodeValue)) {
             return Mono.error(RuntimeException(ResultCode.valueOf(resp.statusCodeValue).message()))
-        }
+        }*/
         return metaEventPropRepository.deleteById(id)
     }
 

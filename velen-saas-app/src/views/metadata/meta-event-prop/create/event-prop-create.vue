@@ -84,7 +84,7 @@
             example: '',
             unit: '',
             public: '',
-            hide:false,
+            hide: false,
             type: '',
             name: '',
             showName: ''
@@ -100,7 +100,8 @@
       handleSubmit() {
         this.createLoading = true
         delete this.formData['public']
-        this.formData.isVisible = this.formData.hide
+        this.formData['isVisible'] = this.formData.hide
+        delete this.formData.hide
         createMetaEventProp(this.formData).then(resp => {
           this.createLoading = false
           this.$message.success('success')

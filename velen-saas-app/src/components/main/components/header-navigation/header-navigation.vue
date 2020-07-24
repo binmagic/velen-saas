@@ -9,6 +9,7 @@ import path from "path";
         <el-menu-item index="menu-analyze-funnel" disabled>漏斗分析</el-menu-item>
         <el-menu-item index="menu-analyze-keep" disabled>留存分析</el-menu-item>
         <el-menu-item index="menu-analyze-meta-event">元事件分析</el-menu-item>
+        <el-menu-item index="menu-analyze-property">属性分析</el-menu-item>
       </el-submenu>
       <el-menu-item index="menu-user-group" disabled>用户分群</el-menu-item>
       <el-menu-item index="menu-bookmarks">书签</el-menu-item>

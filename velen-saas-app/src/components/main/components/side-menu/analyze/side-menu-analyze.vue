@@ -4,6 +4,7 @@
       <el-menu-item index="menu-analyze-event" disabled>事件分析</el-menu-item>
       <el-menu-item index="menu-analyze-funnel" disabled>漏斗分析</el-menu-item>
       <el-menu-item index="menu-analyze-meta-event">元事件分析</el-menu-item>
+      <el-menu-item index="menu-analyze-property">属性分析</el-menu-item>
     </el-menu>
   </div>
 </template>

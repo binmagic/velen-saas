@@ -86,6 +86,12 @@ export const routerApp = [
         name: 'menu-analyze-meta-event',
         component: () => import('@/views/analyze/meta-event/index'),
         meta: {title: '元数据分析', icon: 'form', hideHeader: false, hideAside: false}
+      },
+      {
+        path: '/analyze-property',
+        name: 'menu-analyze-property',
+        component: () => import('@/views/analyze/property/index'),
+        meta: {title: '属性分析', icon: 'form', hideHeader: false, hideAside: false}
       }
     ]
   },

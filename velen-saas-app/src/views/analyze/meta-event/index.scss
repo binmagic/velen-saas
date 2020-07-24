@@ -1,0 +1,59 @@
+@import '@/styles/variables.scss';
+
+.meta-event-container {
+
+}
+
+.meta-event-header {
+  height: auto !important;
+}
+
+.filter-group-relation {
+  width: 30px;
+  position: absolute;
+  left: 50px;
+  height: calc(100% - 60px);
+}
+
+.relation-topline {
+  margin: 15px 0 0 20px;
+  border-left: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  width: 100%;
+  height: calc(50% - 33px);
+}
+
+.relation-bottomline {
+  margin: 0 0 15px 20px;
+  border-left: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  width: 100%;
+  height: calc(50% - 33px);
+}
+
+.filterRow {
+  margin-left: 100px;
+  margin-top: 10px;
+}
+
+.delRow {
+  display: none;
+}
+
+.filterRow:hover {
+  .delRow{
+    display: inline-block;
+    color: red;
+  }
+}
+
+.meta-event-button{
+  float: right;
+  display: none;
+}
+
+.meta-event-header:hover{
+  .meta-event-button{
+    display: inline-block;
+  }
+}
