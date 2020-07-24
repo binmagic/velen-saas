@@ -22,8 +22,8 @@ public class MetaEventListener implements ApplicationListener<CreateMetaEvent> {
 
         MetaEventETLDTO metaEventETLDTO = createMetaEvent.getMetaEventETLDTO();
 
-        tableMetadataApi.createTable(createMetaEvent.getAppId(),createMetaEvent.getUserName(),
-                TableMetadataApi.Convert.toEventMetadataTDO(metaEventETLDTO));
+        /*tableMetadataApi.createTable(createMetaEvent.getAppId(),createMetaEvent.getUserName(),
+                TableMetadataApi.Convert.toEventMetadataTDO(metaEventETLDTO));*/
 
         //profileTableApi.create(createMetaEvent.getAppId(), ProfileTableApi.Convert.toEventTableDTO(metaEventETLDTO), "CREATE");
     }
