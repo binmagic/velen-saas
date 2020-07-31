@@ -243,9 +243,9 @@
           this.componentFlag.createLoading = false
           this.$message.success('success')
           this.$emit('on-create-event')
-        }).catch(reason => {
+        }).catch(response => {
           this.$notify({
-            message: reason,
+            message: response.message,
             type: 'error',
             duration: 2000
           })

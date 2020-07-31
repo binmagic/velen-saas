@@ -111,6 +111,7 @@
           filter: {},
           chartsType: 'pie',
           rangeText: '',
+
           from_date: '2020-06-08', to_date: '2020-06-09'
         })
         create(this.saveData).then(resp => {

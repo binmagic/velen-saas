@@ -12,6 +12,12 @@
           <el-input v-else v-model="scope.row.rule" @blur="updRule(scope.row)" v-focus></el-input>
         </template>
       </el-table-column>
+      <el-table-column label="入库规则">
+        <template slot-scope="scope">
+          <span v-if="!scope.row.update">{{scope.row.valueRule}}</span>
+          <el-input v-else v-model="scope.row.valueRule" @blur="updRule(scope.row)" v-focus></el-input>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="text" @click="updateRow(scope.row)">修改</el-button>
@@ -32,6 +38,7 @@
       :visible.sync="addVisible"
       :type="type"
       :parse-type="fieldRuleType"
+      :field-type="'keyRule'"
       @close-add-rule="handleAddClose"
       @add-event-rule="insertEventKeyRule"
       @add-profile-rule="insertProfileKeyRule"

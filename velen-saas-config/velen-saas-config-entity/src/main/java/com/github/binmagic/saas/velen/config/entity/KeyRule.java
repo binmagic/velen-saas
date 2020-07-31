@@ -21,6 +21,8 @@ public class KeyRule extends BaseEntity<KeyRule> {
 
     private String rule;
 
+    private String valueRule;
+
     private String type;
 
     private String appId;

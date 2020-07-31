@@ -69,12 +69,12 @@ class DispatchRuleController : BaseController() {
 
     @PostMapping
     suspend fun create(@Validated @RequestBody dispatchRuleSaveDTO: DispatchRuleSaveDTO):DispatchRule {
-        println(dispatchRuleSaveDTO)
+        val appId = currentAppId.awaitSingle()
         val dispatchRule = DispatchRule()
         dispatchRule.appId = currentAppId.awaitSingle()
         dispatchRule.userId = currentUserId.awaitSingle()
         BeanUtils.copyProperties(dispatchRuleSaveDTO, dispatchRule)
-        return dispatchRuleService.create(dispatchRule).awaitSingle()
+        return dispatchRuleService.create(dispatchRule,appId).awaitSingle()
     }
 
     @PutMapping

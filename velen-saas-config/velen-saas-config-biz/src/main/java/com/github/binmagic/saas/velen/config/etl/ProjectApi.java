@@ -30,9 +30,10 @@ public interface ProjectApi extends com.velen.etl.verification.api.ProjectApi {
             List<FieldRuleTDO> fieldRulesTDO=new ArrayList<>();
             for (KeyRule keyRuleDTO:keyRulesDTO) {
                 FieldRuleTDO fieldRuleTDO = new FieldRuleTDO();
-                fieldRuleTDO.setFieldName(keyRuleDTO.getName());
+                fieldRuleTDO.setFieldName(keyRuleDTO.getKey());
                 fieldRuleTDO.setKeyRule(keyRuleDTO.getRule());
                 fieldRuleTDO.setKeyRuleType(FieldRuleType.parse(keyRuleDTO.getRuleKey()));
+                fieldRuleTDO.setValueRule(keyRuleDTO.getValueRule());
                 fieldRulesTDO.add(fieldRuleTDO);
             }
             return fieldRulesTDO;

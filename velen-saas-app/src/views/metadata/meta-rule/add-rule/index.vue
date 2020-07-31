@@ -13,6 +13,9 @@
       <el-form-item label="规则">
         <el-input placeholder="请输入规则" v-model="form.rule"></el-input>
       </el-form-item>
+      <el-form-item label="入库规则设置">
+        <el-input placeholder="输入入库规则" v-model="form.valueRule" :disabled="fieldType==='parseRule'"></el-input>
+      </el-form-item>
     </el-form>
     <div slot="footer">
       <el-button @click="handleClose">取消</el-button>
@@ -32,26 +35,32 @@
         required: true,
         type: String
       },
-      parseType:{
-        required:true,
+      parseType: {
+        required: true,
         type: Array
+      },
+      fieldType:{
+        required:true,
+        type:String
       }
     },
     data() {
       return {
         form: {
-          name:'',
-          ruleKey:-1,
-          rule: ''
+          name: '',
+          ruleKey: -1,
+          rule: '',
+          valueRule: ''
         },
-        ruleType:this.parseType[0]
+        ruleType: this.parseType[0]
       }
     },
     methods: {
       openDialog() {
         this.form.name = ''
-        this.form.ruleKey =-1
+        this.form.ruleKey = -1
         this.form.rule = ''
+        this.form.valueRule = ''
         this.ruleType = {}
       },
       handleClose() {
@@ -64,6 +73,8 @@
           this.$emit('add-event-rule', this.form)
         } else if (this.type == 'profile') {
           this.$emit('add-profile-rule', this.form)
+        }else if (this.type == 'eventKeyRule'){
+          this.$emit('add-key-rule',this.form)
         }
         this.$emit('close-add-rule')
       }

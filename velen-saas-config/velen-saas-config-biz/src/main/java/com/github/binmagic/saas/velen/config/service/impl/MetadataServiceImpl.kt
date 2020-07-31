@@ -1,6 +1,7 @@
 package com.github.binmagic.saas.velen.config.service.impl
 
 import cn.hutool.core.bean.BeanUtil
+import cn.hutool.core.util.IdUtil
 import com.github.binmagic.saas.velen.common.config.EnumUtil
 import com.github.binmagic.saas.velen.common.entity.Page
 import com.github.binmagic.saas.velen.config.dto.MetaEventETLDTO
@@ -13,6 +14,7 @@ import com.github.binmagic.saas.velen.config.repository.MetaEventRepository
 import com.github.binmagic.saas.velen.config.service.MetadataService
 import com.velen.etl.ResultCode
 import com.velen.etl.generator.tdo.PropertyMetadataTDO
+import com.velen.etl.generator.tdo.TableMetadataTDO
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -140,6 +142,24 @@ class MetadataServiceImpl : MetadataService {
         delProp.removeAll(metaEvent.propIds)
         addProp.removeAll(metaEventQuery.propIds)
 
+        val metaEventETLDTO = MetaEventETLDTO()
+        BeanUtils.copyProperties(metaEvent, metaEventETLDTO)
+
+        for (propId in metaEvent.propIds) {
+            val prop = metaEventPropRepository.findById(propId).awaitSingle()
+            val list = metaEventPropRepository.findAll().collectList().awaitSingle()
+            val index = list.indexOf(prop)
+            val metaEventETLPropDTO = MetaEventETLDTO.MetaEventETLPropDTO()
+            BeanUtils.copyProperties(prop, metaEventETLPropDTO)
+            metaEventETLPropDTO.index = index
+            metaEventETLDTO.props.add(metaEventETLPropDTO)
+        }
+
+        val responseEntity = tableMetadataApi.updateTable(metaEvent.appId, "event",
+                TableMetadataApi.Convert.toEventMetadataTDO(metaEventETLDTO), metaEvent.createUser)
+        if (EnumUtil.isInResultCode(responseEntity.statusCodeValue)) {
+            return Mono.error(RuntimeException(ResultCode.valueOf(responseEntity.statusCodeValue).message()))
+        }
         /*val delList: MutableList<PropertyMetadataTDO> = ArrayList()
         for (metaEventPropId in delProp) {
             val propertyMetadataTDO = PropertyMetadataTDO()
@@ -225,13 +245,46 @@ class MetadataServiceImpl : MetadataService {
     }
 
     override suspend fun all(appId: String, user: String): Mono<Void> {
+        val now = LocalDateTime.now()
         val list = metaEventRepository.findByAppId(appId).collectList().awaitSingle()
         if (!appVerifyRepository.findByAppId(appId).awaitSingle().verify) {
-
+            val tableMetadatasTDO = tableMetadataApi.getTables(appId, user)
+            println("getTables$tableMetadatasTDO")
             for (metaEvent in list) {
-                tableMetadataApi.getTable(appId, metaEvent.name, metaEvent.createUser)
+                val tableMetadataTDO = tableMetadataApi.getTable(appId, metaEvent.name, metaEvent.createUser)
+                if (tableMetadatasTDO.contains(tableMetadataTDO)) {
+                    tableMetadatasTDO.remove(tableMetadataTDO)
+                }
+                println("getTable$tableMetadataTDO")
             }
-            tableMetadataApi.getTables(appId, user)
+            println("getTables$tableMetadatasTDO")
+            if (!tableMetadatasTDO.isNullOrEmpty()) {
+                for (item in tableMetadatasTDO) {
+                    val metaEventETLDTO = TableMetadataApi.Convert.toMetaEventETLDTO(item)
+                    val metaEvent = MetaEvent()
+                    metaEvent.appId = appId
+                    metaEvent.createTime = now
+                    metaEvent.createUser = user
+                    metaEvent.isVisible = false
+                    metaEvent.name = metaEventETLDTO.name
+                    metaEvent.updateTime = now
+                    metaEvent.showName = metaEventETLDTO.name
+                    val propIds: MutableList<String> = ArrayList()
+                    for (prop in metaEventETLDTO.props) {
+                        val metaEventProp = MetaEventProp()
+                        metaEventProp.createUser = user
+                        metaEventProp.appId = appId
+                        metaEventProp.createTime = now
+                        metaEventProp.name = prop.name
+                        metaEventProp.type = prop.type
+                        metaEventProp.showName = prop.name
+                        val monoProp = metaEventPropRepository.insert(metaEventProp).awaitSingle()
+                        propIds.add(monoProp.id)
+                    }
+                    metaEvent.propIds = propIds
+                    metaEventRepository.insert(metaEvent).awaitSingle()
+                }
+            }
         }
         return Mono.just(list).then()
     }

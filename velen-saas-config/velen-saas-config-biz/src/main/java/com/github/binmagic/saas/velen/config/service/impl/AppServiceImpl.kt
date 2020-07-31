@@ -82,7 +82,7 @@ class AppServiceImpl : AppService {
             return Mono.error(RuntimeException("app名重复"))
         }
 
-        val resp1 = tableMetadataApi.createApp(app.id, app.owner)
+        val resp1 = tableMetadataApi.createApp(app.id, app.name ,app.owner)
         if (EnumUtil.isInResultCode(resp1.statusCodeValue)) {
             return Mono.error(RuntimeException(ResultCode.valueOf(resp1.statusCodeValue).message()))
         }

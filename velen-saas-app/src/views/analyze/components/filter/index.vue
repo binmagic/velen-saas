@@ -45,12 +45,12 @@
       <el-col
         v-else-if="filterItem.filter==='less'|| filterItem.filter === 'greater' || filterItem.filter==='rlike' || filterItem.filter==='notrlike'"
         :span="3">
-        <el-input v-model="filterItem.params" size="small" @blur="handleUpdate"></el-input>
+        <el-input v-model="filterItem.params[0]" size="small" @blur="handleUpdate"></el-input>
       </el-col>
       <el-col class="between-input" v-else-if="filterItem.filter ==='between'" :span="4">
-        <el-input v-model="filterItem.form" size="small" @blur="handleUpdate"/>
+        <el-input v-model="filterItem.params[0]" size="small" @blur="handleUpdate"/>
         与
-        <el-input v-model="filterItem.to" size="small" @blur="handleUpdate"/>
+        <el-input v-model="filterItem.params[1]" size="small" @blur="handleUpdate"/>
         之间
       </el-col>
       <el-col class="between-date-picker" v-else-if="filterItem.filter === 'absolute_between'" :span="5">
@@ -67,18 +67,18 @@
       </el-col>
       <el-col class="within-data-picker" v-else-if="filterItem.filter === 'relative_within'" :span="5">
         <span>在</span>
-        <el-input v-model="filterItem.from" size="small"></el-input>
+        <el-input v-model="filterItem.params[0]" size="small"></el-input>
         <span>天</span>
-        <el-select size="small" v-model="filterItem.to">
+        <el-select size="small" v-model="filterItem.params[1]">
           <el-option label="之内" value="within"/>
           <el-option label="之前" value="before"/>
         </el-select>
       </el-col>
       <el-col v-else-if="filterItem.filter ==='relative_between'" :span="5">
         <span>在过去</span>
-        <el-input v-model="filterItem.from" size="small" />
+        <el-input v-model="filterItem.params[0]" size="small" />
         <span>天到过去</span>
-        <el-input v-model="filterItem.to" size="small" />
+        <el-input v-model="filterItem.params[1]" size="small" />
         <span>天之内</span>
         <el-tooltip effect="dark" content="起始数值要大于终止数值" placement="top">
           <i class="el-icon-question" />
@@ -141,7 +141,7 @@
       },
       handleUpdate() {
         this.$emit('update-filter', this.filterList)
-        this.$emit('get-btn-val',this.btnVal)
+        this.$emit('get-btn-val',this.filterList.length =1 ? '' : this.btnVal)
       }
     }
   }

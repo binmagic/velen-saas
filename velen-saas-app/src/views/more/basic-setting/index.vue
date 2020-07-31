@@ -27,12 +27,14 @@
     </el-card>
     <basic-create :dialogVisible.sync="dialogVisible" :title="title" :type="type" @close-dialog="handleClose"
                   @on-create-dispatch="handleCreate"/>
+
+    <el-button type="primary" @click="fastDispatch">快速dispatch</el-button>
   </div>
 </template>
 
 <script>
   import CustomHeader from '_c/custom-header'
-  import {getPage} from '@/api/dispatch'
+  import {getPage,createDispatch} from '@/api/dispatch'
   import BasicCreate from './basic-create/basic-create'
 
   export default {
@@ -82,6 +84,30 @@
       handleCreate() {
         this.dialogVisible = false
         this.findData()
+      },
+      fastDispatch(){
+        const dispatch = {
+          platform: 'FLINK',
+          platformType: 2,
+          process: 'TASK',
+          processType: 2,
+          businessName: 'test',
+          dsl: '',
+          properties: {id:'app.id',name:'app.owner'}
+        }
+        createDispatch(dispatch).then(resp =>{
+          this.$notify({
+            title: '成功',
+            message: '快速添加',
+            type: 'success'
+          });
+        }).catch(msg =>{
+          this.$notify({
+            title: '失败',
+            message: msg.message,
+            type: 'error'
+          });
+        })
       }
     }
   }

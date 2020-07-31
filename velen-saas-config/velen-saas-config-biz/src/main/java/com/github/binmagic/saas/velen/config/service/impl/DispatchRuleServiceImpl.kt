@@ -1,9 +1,16 @@
 package com.github.binmagic.saas.velen.config.service.impl
 
+import cn.hutool.core.bean.BeanUtil
+import com.github.binmagic.saas.velen.common.config.EnumUtil
 import com.github.binmagic.saas.velen.common.entity.Page
+import com.github.binmagic.saas.velen.common.util.StringFormat
+import com.github.binmagic.saas.velen.config.entity.App
 import com.github.binmagic.saas.velen.config.entity.DispatchRule
+import com.github.binmagic.saas.velen.config.repository.AppRepository
 import com.github.binmagic.saas.velen.config.repository.DispatchRuleRepository
 import com.github.binmagic.saas.velen.config.service.DispatchRuleService
+import com.velen.etl.ResultCode
+import com.velen.etl.dispatcher.restful.api.DispatchApi
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
@@ -23,6 +30,12 @@ class DispatchRuleServiceImpl : DispatchRuleService {
 
     @Autowired
     lateinit var dispatchRuleRepository: DispatchRuleRepository
+
+    @Autowired
+    lateinit var dispatchApi: DispatchApi
+
+    @Autowired
+    lateinit var appRepository: AppRepository
 
     override suspend fun getAll(): Flux<DispatchRule> {
         return dispatchRuleRepository.findAll()
@@ -57,15 +70,26 @@ class DispatchRuleServiceImpl : DispatchRuleService {
         return Page.Result(total, items).toMono()
     }
 
-    override suspend fun create(dispatchRule: DispatchRule): Mono<DispatchRule> {
+    override suspend fun create(dispatchRule: DispatchRule, appId: String): Mono<DispatchRule> {
 
         dispatchRule.createTime = LocalDateTime.now()
         dispatchRule.updateTime = LocalDateTime.now()
         val item = dispatchRuleRepository.findByBusinessName(dispatchRule.businessName).awaitFirstOrNull()
-        if (item != null){
+        if (item != null) {
             return Mono.error(RuntimeException("业务名重复"))
         }
+        val app = appRepository.findById(appId).awaitSingle()
 
+        val map = BeanUtil.beanToMap(app)
+
+        for (entry in dispatchRule.properties) {
+            entry.setValue(StringFormat.format(entry.value, map))
+        }
+
+        val resp = dispatchApi.deploy(dispatchRule.platform, dispatchRule.process, dispatchRule.businessName, dispatchRule.dsl, dispatchRule.properties)
+        if (EnumUtil.isInResultCode(resp.statusCodeValue)) {
+            return Mono.error(RuntimeException(ResultCode.valueOf(resp.statusCodeValue).message()))
+        }
         return dispatchRuleRepository.insert(dispatchRule)
     }
 

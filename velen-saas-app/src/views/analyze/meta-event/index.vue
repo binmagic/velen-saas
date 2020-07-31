@@ -93,7 +93,8 @@
                 <i class="el-icon-close" style="font-size: 18px"/></span>
             </el-col>
           </el-row>-->
-          <screening-condition :filter="filterList" :props="meta_props" @update-filter="handleUpdate"/>
+          <screening-condition :filter="filterList" :props="meta_props" @update-filter="handleUpdate"
+                               @get-btn-val="handleBtnVal"/>
           <!--<div>
             <el-button type="primary" size="mini" icon="el-icon-plus" circle>
             </el-button>
@@ -159,7 +160,7 @@
         data: [],
         switchEvent: '',
         filterValue: '',
-        btnVal: 'and',
+        btnVal: '',
         filterList: [],
         meta_events: [],
         meta_props: {},
@@ -187,7 +188,22 @@
     },
     methods: {
       submitData() {
-        console.log('xxxxxsubmitdata')
+        var filter = {}
+        if (this.filterList.length >= 1) {
+          var condition = []
+          this.filterList.some(item => {
+            condition.push({
+              field: this.meta_events.find(v => {
+                return this.switchEvent === v.id ? this.meta_events.name + '.' + item.name : ''
+              }),
+              function: item.filter,
+              params: item.params
+            })
+          })
+          filter['condition'] = condition
+          if (this.filterList.length > 1)
+            filter['relation'] = this.btnVal
+        }
         this.saveData.name = this.formData.name
         this.saveData.config = JSON.stringify({
           comment: this.comment
@@ -257,14 +273,16 @@
         this.filterList[index].filter = ''
       },
       handleFilter() {
-        this.filterList.push({switchProp: {}, filter: '', params: '', form: '', to: ''})
-
+        this.filterList.push({switchProp: {}, filter: '', params: [], form: '', to: ''})
       },
       delRow(index) {
         this.filterList.splice(index, 1)
       },
       handleUpdate(val) {
         this.filterList = val
+      },
+      handleBtnVal(val) {
+        this.btnVal = val
       }
     }
   }

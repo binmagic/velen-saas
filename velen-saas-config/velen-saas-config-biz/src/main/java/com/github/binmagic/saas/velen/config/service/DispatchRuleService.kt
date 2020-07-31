@@ -11,7 +11,7 @@ interface DispatchRuleService {
 
     suspend fun findPage(query: Page.Query): Mono<Page.Result<DispatchRule>>
 
-    suspend fun create(dispatchRule: DispatchRule) : Mono<DispatchRule>
+    suspend fun create(dispatchRule: DispatchRule,appId:String) : Mono<DispatchRule>
 
     suspend fun update(dispatchRule: DispatchRule) : Mono<DispatchRule>
 

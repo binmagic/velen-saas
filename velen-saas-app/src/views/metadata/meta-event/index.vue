@@ -170,6 +170,7 @@ export default {
   },
   created() {
     this.fetchData()
+    this.fetchAll()
   },
   methods: {
     fetchData() {
@@ -180,8 +181,11 @@ export default {
         this.listLoading = false
       })
 
-      all().then(resp =>{
 
+    },
+    fetchAll(){
+      all().then(resp =>{
+        this.fetchData()
       })
     },
     handleClickPlus(command) {

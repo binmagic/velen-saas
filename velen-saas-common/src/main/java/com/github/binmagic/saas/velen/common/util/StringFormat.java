@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public abstract class StringFormat {
 
-    private static Pattern pattern = Pattern.compile("\\$\\{[\\w]*\\}");
+    private static Pattern pattern = Pattern.compile("\\$\\{[\\w\\.]*\\}");
 
     public StringFormat() {
     }
@@ -21,7 +21,7 @@ public abstract class StringFormat {
         String tmp = value;
         while (matcher.find()) {
             String key = matcher.group();
-            String entryKey = key.replace("${", "")
+            String entryKey = key.replace("${app.", "")
                     .replace("}", "");
             String replaced = null;
             if (params.containsKey(entryKey)) {
@@ -36,16 +36,33 @@ public abstract class StringFormat {
         return tmp;
     }
 
-    public static void main(String[] args){
-       /* BeanUtil.beanToMap()
+    /*public static void main(String[] args){
+        BeanUtil.beanToMap()
 
-        Map<String, String> params = new HashMap();
-        params.put("appId", "123213");
+        Map<String, Object> params = new HashMap();
+        params.put("id", "123213");
 
+        App app = new App();
+        app.setId("121231");
+        Map<String, Object> map = BeanUtil.beanToMap(app);
+        for (Map.Entry<String,Object> entry: map.entrySet()){
+            entry.setValue("123123");
+        }
+        String value = "${app.id}";
 
-        String value = "123123dasdcc${appId}";
-
-        System.err.println(format(value, params));*/
+        System.err.println(format(value, map));
     }
+
+    public static class App {
+        String id;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+    }*/
 
 }

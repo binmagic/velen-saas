@@ -33,6 +33,21 @@ public interface TableMetadataApi extends com.velen.etl.generator.api.TableMetad
 
             return tableMetadataTDO;
         }
+        public static MetaEventETLDTO toMetaEventETLDTO(TableMetadataTDO tableMetadataTDO){
+            MetaEventETLDTO metaEventETLDTO = new MetaEventETLDTO();
+            metaEventETLDTO.setAppId(tableMetadataTDO.getDb());
+            metaEventETLDTO.setName(tableMetadataTDO.getTable());
+            for (PropertyMetadataTDO properties :tableMetadataTDO.getProperties()){
+                MetaEventETLDTO.MetaEventETLPropDTO  metaEventETLPropDTO = new MetaEventETLDTO.MetaEventETLPropDTO();
+                metaEventETLPropDTO.setName(properties.getName());
+                metaEventETLPropDTO.setType(properties.getType());
+                metaEventETLPropDTO.setComment(properties.getComment());
+                metaEventETLPropDTO.setIndex(properties.getIndex());
+                metaEventETLDTO.getProps().add(metaEventETLPropDTO);
+            }
+            return metaEventETLDTO;
+        }
+
     }
 
 }

@@ -42,19 +42,19 @@
             </el-table>
           </el-form-item>
           <el-row>
-            <el-col v-for="event in events" :span="4" style="margin-right: 50px;">
-              <span>{{event.label}}</span>
+            <el-col v-for="event in events" :span="4" style="margin-right: 50px;margin-top: 20px;">
+              <span>{{event.name}}</span>
+              <p class="rule-comment">{{event.comment}}</p>
               <p>Key规则</p>
-              <el-link type="primary"
-                       @click="showParserTable(event.name,event.keyRule,'event')"
-              >
-                {{event.keyRule.length<=0?'未设置':'显示匹配规则'}}
+              <el-link v-if="event.keyRule">
+                {{event.keyRule ?event.keyRule.rule:'设置KeyRule'}}
+              </el-link>
+              <el-link type="primary" v-else @click="showParserTable(event.name,event.keyRule,'eventKeyRule')">
+                {{event.keyRule ?event.keyRule.rule:'设置KeyRule'}}
               </el-link>
               <p>入库规则</p>
-              <el-link type="primary"
-                       @click="showCheckTable(event.name,event.rule,'event')"
-              >
-                {{event.rule.length<=0?'未设置 任意格式均可上报入库':'显示入库规则'}}
+              <el-link>
+                {{event.keyRule ?event.keyRule.valueRule:'未设置,任意字段可入库'}}
               </el-link>
             </el-col>
           </el-row>
@@ -100,25 +100,23 @@
             </el-table>
           </el-form-item>
           <el-row>
-            <el-col v-for="profile in profiles" :span="4" style="margin-right: 50px;">
+            <el-col v-for="profile in profiles" :span="4" style="margin-right: 50px;margin-top: 20px;">
               <span>{{profile.label}}</span>
               <p>Key规则</p>
               <el-link type="primary"
                        @click="showParserTable(profile.name,profile.keyRule,'profile')">
-                {{profile.keyRule.length<=0?'未设置':'显示匹配规则'}}
+                <!--{{profile.keyRule.length<=0?'未设置':'显示匹配规则'}}-->
               </el-link>
               <p>入库规则</p>
-              <el-link type="primary"
-                       @click="showCheckTable(profile.name,profile.rule,'profile')"
-              >
-                {{profile.rule.length<=0?'未设置 任意格式均可上报入库':'显示入库规则'}}
+              <el-link type="primary">
+                <!--{{profile.rule.length<=0?'未设置 任意格式均可上报入库':'显示入库规则'}}-->
               </el-link>
             </el-col>
           </el-row>
         </el-form>
       </div>
     </el-card>
-    <parser-table
+    <!--<parser-table
       :visible.sync="parserVisible"
       :type="type"
       :data.sync="data"
@@ -126,8 +124,8 @@
       @find-event-data="findEvenKeyRule"
       @find-profile-data="findProfileKeyRule"
       @close-parser-table="handleParserClose"
-    />
-    <check-table
+    />-->
+    <!--<check-table
       :visible.sync="checkVisible"
       :type="type"
       :data.sync="data"
@@ -135,14 +133,16 @@
       @find-event-data="findEventCheckRule"
       @find-profile-data="findProfileCheckRule"
       @close-check-table="handleCheckClose"
-    />
+    />-->
     <add-dialog
       :visible.sync="addVisible"
       :type="type"
-      :parse-type="inputParseType"
+      :parse-type="showType"
+      :field-type="fieldType"
       @close-add-rule="handleAddClose"
       @add-event-rule="insertEventRule"
       @add-profile-rule="insertProfileRule"
+      @add-key-rule="insertEventKeyRule"
     />
   </div>
 </template>
@@ -157,8 +157,11 @@
     updateEventRule,
     deleteEventRule,
     getEventKeyRule,
-    getEventCheckRule,
     getInputParseType,
+    addEventKeyRule,
+    updateEventKeyRule,
+    deleteEventKeyRule,
+    getFieldRuleType
   } from "@/api/eventRule";
   import {
     getProfileRule,
@@ -166,9 +169,12 @@
     updateProfileRule,
     deleteProfileRule,
     getProfileKeyRule,
-    getProfileCheckRule
+    addProfileKeyRule,
+    updateProfileKeyRule,
+    deleteProfileKeyRule
   } from "@/api/profileRule";
-  import {getAppVerify,updateAppVerify} from "@/api/appVerify"
+  import {getAppVerify, updateAppVerify} from "@/api/appVerify"
+  import {getFieldType} from "@/api/fieldType";
 
   export default {
     components: {
@@ -189,39 +195,14 @@
         userCheck: false,
         addVisible: false,
         parserVisible: false,
-        checkVisible:false,
+        checkVisible: false,
         type: '',
         keyName: '',
         eventTable: [],
         profileTable: [],
         profileRule: '',
         data: [],
-        events: [{
-          label: '接收用户「设备ID」',
-          name: 'device_id',
-          keyRule: [],
-          rule: []
-        }, {
-          label: '接收用户「用户ID」',
-          name: 'distinct_id',
-          keyRule: [],
-          rule: []
-        }, {
-          label: '接收事件「发生时间」',
-          name: 'time',
-          keyRule: [],
-          rule: []
-        }, {
-          label: '接收事件「名称」',
-          name: 'event',
-          keyRule: [],
-          rule: []
-        }, {
-          label: '接收事件「项目ID」',
-          name: 'project',
-          keyRule: [],
-          rule: []
-        }],
+        events: [],
         profiles: [{
           label: '接收用户「设备ID」',
           name: 'device_id',
@@ -248,8 +229,10 @@
           keyRule: [],
           rule: []
         }],
-        inputParseType:[],
-
+        inputParseType: [],
+        fieldRuleType: [],
+        fieldType: '',
+        showType: []
       }
     },
     created() {
@@ -257,12 +240,16 @@
       this.findProfileRule()
       this.findEvenKeyRule()
       this.findProfileKeyRule()
-      this.findEventCheckRule()
-      this.findProfileCheckRule()
       this.findInputParseType()
       this.findAppVerify()
+      this.findFieldRuleType()
     },
     methods: {
+      findFieldRuleType() {
+        getFieldRuleType().then(resp => {
+          this.fieldRuleType = resp
+        })
+      },
       findEventRule() {
         getEventRule().then(resp => {
           this.eventTable = resp
@@ -273,26 +260,29 @@
           this.profileTable = resp
         })
       },
-      findInputParseType(){
-        getInputParseType().then(resp =>{
+      findInputParseType() {
+        getInputParseType().then(resp => {
           this.inputParseType = resp
         })
       },
-      findAppVerify(){
-        getAppVerify().then(resp =>{
+      findAppVerify() {
+        getAppVerify().then(resp => {
           this.eventCheck = resp.verify
         })
       },
       findEvenKeyRule() {
-        getEventKeyRule().then(resp => {
-          for (let key in this.events) {
-            this.events[key].keyRule.splice(0)
-            resp.some(item => {
-              if (this.events[key].name === item.key) {
-                this.events[key].keyRule.push(item)
-              }
+        getFieldType().then(response => {
+          this.events = response
+          getEventKeyRule().then(resp => {
+            this.events.some(event => {
+              resp.some(item => {
+                if (event.value === item.key) {
+                  event['keyRule'] = item
+                  return
+                }
+              })
             })
-          }
+          })
         })
       },
       findProfileKeyRule() {
@@ -307,51 +297,29 @@
           }
         })
       },
-      findEventCheckRule() {
-        getEventCheckRule().then(resp => {
-          for (let key in this.events) {
-            this.events[key].rule.splice(0)
-            resp.some(item => {
-              if (this.events[key].name === item.key) {
-                this.events[key].rule.push(item)
-              }
-            })
-          }
-        })
-      },
-      findProfileCheckRule() {
-        getProfileCheckRule().then(resp => {
-          for (let key in this.profiles) {
-            this.profiles[key].rule.splice(0)
-            resp.some(item => {
-              if (this.profiles[key].name === item.key) {
-                this.profiles[key].rule.push(item)
-              }
-            })
-          }
-        })
-      },
       handleAddClose() {
         this.addVisible = false
       },
       handleParserClose() {
         this.parserVisible = false
       },
-      handleCheckClose(){
-        this.checkVisible=false
+      handleCheckClose() {
+        this.checkVisible = false
       },
       addTableRow(type) {
+        this.showType = this.inputParseType
         this.addVisible = true
         this.type = type
+        this.fieldType = 'parseRule'
       },
       showParserTable(key, data, type) {
-        this.keyName = key
         this.data = data
-        this.parserVisible = true
+        this.addVisible = true
         this.type = type
+        this.showType = this.fieldRuleType
+        this.fieldType = 'keyRule'
       },
-      showCheckTable(key, data, type){
-        this.keyName = key
+      showCheckTable(key, data, type) {
         this.data = data
         this.checkVisible = true
         this.type = type
@@ -366,6 +334,13 @@
         addProfileRule(val).then(resp => {
         })
         this.findProfileRule()
+      },
+      insertEventKeyRule(val) {
+        val.key = this.keyName
+        val.type = 'event'
+        addEventKeyRule(val).then(resp => {
+          this.findEvenKeyRule()
+        })
       },
       updateRow(row) {
         if (row.name.toLowerCase().indexOf('json') <= -1)
@@ -397,12 +372,12 @@
           this.findProfileRule()
         }
       },
-      setVerify(value){
-        const appVerify = {verify:value}
-        updateAppVerify(appVerify).then(resp =>{
+      setVerify(value) {
+        const appVerify = {verify: value}
+        updateAppVerify(appVerify).then(resp => {
           console.log(resp)
           this.eventCheck = resp.verify
-        }).catch(r =>{
+        }).catch(r => {
           this.eventCheck = !this.eventCheck
         })
       }
