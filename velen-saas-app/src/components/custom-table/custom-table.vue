@@ -5,7 +5,7 @@
       :data="insideTableData"
       style="width: 100%"
     >
-      <el-table-column v-for="column of insideColumns" :label="column.label" :align="column.align" :width="column.width"/>
+      <el-table-column v-for="column of insideColumns" :prop="column.prop" :label="column.label" :align="column.align" :width="column.width"/>
     </el-table>
   </div>
 </template>
@@ -76,6 +76,7 @@ export default {
 
     },
     handleColumns(columns) {
+      console.log("columns")
       this.insideColumns = columns.map((item, index) => {
         let res = Object.assign({}, this.default_column, item)
         if (res.editable) res = this.supportEdit(res, index)
@@ -87,6 +88,7 @@ export default {
 
     },
     handleTableData() {
+      console.log("sdsdxxx")
       this.insideTableData = this.value.map((item, index) => {
         const res = item
         res.initRowIndex = index

@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function reportMetaEvent(data) {
+export function query(data){
   return request({
-    url: '/query/meta-event',
+    url: '/query/report',
     method: 'post',
     data
   })
