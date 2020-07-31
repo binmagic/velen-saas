@@ -19,36 +19,48 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="{row}">
-              <i class="el-icon-edit"/>
+              <i class="el-icon-edit" style="cursor:pointer;" @click="handleDialogUpdate(row)"/>
             </template>
           </el-table-column>
         </el-table>
       </div>
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="query.page"
+        :limit.sync="query.limit"
+        @pagination="findData"
+      />
     </el-card>
-    <basic-create :dialogVisible.sync="dialogVisible" :title="title" :type="type" @close-dialog="handleClose"
+    <basic-create :dialogVisible.sync="dialogVisible" @close-dialog="handleClose"
                   @on-create-dispatch="handleCreate"/>
+    <basic-update :dialog-visible="dialogVisibleUpdate" :data="data" @close-dialog="handleCloseUpdate"
+                  @on-update-dispatch="handleUpdate"/>
 
-    <el-button type="primary" @click="fastDispatch">快速dispatch</el-button>
   </div>
 </template>
 
 <script>
   import CustomHeader from '_c/custom-header'
-  import {getPage,createDispatch} from '@/api/dispatch'
+  import {getPage, createDispatch} from '@/api/dispatch'
   import BasicCreate from './basic-create/basic-create'
+  import BasicUpdate from './basic-update/basic-update'
+  import Pagination from '@/components/Pagination'
 
   export default {
     name: "index",
     components: {
       CustomHeader,
-      BasicCreate
+      BasicCreate,
+      BasicUpdate,
+      Pagination
     },
     data() {
       return {
         formData: {},
         dialogVisible: false,
-        title: '',
-        type: '',
+        dialogVisibleUpdate: false,
+        data: {},
         dialogData: null,
         total: 0,
         query: {
@@ -74,40 +86,27 @@
           this.tableData = resp.items
         })
       },
-      handleDialog(row) {
+      handleDialog() {
         this.dialogVisible = true
-        this.title = '创建'
+      },
+      handleDialogUpdate(row) {
+        this.dialogVisibleUpdate = true
+        this.data = row
       },
       handleClose() {
         this.dialogVisible = false
-      },
-      handleCreate() {
-        this.dialogVisible = false
         this.findData()
       },
-      fastDispatch(){
-        const dispatch = {
-          platform: 'FLINK',
-          platformType: 2,
-          process: 'TASK',
-          processType: 2,
-          businessName: 'test',
-          dsl: '',
-          properties: {id:'app.id',name:'app.owner'}
-        }
-        createDispatch(dispatch).then(resp =>{
-          this.$notify({
-            title: '成功',
-            message: '快速添加',
-            type: 'success'
-          });
-        }).catch(msg =>{
-          this.$notify({
-            title: '失败',
-            message: msg.message,
-            type: 'error'
-          });
-        })
+      handleCloseUpdate() {
+        this.dialogVisibleUpdate = false
+        this.findData()
+      },
+      handleCreate() {
+        //this.dialogVisible = false
+        this.findData()
+      },
+      handleUpdate() {
+        this.findData()
       }
     }
   }

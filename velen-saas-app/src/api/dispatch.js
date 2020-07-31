@@ -37,3 +37,11 @@ export function updateDispatch(data) {
     data
   })
 }
+
+export function fastDispatch(data) {
+  return request({
+    url: '/dispatch/fast',
+    method: 'post',
+    data
+  })
+}

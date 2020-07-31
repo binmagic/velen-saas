@@ -78,18 +78,7 @@ class DispatchRuleServiceImpl : DispatchRuleService {
         if (item != null) {
             return Mono.error(RuntimeException("业务名重复"))
         }
-        val app = appRepository.findById(appId).awaitSingle()
 
-        val map = BeanUtil.beanToMap(app)
-
-        for (entry in dispatchRule.properties) {
-            entry.setValue(StringFormat.format(entry.value, map))
-        }
-
-        val resp = dispatchApi.deploy(dispatchRule.platform, dispatchRule.process, dispatchRule.businessName, dispatchRule.dsl, dispatchRule.properties)
-        if (EnumUtil.isInResultCode(resp.statusCodeValue)) {
-            return Mono.error(RuntimeException(ResultCode.valueOf(resp.statusCodeValue).message()))
-        }
         return dispatchRuleRepository.insert(dispatchRule)
     }
 
@@ -99,4 +88,23 @@ class DispatchRuleServiceImpl : DispatchRuleService {
 
         return dispatchRuleRepository.save(dispatchRule)
     }
+
+    override suspend fun fast(dispatchRule: DispatchRule): Mono<Void> {
+        val app = appRepository.findById(dispatchRule.appId).awaitSingle()
+
+        val map = BeanUtil.beanToMap(app)
+
+        for (entry in dispatchRule.properties) {
+            entry.setValue(StringFormat.format(entry.value, map))
+        }
+        val name = DispatchApi.make(dispatchRule.appId, dispatchRule.businessName)
+        val resp = dispatchApi.deploy(dispatchRule.platform, dispatchRule.process, name, dispatchRule.dsl, dispatchRule.properties)
+        if (EnumUtil.isInResultCode(resp.statusCodeValue)) {
+            return Mono.error(RuntimeException(ResultCode.valueOf(resp.statusCodeValue).message()))
+        }
+        dispatchRuleRepository.save(dispatchRule).awaitSingle()
+        return Mono.just(dispatchRule).then()
+    }
+
+
 }

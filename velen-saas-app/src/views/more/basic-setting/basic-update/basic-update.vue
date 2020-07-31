@@ -1,7 +1,7 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" :before-close="handleClose" center>
+  <el-dialog :visible.sync="dialogVisible" :before-close="handleClose" center @open="openDialog">
     <div slot="title">
-      创建
+      {{ title }}
     </div>
     <div style="overflow-y: auto;max-height: 400px;">
       <el-form :inline="true">
@@ -38,11 +38,11 @@
             </el-col>
             <el-col :span="1" style="text-align: right">
               <i v-if="formData.properties.length != 1" class="el-icon-remove-outline" @click="delRow(prop)"
-                 style="cursor:pointer;  font-size: 18px;"/>
+                 style="cursor:pointer; font-size: 18px;"/>
             </el-col>
             <el-col :span="1" style="text-align: right">
               <i v-if="key == formData.properties.length-1" class="el-icon-circle-plus-outline" @click="addRow"
-                 style="cursor: pointer;  font-size: 18px;"/>
+                 style="cursor: pointer; font-size: 18px;"/>
             </el-col>
           </el-row>
         </el-form-item>
@@ -61,12 +61,25 @@
   import {createDispatch, updateDispatch, fastDispatch} from '@/api/dispatch'
 
   export default {
-    name: "basic-create",
+    name: "basic-update",
     props: {
       dialogVisible: {
         type: Boolean,
         required: true
       },
+      title: {
+        type: String,
+      },
+      data: {
+        type: Object,
+        default() {
+          return {
+            businessName: '',
+            dsl: '',
+            properties: {id: 'appId'}
+          }
+        }
+      }
     },
     data() {
       return {
@@ -74,12 +87,7 @@
         processes: [],
         platform: {},
         process: {},
-        formData:
-          {
-            businessName: '',
-            dsl: '',
-            properties: [{name: '', prop: ''}]
-          }
+        formData: {}
       }
     },
     created() {
@@ -87,6 +95,16 @@
       this.findProcess()
     },
     methods: {
+      openDialog() {
+        this.platform = JSON.parse(JSON.stringify({name: this.data.platform, key: this.data.platformType}))
+        this.process = JSON.parse(JSON.stringify({name: this.data.process, key: this.data.processType}))
+        this.formData = JSON.parse(JSON.stringify(this.data))
+        var list = []
+        for (let key in this.formData.properties) {
+          list.push({name: key, prop: this.formData.properties[key]})
+        }
+        this.formData.properties = list
+      },
       findPlatform() {
         getPlatform().then(resp => {
           this.platforms = resp
@@ -121,9 +139,9 @@
           dsl: this.formData.dsl,
           properties: properties
         }
-        createDispatch(data).then(resp => {
+        updateDispatch(data).then(resp => {
           console.log(resp)
-          this.$emit('on-create-dispatch')
+          this.$emit('on-update-dispatch')
           this.$emit('close-dialog')
         })
       },
@@ -142,6 +160,7 @@
           properties[item.name] = item.prop
         })
         const dispatch = {
+          id: this.formData.id,
           platform: this.platform.name,
           platformType: this.platform.key,
           process: this.process.name,
@@ -151,7 +170,7 @@
           properties: properties
         }
         fastDispatch(dispatch).then(resp => {
-
+          this.$emit('on-update-dispatch')
           this.$notify({
             title: '成功',
             message: '快速调用',
