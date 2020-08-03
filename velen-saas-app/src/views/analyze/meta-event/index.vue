@@ -94,7 +94,7 @@
             </el-col>
           </el-row>-->
           <screening-condition
-            :filter="filterList"
+            :filter.sync="filterList"
             :props="meta_props"
             @update-filter="handleUpdate"
             @get-btn-val="handleBtnVal"
@@ -123,10 +123,10 @@
           </el-col>
           <el-col :span="8" />
         </el-row>
-        <custom-table :columns="columns" :value="data" />
-        <custom-charts
-          :chart-name="chartName"
-        />
+        <custom-table :columns.sync="columns" :value.sync="data" />
+<!--        <custom-charts-->
+<!--          :chart-name="chartName"-->
+<!--        />-->
       </el-main>
     </el-container>
   </div>
@@ -173,6 +173,7 @@ export default {
         measures: {
           props: [],
           filter: {
+            union: 'AND',
             conditions: []
           }
         }
@@ -230,8 +231,9 @@ export default {
       })
     },
     fetchData() {
+
       query(this.query).then(resp => {
-        this.data = resp.rows
+        this.data = resp.rows || []
       })
     },
     fetchMetaEventProps() {
@@ -295,6 +297,13 @@ export default {
     },
     handleUpdate(val) {
       this.filterList = val
+      this.query.measures.filter.conditions = []
+      for (const index in this.filterList) {
+        const data = this.filterList[index]
+        this.query.measures.filter.conditions
+          .push({ prop: data.switchProp.name, filter: data.filter, params: data.params })
+      }
+      this.fetchData()
     },
     handleBtnVal(val) {
       this.btnVal = val

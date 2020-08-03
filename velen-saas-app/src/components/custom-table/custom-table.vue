@@ -88,7 +88,6 @@ export default {
 
     },
     handleTableData() {
-      console.log("sdsdxxx")
       this.insideTableData = this.value.map((item, index) => {
         const res = item
         res.initRowIndex = index
