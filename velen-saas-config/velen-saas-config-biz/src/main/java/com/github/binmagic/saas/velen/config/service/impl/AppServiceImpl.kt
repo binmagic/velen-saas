@@ -76,7 +76,7 @@ class AppServiceImpl : AppService {
         app.createTime = now
         app.state = App.DRAFT
         app.updateTime = now
-        app.id = IdUtil.fastSimpleUUID();
+        app.id = IdUtil.fastSimpleUUID()
 
         if (appRepository.findByName(app.name).awaitFirstOrNull() != null) {
             return Mono.error(RuntimeException("app名重复"))

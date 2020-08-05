@@ -103,7 +103,7 @@
         for (let key in this.formData.properties) {
           list.push({name: key, prop: this.formData.properties[key]})
         }
-        this.formData.properties = list
+        this.formData.properties = list.length > 0 ? list : [{name: '', prop: ''}]
       },
       findPlatform() {
         getPlatform().then(resp => {
@@ -128,9 +128,11 @@
       handleSubmit() {
         var properties = {}
         this.formData.properties.some(item => {
-          properties[item.name] = item.prop
+          if (item.name != '')
+            properties[item.name] = item.prop
         })
         var data = {
+          id: this.formData.id,
           platform: this.platform.name,
           platformType: this.platform.key,
           process: this.process.name,
@@ -157,7 +159,8 @@
       fastDispatch() {
         var properties = {}
         this.formData.properties.some(item => {
-          properties[item.name] = item.prop
+          if (item.name != '')
+            properties[item.name] = item.prop
         })
         const dispatch = {
           id: this.formData.id,

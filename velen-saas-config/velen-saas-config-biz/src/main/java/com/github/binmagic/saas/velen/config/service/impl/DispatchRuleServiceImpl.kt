@@ -1,6 +1,7 @@
 package com.github.binmagic.saas.velen.config.service.impl
 
 import cn.hutool.core.bean.BeanUtil
+import cn.hutool.core.util.IdUtil
 import com.github.binmagic.saas.velen.common.config.EnumUtil
 import com.github.binmagic.saas.velen.common.entity.Page
 import com.github.binmagic.saas.velen.common.util.StringFormat
@@ -15,6 +16,7 @@ import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cloud.commons.util.IdUtils
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.ExampleMatcher
 import org.springframework.data.domain.PageRequest
@@ -93,12 +95,20 @@ class DispatchRuleServiceImpl : DispatchRuleService {
         val app = appRepository.findById(dispatchRule.appId).awaitSingle()
 
         val map = BeanUtil.beanToMap(app)
-
+        val name = DispatchApi.make(dispatchRule.appId, dispatchRule.businessName)
+        map["pid"] = IdUtil.fastSimpleUUID()
         for (entry in dispatchRule.properties) {
             entry.setValue(StringFormat.format(entry.value, map))
         }
-        val name = DispatchApi.make(dispatchRule.appId, dispatchRule.businessName)
-        val resp = dispatchApi.deploy(dispatchRule.platform, dispatchRule.process, name, dispatchRule.dsl, dispatchRule.properties)
+
+        val propMap: MutableMap<String, String> = HashMap()
+
+        for (entry in dispatchRule.properties) {
+            val key = entry.key.replace("_", ".")
+            propMap[key] = entry.value
+        }
+
+        val resp = dispatchApi.deploy(dispatchRule.platform, dispatchRule.process, name, dispatchRule.dsl, propMap)
         if (EnumUtil.isInResultCode(resp.statusCodeValue)) {
             return Mono.error(RuntimeException(ResultCode.valueOf(resp.statusCodeValue).message()))
         }

@@ -28,8 +28,8 @@
         </el-row>
       </el-form>
       <el-form label-position="top">
-        <el-form-item v-for="(prop,key) in formData.properties" :label=" key ==0 ? 'properties' :''">
-          <el-row>
+        <el-form-item label="properties">
+          <el-row v-for="(prop,key) in formData.properties">
             <el-col :span="8" style="margin-right: 20px;">
               <el-input v-model="prop.name" placeholder="名字" size="small"/>
             </el-col>
@@ -110,7 +110,8 @@
       handleSubmit() {
         var properties = {}
         this.formData.properties.some(item => {
-          properties[item.name] = item.prop
+          if (item.name != '')
+            properties[item.name] = item.prop
         })
         var data = {
           platform: this.platform.name,
@@ -122,7 +123,6 @@
           properties: properties
         }
         createDispatch(data).then(resp => {
-          console.log(resp)
           this.$emit('on-create-dispatch')
           this.$emit('close-dialog')
         })
@@ -139,7 +139,8 @@
       fastDispatch() {
         var properties = {}
         this.formData.properties.some(item => {
-          properties[item.name] = item.prop
+          if (item.name != '')
+            properties[item.name] = item.prop
         })
         const dispatch = {
           platform: this.platform.name,
@@ -151,7 +152,6 @@
           properties: properties
         }
         fastDispatch(dispatch).then(resp => {
-
           this.$notify({
             title: '成功',
             message: '快速调用',
