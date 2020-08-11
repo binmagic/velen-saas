@@ -37,4 +37,5 @@ public class ReportQueryDTO
 	private String unit;
 
 	private String valueTypes;
+
 }

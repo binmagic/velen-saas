@@ -10,4 +10,7 @@ import java.util.Map;
 public class MetaEventReportQueryResultDTO extends ReportQueryResultDTO
 {
 	private List<Map<String, Object>> rows = new ArrayList<>();
+
+	private long total;
+
 }

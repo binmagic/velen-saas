@@ -1,15 +1,17 @@
 <template>
   <card>
-    <template slot="title">{{event_name}}</template>
+    <template slot="title">{{ event_name }}</template>
     <template slot="tools" />
     <template slot="content">
-      <custom-table :columns="columns" :value="value" />
+      <custom-table :columns="columns" :value="data" :loading="loading" :total="total" @fetch="fetch" />
     </template>
   </card>
 </template>
 <script>
 import CustomTable from '_c/custom-table'
 import Card from '../../card'
+import { query } from '@/api/query'
+
 export default {
   name: 'MetaEventAnalytics',
   components: {
@@ -34,14 +36,22 @@ export default {
       default: () => {
         return {}
       }
+    },
+    config: {
+      type: String,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {
     return {
       columns: [],
-      value: [],
       event_id: '',
       event_name: '',
+      data: [],
+      total: 0,
+      loading: false,
     }
   },
   mounted() {
@@ -54,10 +64,10 @@ export default {
       this.event_id = data.measures
       this.event_name = this.getMetaEvent(this.event_id).showName
     },
-    getMetaEvent(eventId){
+    getMetaEvent(eventId) {
       for (const index in this.meta_events) {
         const meta_event = this.meta_events[index]
-        if(Object.is(eventId, meta_event.id)){
+        if (Object.is(eventId, meta_event.id)) {
           return meta_event
         }
       }
@@ -68,11 +78,27 @@ export default {
       for (const _index in meta_event.propIds) {
         const id = meta_event.propIds[_index]
         const prop = this.meta_props[id]
-        this.columns.push({
-          'prop': prop.name,
-          'label': prop.showName
-        })
+        if(prop) {
+          this.columns.push({
+            'prop': prop.name.toLowerCase(),
+            'label': prop.showName
+          })
+        }
       }
+    },
+    fetch(param) {
+      this.loading = true
+      const params = JSON.parse(this.bookmarks.data)
+      params.measures = Object.assign({}, params.measures, param || {})
+      query(params).then(resp => {
+        setTimeout(function() {
+          this.loading = false
+        }, 3000)
+        this.data = resp.rows || []
+        this.total = resp.total || resp.rows.length
+      }).catch(err => {
+        this.loading = false
+      })
     }
   }
 }

@@ -123,7 +123,7 @@
           </el-col>
           <el-col :span="8" />
         </el-row>
-        <custom-table :columns.sync="columns" :value.sync="data" />
+        <custom-table :columns.sync="columns" :value.sync="data" :total.sync="total" :loading="loading" @fetch="fetchData"/>
 <!--        <custom-charts-->
 <!--          :chart-name="chartName"-->
 <!--        />-->
@@ -161,6 +161,8 @@ export default {
       id: '',
       columns: [],
       data: [],
+      total: 0,
+      loading: false,
       switchEvent: '',
       filterValue: '',
       btnVal: '',
@@ -175,8 +177,10 @@ export default {
           filter: {
             union: 'AND',
             conditions: []
-          }
-        }
+          },
+          page: 1,
+          limit: 10,
+        },
       },
       originQuery: {
         dateRange: []
@@ -219,21 +223,22 @@ export default {
       this.saveData.config = JSON.stringify({
         comment: this.comment
       })
-      this.saveData.data = JSON.stringify({
-        measures: this.switchEvent,
-        filter: {},
-        chartsType: 'pie',
-        rangeText: '',
-        from_date: '2020-06-08', to_date: '2020-06-09'
-      })
+      this.saveData.data = JSON.stringify(this.query)
       create(this.saveData).then(resp => {
         this.id = resp.id
       })
     },
-    fetchData() {
-
-      query(this.query).then(resp => {
+    fetchData(param) {
+      console.log("fetchData")
+      this.loading = true
+      const params = Object.assign({}, this.query)
+      params.measures = Object.assign({}, params.measures, param)
+      query(params).then(resp => {
+        this.total = resp.total || resp.rows.length
         this.data = resp.rows || []
+        setTimeout(function() {
+          this.loading = false
+        }, 2000)
       })
     },
     fetchMetaEventProps() {
