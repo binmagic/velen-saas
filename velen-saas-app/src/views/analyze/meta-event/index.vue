@@ -123,7 +123,7 @@
           </el-col>
           <el-col :span="8" />
         </el-row>
-        <custom-table :columns.sync="columns" :value.sync="data" :total.sync="total" :loading="loading" @fetch="fetchData"/>
+        <custom-table :columns.sync="columns" :value.sync="data" :total.sync="total" :loading.sync="loading" @fetch="fetchData"/>
 <!--        <custom-charts-->
 <!--          :chart-name="chartName"-->
 <!--        />-->
@@ -226,6 +226,7 @@ export default {
       this.saveData.data = JSON.stringify(this.query)
       create(this.saveData).then(resp => {
         this.id = resp.id
+        this.$message.success("添加成功")
       })
     },
     fetchData(param) {
@@ -233,12 +234,15 @@ export default {
       this.loading = true
       const params = Object.assign({}, this.query)
       params.measures = Object.assign({}, params.measures, param)
+      const that = this
       query(params).then(resp => {
         this.total = resp.total || resp.rows.length
         this.data = resp.rows || []
         setTimeout(function() {
-          this.loading = false
-        }, 2000)
+          that.loading = false
+        }, 1000)
+      }).catch(err => {
+        this.loading = false
       })
     },
     fetchMetaEventProps() {

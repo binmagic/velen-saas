@@ -87,13 +87,14 @@ export default {
       }
     },
     fetch(param) {
+      const that = this
       this.loading = true
       const params = JSON.parse(this.bookmarks.data)
       params.measures = Object.assign({}, params.measures, param || {})
       query(params).then(resp => {
         setTimeout(function() {
-          this.loading = false
-        }, 3000)
+          that.loading = false
+        }, 1000)
         this.data = resp.rows || []
         this.total = resp.total || resp.rows.length
       }).catch(err => {
