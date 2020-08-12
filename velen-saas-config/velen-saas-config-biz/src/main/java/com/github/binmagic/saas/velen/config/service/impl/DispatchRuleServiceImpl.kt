@@ -61,11 +61,17 @@ class DispatchRuleServiceImpl : DispatchRuleService {
             }
         }
 
-        val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
+//        val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
 
         val example = Example.of(DispatchRule.EMPTY, exampleMatcher)
 
         val total = dispatchRuleRepository.count(example).awaitSingle()
+
+        if (query.limit == 0 || query.limit == null) {
+            query.limit = total.toInt()
+        }
+
+        val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
 
         val items = dispatchRuleRepository.findAll(example, pageRequest).collectList().awaitSingle()
 

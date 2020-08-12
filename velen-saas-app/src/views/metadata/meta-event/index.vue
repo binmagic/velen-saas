@@ -179,13 +179,23 @@ export default {
         this.total = resp.total
         this.list = resp.items
         this.listLoading = false
+      }).catch(err =>{
+        this.$notify({
+          type:'error',
+          message:err.message,
+          title:'失败'
+        })
       })
-
-
     },
     fetchAll(){
       all().then(resp =>{
         this.fetchData()
+      }).catch(err => {
+        this.$notify({
+          type: 'error',
+          message: err.message,
+          title: '失败'
+        })
       })
     },
     handleClickPlus(command) {

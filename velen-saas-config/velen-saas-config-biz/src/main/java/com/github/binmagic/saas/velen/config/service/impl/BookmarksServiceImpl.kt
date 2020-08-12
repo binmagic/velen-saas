@@ -66,11 +66,17 @@ class BookmarksServiceImpl : BookmarksService {
             }
         }
 
-        val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
+//        val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
 
         val example = Example.of(Bookmarks.EMPTY, exampleMatcher)
 
         val total = bookmarksRepository.count(example).awaitSingle()
+
+        if (query.limit == 0 || query.limit == null) {
+            query.limit = total.toInt()
+        }
+
+        val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
 
         val items = bookmarksRepository.findAll(example, pageRequest).collectList().awaitSingle()
 

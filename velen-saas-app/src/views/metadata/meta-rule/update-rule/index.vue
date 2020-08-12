@@ -2,7 +2,7 @@
   <el-dialog :visible.sync="visible" :before-close="handleClose" width="20%" @open="openDialog"
              append-to-body>
     <template slot="title">
-      <p>添加解释器</p>
+      <p>修改key规则</p>
     </template>
     <el-form :model="form">
       <el-form-item label="解释器类型">
@@ -14,7 +14,7 @@
         <el-input placeholder="请输入规则" v-model="form.rule"></el-input>
       </el-form-item>
       <el-form-item label="入库规则设置">
-        <el-input placeholder="输入入库规则" v-model="form.valueRule" :disabled="fieldType==='parseRule'"></el-input>
+        <el-input placeholder="输入入库规则" v-model="form.valueRule"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer">
@@ -39,9 +39,8 @@
         required: true,
         type: Array
       },
-      fieldType: {
-        required: true,
-        type: String
+      date: {
+        type: Object
       }
     },
     data() {
@@ -62,25 +61,22 @@
         this.form.rule = ''
         this.form.valueRule = ''
         this.ruleType = {}
+        this.from = JSON.parse(JSON.stringify(this.data))
+        this.ruleType.name = this.from.name
+        this.ruleType.key = this.from.ruleKey
       },
       handleClose() {
-        this.$emit('close-add-rule')
+        this.$emit('close-update-rule')
       },
       addRule() {
         this.form.name = this.ruleType.name
         this.form.ruleKey = this.ruleType.key
         switch (this.type) {
-          case 'event':
-            this.$emit('add-event-rule', this.form)
-            break
-          case 'profile':
-            this.$emit('add-profile-rule', this.form)
-            break
           case 'eventKeyRule':
-            this.$emit('add-key-rule', this.form)
+            this.$emit('update-key-rule', this.form)
             break
         }
-        this.$emit('close-add-rule')
+        this.$emit('close-update-rule')
       }
     }
   }

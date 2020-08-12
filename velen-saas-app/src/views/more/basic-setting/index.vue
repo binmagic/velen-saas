@@ -13,13 +13,15 @@
           <el-table-column label="业务名" prop="businessName"/>
           <el-table-column label="DSL" prop="dsl"/>
           <el-table-column label="配置" :show-overflow-tooltip="true">
-            <template slot-scope="{row}">
+            <template v-if="row.properties!=null" slot-scope="{row}">
               <span v-for="(r,key) in row.properties">{{ key }} : {{ r }};</span>
             </template>
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="{row}">
               <i class="el-icon-edit" style="cursor:pointer;" @click="handleDialogUpdate(row)"/>
+              <el-button style="margin-left: 10px;" size="small" type="primary" @click="fastDispatch(row)">dispatch
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -42,7 +44,7 @@
 
 <script>
   import CustomHeader from '_c/custom-header'
-  import {getPage, createDispatch} from '@/api/dispatch'
+  import {getPage, fastDispatch} from '@/api/dispatch'
   import BasicCreate from './basic-create/basic-create'
   import BasicUpdate from './basic-update/basic-update'
   import Pagination from '@/components/Pagination'
@@ -107,6 +109,21 @@
       },
       handleUpdate() {
         this.findData()
+      },
+      fastDispatch(row) {
+        fastDispatch(row).then(resp => {
+          this.$notify({
+            title: '成功',
+            message: '快速调用',
+            type: 'success'
+          });
+        }).catch(msg => {
+          this.$notify({
+            title: '失败',
+            message: msg.message,
+            type: 'error'
+          });
+        })
       }
     }
   }

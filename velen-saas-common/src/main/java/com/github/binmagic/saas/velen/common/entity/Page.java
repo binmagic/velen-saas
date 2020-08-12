@@ -21,7 +21,7 @@ public class Page
 
 		private int page = 1;
 
-		private int limit = 15;
+		private int limit;
 
 		private Map<String, String> params = new HashMap<>();
 

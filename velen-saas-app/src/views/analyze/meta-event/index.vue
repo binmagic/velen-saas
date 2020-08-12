@@ -6,6 +6,8 @@
           placement="bottom"
           width="200"
           trigger="click"
+          v-model="popoverVisible"
+          @show="handleCleanData"
         >
           <el-button slot="reference" icon="el-icon-folder-add" />
 
@@ -17,7 +19,7 @@
               <el-input v-model="formData.comment" type="textarea" />
             </el-form-item>
             <el-form-item>
-              <el-button>取消</el-button>
+              <el-button @click="popoverVisible = false">取消</el-button>
               <el-button type="primary" @click="submitData">确定</el-button>
             </el-form-item>
           </el-form>
@@ -195,7 +197,8 @@ export default {
         config: '',
         type: '/meta_event_analytics/'
       },
-      chartName: '测试'
+      chartName: '测试',
+      popoverVisible:false
     }
   },
   created() {
@@ -228,6 +231,7 @@ export default {
         this.id = resp.id
         this.$message.success("添加成功")
       })
+      this.popoverVisible = false
     },
     fetchData(param) {
       console.log("fetchData")
@@ -325,6 +329,10 @@ export default {
     },
     handleBtnVal(val) {
       this.btnVal = val
+    },
+    handleCleanData(){
+      this.formData.name = ''
+      this.formData.comment = ''
     }
   }
 }

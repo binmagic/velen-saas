@@ -56,11 +56,16 @@ class MetadataServiceImpl : MetadataService {
         val metaEventProp = BeanUtil.mapToBean(query.params, MetaEventProp::class.java, true)
         metaEventProp.appId = appId
 
-        val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
 
         val example = Example.of(metaEventProp, exampleMatcher)
 
         val total = metaEventPropRepository.count(example).awaitSingle()
+
+        if (query.limit == 0 || query.limit == null) {
+            query.limit = total.toInt()
+        }
+
+        val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
 
         val items = metaEventPropRepository.findAll(example, pageRequest).collectList().awaitSingle()
 
@@ -93,11 +98,15 @@ class MetadataServiceImpl : MetadataService {
         val metaEvent = BeanUtil.mapToBean(query.params, MetaEvent::class.java, true)
         metaEvent.appId = appId
 
-        val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
-
         val example = Example.of(metaEvent, exampleMatcher)
 
         val total = metaEventRepository.count(example).awaitSingle()
+
+        if (query.limit == 0 || query.limit == null) {
+            query.limit = total.toInt()
+        }
+
+        val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
 
         val items = metaEventRepository.findAll(example, pageRequest).collectList().awaitSingle()
 

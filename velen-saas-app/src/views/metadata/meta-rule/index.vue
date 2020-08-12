@@ -46,10 +46,10 @@
               <span>{{event.name}}</span>
               <p class="rule-comment">{{event.comment}}</p>
               <p>Key规则</p>
-              <el-link v-if="event.keyRule">
+              <el-link v-if="event.keyRule" @click="showUpdateDialog(event.value,'eventKeyRule')">
                 {{event.keyRule ?event.keyRule.rule:'设置KeyRule'}}
               </el-link>
-              <el-link type="primary" v-else @click="showParserTable(event.name,event.keyRule,'eventKeyRule')">
+              <el-link type="primary" v-else @click="showParserTable(event.value,'eventKeyRule')">
                 {{event.keyRule ?event.keyRule.rule:'设置KeyRule'}}
               </el-link>
               <p>入库规则</p>
@@ -104,7 +104,7 @@
               <span>{{profile.label}}</span>
               <p>Key规则</p>
               <el-link type="primary"
-                       @click="showParserTable(profile.name,profile.keyRule,'profile')">
+                       @click="showParserTable(profile.name,'profile')">
                 <!--{{profile.keyRule.length<=0?'未设置':'显示匹配规则'}}-->
               </el-link>
               <p>入库规则</p>
@@ -144,11 +144,19 @@
       @add-profile-rule="insertProfileRule"
       @add-key-rule="insertEventKeyRule"
     />
+    <update-dialog
+      :visible.sync="updateVisible"
+      :type="type"
+      :parse-type="showType"
+      @close-update-rule="handleUpdateClose"
+      @update-key-rule="handleUpdateEventKeyRule"
+    />
   </div>
 </template>
 
 <script>
   import AddDialog from './add-rule'
+  import UpdateDialog from './update-rule'
   import ParserTable from './parser-table'
   import CheckTable from './check-table'
   import {
@@ -160,7 +168,6 @@
     getInputParseType,
     addEventKeyRule,
     updateEventKeyRule,
-    deleteEventKeyRule,
     getFieldRuleType
   } from "@/api/eventRule";
   import {
@@ -171,7 +178,6 @@
     getProfileKeyRule,
     addProfileKeyRule,
     updateProfileKeyRule,
-    deleteProfileKeyRule
   } from "@/api/profileRule";
   import {getAppVerify, updateAppVerify} from "@/api/appVerify"
   import {getFieldType} from "@/api/fieldType";
@@ -180,7 +186,8 @@
     components: {
       AddDialog,
       ParserTable,
-      CheckTable
+      CheckTable,
+      UpdateDialog
     },
     directives: {
       focus: {
@@ -194,6 +201,7 @@
         eventCheck: false,
         userCheck: false,
         addVisible: false,
+        updateVisible: false,
         parserVisible: false,
         checkVisible: false,
         type: '',
@@ -201,7 +209,7 @@
         eventTable: [],
         profileTable: [],
         profileRule: '',
-        data: [],
+        data: {},
         events: [],
         profiles: [{
           label: '接收用户「设备ID」',
@@ -300,6 +308,9 @@
       handleAddClose() {
         this.addVisible = false
       },
+      handleUpdateClose(){
+        this.updateVisible = false
+      },
       handleParserClose() {
         this.parserVisible = false
       },
@@ -312,15 +323,21 @@
         this.type = type
         this.fieldType = 'parseRule'
       },
-      showParserTable(key, data, type) {
-        this.data = data
+      showParserTable(key, type) {
+        this.keyName = key
         this.addVisible = true
         this.type = type
         this.showType = this.fieldRuleType
         this.fieldType = 'keyRule'
       },
-      showCheckTable(key, data, type) {
-        this.data = data
+      showUpdateDialog(key, type) {
+        this.keyName = key
+        this.updateVisible = true
+        this.showType = this.fieldRuleType
+        this.type = type
+
+      },
+      showCheckTable(key, type) {
         this.checkVisible = true
         this.type = type
       },
@@ -342,6 +359,9 @@
           this.findEvenKeyRule()
         })
       },
+      handleUpdateEventKeyRule(val) {
+
+      },
       updateRow(row) {
         if (row.name.toLowerCase().indexOf('json') <= -1)
           this.$set(row, 'update', true)
@@ -349,8 +369,8 @@
       updEventRule(row) {
         this.$set(row, 'update', false)
         updateEventRule(row).then(resp => {
+          this.findEventRule()
         })
-        this.findEventRule()
       },
       updProfileRule(row) {
         if (row.rule.split(' ').join('').length == 0) {
