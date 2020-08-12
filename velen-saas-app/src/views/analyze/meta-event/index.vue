@@ -236,8 +236,17 @@ export default {
       params.measures = Object.assign({}, params.measures, param)
       const that = this
       query(params).then(resp => {
+        const _data = []
+        for(const index in resp.rows){
+          const row = resp.rows[index]
+          const _row = {}
+          for(const key in row){
+            _row[key.toLowerCase()] = row[key]
+          }
+          _data.push(_row)
+        }
+        this.data = _data
         this.total = resp.total || resp.rows.length
-        this.data = resp.rows || []
         setTimeout(function() {
           that.loading = false
         }, 1000)

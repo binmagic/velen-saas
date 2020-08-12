@@ -95,7 +95,16 @@ export default {
         setTimeout(function() {
           that.loading = false
         }, 1000)
-        this.data = resp.rows || []
+        const _data = []
+        for(const index in resp.rows){
+          const row = resp.rows[index]
+          const _row = {}
+          for(const key in row){
+            _row[key.toLowerCase()] = row[key]
+          }
+          _data.push(_row)
+        }
+        this.data = _data
         this.total = resp.total || resp.rows.length
       }).catch(err => {
         this.loading = false

@@ -1,5 +1,5 @@
 middleware:
-  host: 192.168.1.85
+  host: localhost
 ribbon:
   ConnectTimeout: 60000
   ReadTimeout: 60000
@@ -30,4 +30,6 @@ jwt:
   token_secret: pXFb4i%*834gfdh96(3df&%18iodGq4ODQyMzc4lz7yI6ImF1dG
 
 rxjdbc:
-  url: jdbc:hive2://119.254.118.20:10000/%s
+  url: jdbc:mysql://192.168.1.55:3306/2faee48c434d481c9b75d1e16031e686
+  username: root
+  password: V/p8Rv2FliKic
