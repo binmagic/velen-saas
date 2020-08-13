@@ -106,7 +106,7 @@
       </el-table-column>
       <el-table-column fixed="right" label="#" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <i class="el-icon-edit" @click="showEventCreate(row)"/>
+          <i class="el-icon-edit" @click="showEventUpdate(row)"/>
           <i class="el-icon-more" />
         </template>
       </el-table-column>
@@ -215,7 +215,11 @@ export default {
     },
     showEventCreate(row){
       this.componentFlag.enableDrawer = true
+    },
+    showEventUpdate(row){
+      this.componentFlag.updateDrawer = true
       this.event = row
+      console.log(this.event)
     }
   }
 }

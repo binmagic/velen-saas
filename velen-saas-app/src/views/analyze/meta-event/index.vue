@@ -41,60 +41,6 @@
               </el-button>
             </el-col>
           </el-row>
-          <!--<div v-if="filterList.length>=2" class="filter-group-relation">
-            <div class="relation-topline"></div>
-            <el-button size="small" v-model="btnVal" @click="btnVal==='and'?btnVal = 'or':btnVal = 'and'">
-              {{btnVal==='and'?'且':'或'}}
-            </el-button>
-            <div class="relation-bottomline"></div>
-          </div>
-          <el-row v-if="filterList.length>=1" v-for="(filterItem,index) in filterList" class="filterRow">
-            <el-col :span="4">
-              <el-select size="small" v-model="filterItem.switchProp" value-key="id"
-                         @change="handleSelectChange(index)">
-                <el-option v-for="(prop,key) in meta_props" :key="key" :label="prop.showName"
-                           :value="prop"></el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="4">
-              <el-select v-show="filterItem.switchProp.type === 'NUMBER'" size="small" v-model="filterItem.filter">
-                <el-option v-for="item in $const.filter_type.option1" :key="item.value" :label="item.label"
-                           :value="item.value"></el-option>
-              </el-select>
-              <el-select v-show="filterItem.switchProp.type === 'STRING'" size="small" v-model="filterItem.filter">
-                <el-option v-for="item in $const.filter_type.option2" :key="item.value" :label="item.label"
-                           :value="item.value"></el-option>
-              </el-select>
-              <el-select v-show="filterItem.switchProp.type === 'BOOL'" size="small" v-model="filterItem.filter">
-                <el-option v-for="item in $const.filter_type.option3" :key="item.value" :label="item.label"
-                           :value="item.value"></el-option>
-              </el-select>
-              <el-select v-show="filterItem.switchProp.type === 'DATETIME'" size="small" v-model="filterItem.filter">
-                <el-option v-for="item in $const.filter_type.option4" :key="item.value" :label="item.label"
-                           :value="item.value"></el-option>
-              </el-select>
-            </el-col>
-            <el-col
-              v-if="filterItem.filter ==='equal' || filterItem.filter ==='notEqual' || filterItem.filter ==='contain' || filterItem.filter === 'notContain'"
-              :span="14">
-              <tag-input :size="'1'" @input="handleInput"></tag-input>
-            </el-col>
-            <el-col
-              v-else-if="filterItem.filter==='less'|| filterItem.filter === 'greater' || filterItem.filter==='rlike' || filterItem.filter==='notrlike'"
-              :span="3">
-              <el-input v-model="params" size="small"></el-input>
-            </el-col>
-            <el-col class="between-input" v-else-if="filterItem.filter ==='between'" :span="4">
-              <el-input v-model="filterItem.form" size="small"></el-input>
-              与
-              <el-input v-model="filterItem.to" size="small"></el-input>
-              之间
-            </el-col>
-            <el-col :span="1" class="delRow">
-              <span @click="delRow(index)" style="line-height: 32px;cursor:pointer;">
-                <i class="el-icon-close" style="font-size: 18px"/></span>
-            </el-col>
-          </el-row>-->
           <screening-condition
             :filter.sync="filterList"
             :props="meta_props"
@@ -283,6 +229,7 @@ export default {
       this.fetchData()
     },
     handleColumn(props) {
+      this.columns.length = 0
       this.query.measures.props = []
       for (const index in props) {
         const prop = this.meta_props[props[index]]

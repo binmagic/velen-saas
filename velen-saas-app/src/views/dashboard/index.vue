@@ -201,6 +201,8 @@ export default {
     fetchBookmarksData() {
       console.log("fetchBookmarksData")
       for (const key in this.pre_data.dashboard.items) {
+        this.$refs[key][0].handleData()
+        this.$refs[key][0].handleColumns()
         this.$refs[key][0].fetch()
       }
     },

@@ -75,6 +75,7 @@
                 trigger="click"
                 width="500"
                 @hide="hidePopover"
+                @show="showPopover"
               >
                 <div style="display: flex;margin-bottom: 20px">
                   <el-button type="success" @click="handleAddToList()">添加</el-button>
@@ -85,6 +86,7 @@
                   border
                   fit
                   highlight-current-row
+                  height="600"
                   style="width: 100%;"
                 >
                   <el-table-column
@@ -135,49 +137,6 @@
               <i class="el-icon-close" @click="handleDeleteCommonProp(prop)"/>
             </el-col>
           </el-row>
-          <el-row style="background: white">
-            <el-col>
-              <el-popover
-                placement="bottom"
-                trigger="click"
-                width="500"
-                @hide="hidePopover"
-              >
-                <div style="display: flex;margin-bottom: 20px">
-                  <el-button type="success" @click="handleAddToList()">添加</el-button>
-                </div>
-                <el-table
-                  ref="propertiesTable"
-                  :data="properties"
-                  border
-                  fit
-                  highlight-current-row
-                  style="width: 100%;"
-                >
-                  <el-table-column
-                    type="selection"
-                    width="55"
-                  />
-                  <el-table-column label="属性名" align="center" :show-overflow-tooltip="true">
-                    <template slot-scope="{row}">
-                      <span>{{ row.name }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="属性显示名" align="center" :show-overflow-tooltip="true">
-                    <template slot-scope="{row}">
-                      <span>{{ row.showName }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column label="属性类型" align="center" :show-overflow-tooltip="true">
-                    <template slot-scope="{row}">
-                      <span>{{ row.type }}</span>
-                    </template>
-                  </el-table-column>
-                </el-table>
-                <i slot="reference" class="el-icon-plus"/>
-              </el-popover>
-            </el-col>
-          </el-row>
         </el-form-item>
         <el-form-item label="预制属性" class="custom-prop">
           <el-row :gutter="20" style="background: rgb(241, 240, 240); display: flex; margin-bottom: 10px">
@@ -221,7 +180,7 @@
     box-shadow:  rgb(194, 210, 230) -7px -1px 2px 0px;padding-right: 50px;position: absolute;bottom: 0;clear: both;"
     >
       <span style="margin-right: 30px">
-        <el-button type="text">取消</el-button>
+        <el-button type="text" @click="hideDrawer">取消</el-button>
       </span>
       <span>
         <el-button type="success" :loading="componentFlag.createLoading" @click="handleSubmit">确认</el-button>
@@ -239,7 +198,6 @@
     components: {},
     directives: {},
     props: {
-
       enable: {
         type: Boolean,
         default: false
@@ -300,7 +258,7 @@
           })
           this.componentFlag.createLoading = false
         })
-
+        this.hideDrawer()
       },
       handleDeleteProp(prop) {
         for (const index in this.selectProperties) {
@@ -338,10 +296,23 @@
       hidePopover() {
         this.$refs.propertiesTable.clearSelection();
       },
-      openDrawer(){
+      showPopover() {
+        if (this.selectProperties) {
+          this.selectProperties.forEach(row => {
+            this.$refs.propertiesTable.toggleRowSelection(row)
+          })
+        }
+      },
+      openDrawer() {
         this.formData = JSON.parse(JSON.stringify(this.event))
-        this.$set(this.formData,'hide',this.formData['isVisible'])
-
+        this.$set(this.formData, 'hide', this.formData['isVisible'])
+        this.formData.propIds.some(id => {
+          this.properties.some(item => {
+            if (id === item.id) {
+              this.selectProperties.push(item)
+            }
+          })
+        })
       }
     }
   }

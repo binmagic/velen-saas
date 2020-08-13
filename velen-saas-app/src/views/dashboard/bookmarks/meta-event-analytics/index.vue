@@ -3,7 +3,7 @@
     <template slot="title">{{ event_name }}</template>
     <template slot="tools" />
     <template slot="content">
-      <custom-table :columns="columns" :value="data" :loading="loading" :total="total" @fetch="fetch" />
+      <custom-table :columns.sync="columns" :value.sync="data" :loading="loading" :total="total" @fetch="fetch" />
     </template>
   </card>
 </template>
@@ -61,7 +61,7 @@ export default {
   methods: {
     handleData() {
       const data = JSON.parse(this.bookmarks.data)
-      this.event_id = data.measures
+      this.event_id = data.measures.eventName
       this.event_name = this.getMetaEvent(this.event_id).showName
     },
     getMetaEvent(eventId) {
@@ -74,6 +74,7 @@ export default {
     },
     handleColumns() {
       console.log('handleColumns')
+      this.columns.length = 0
       const meta_event = this.getMetaEvent(this.event_id)
       for (const _index in meta_event.propIds) {
         const id = meta_event.propIds[_index]
