@@ -110,7 +110,8 @@
             </div>
           </template>
           <ul class="dashboard-aside-ul">
-            <li v-for="dashboard in group.list" class="dashboard-aside-li" @click="clickDashboard(dashboard)">
+            <li v-for="dashboard in group.list" class="dashboard-aside-li" @click="clickDashboard(dashboard)"
+                :class="pickDashboard === dashboard.id ? 'dashboard-aside-li-active': ''">
               <span>
                 {{ dashboard.name }}
               </span>
@@ -206,6 +207,7 @@
               if (item != null) {
                 this.pickGroup = key
                 this.pickDashboard = item.id
+                this.clickDashboard(item)
                 return true
               }
             })

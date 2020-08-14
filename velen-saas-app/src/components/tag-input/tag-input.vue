@@ -16,7 +16,7 @@
       ref="input"
       size="small"
       v-model.trim="newTag"
-      style="outline:none;      border:none;"
+      style="outline:none; border:none;"
       @blur = "handleSelect"
       @keyup.delete.native="removeLastTag"
       @keyup.enter.native="handleSelect"
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+  import './index.scss'
   export default {
     props: {
       value: {

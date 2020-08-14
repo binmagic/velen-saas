@@ -1,0 +1,45 @@
+@import '@/styles/variables.scss';
+
+.el-tag {
+  margin-right: 4px;
+}
+
+.tag-input {
+  background: transparent;
+  border: none !important;
+  font-size: 14px;
+  height: 40px;
+  outline: none;
+  padding-left: 0;
+  width: 100px;
+}
+
+.el-input-tag--mini .tag-input {
+  height: 28px;
+  line-height: 28px;
+}
+
+.el-input-tag--small .tag-input {
+  height: 31px;
+  line-height: 31px;
+}
+
+.el-input-tag--medium .tag-input {
+  height: 36px;
+  line-height: 36px;
+}
+.input-tag-wrapper{
+  .el-input{
+    .el-input__inner{
+      height: 30px;
+      padding: 0 5px;
+    }
+  }
+}
+
+.el-input-tag{
+  width: 200px;
+  max-height: 32px;
+}
+
+

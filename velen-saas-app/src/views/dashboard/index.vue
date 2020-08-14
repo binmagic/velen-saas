@@ -211,7 +211,6 @@ export default {
         this.componentFlag.enableCreateComponent = true
       } else if (Object.is(command, 'createFromBookmarks')) {
         this.componentFlag.enableCreateFromBookmarks = true
-        console.log()
       }
     },
     handleClickPlusVisible(flag) {
