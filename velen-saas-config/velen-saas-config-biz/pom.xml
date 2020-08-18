@@ -23,5 +23,9 @@
 			<artifactId>velen-etl-api</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.github.haivan</groupId>
+			<artifactId>sqlbuilder</artifactId>
+		</dependency>
 	</dependencies>
 </project>

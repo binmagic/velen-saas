@@ -54,10 +54,18 @@
 
 		<velen-etl.version>0.0.2-SNAPSHOT</velen-etl.version>
 
+		<sqlbuilder.version>1.0-SNAPSHOT</sqlbuilder.version>
+
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+
+			<dependency>
+				<groupId>com.github.haivan</groupId>
+				<artifactId>sqlbuilder</artifactId>
+				<version>${sqlbuilder.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>com.github.binmagic</groupId>

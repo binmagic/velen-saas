@@ -28,14 +28,50 @@ public class ReportQueryDTO
 
 	private List<String> byFields;
 
-	private JSONObject axisConfig;
+	private AxisConfig axisConfig;
 
-	private JSONObject measures;
+	private Measures measures;
 
 	private String topN;
 
 	private String unit;
 
 	private String valueTypes;
+
+	@Data
+	public static class AxisConfig{
+
+	}
+
+	@Data
+	public static class Measures{
+
+		private List<String> props;
+
+		private int page;
+
+		private int limit;
+
+		private Filter filter;
+	}
+
+	@Data
+	public static class Filter{
+
+		private boolean union;
+
+		private List<Condition> conditions;
+	}
+
+	@Data
+	public static class Condition{
+
+		private String op;
+
+		private String prop;
+
+		private List<String> params;
+	}
+
 
 }
