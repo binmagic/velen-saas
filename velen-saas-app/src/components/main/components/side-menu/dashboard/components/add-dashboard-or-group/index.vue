@@ -19,7 +19,7 @@
                   </el-row>
                 </el-form-item>
                 <div v-if="radio">
-                  <el-form-item label="概览名称">
+                  <el-form-item label="概览名称" :rules="{required: true, message: '名字不能为空', trigger: 'blur'}">
                     <el-row>
                       <el-col :span="24">
                         <el-input v-model="dashboardName" v-focus placeholder="请输入"/>
@@ -38,7 +38,7 @@
                   </el-form-item>
                 </div>
                 <div v-else>
-                  <el-form-item label="分组名称">
+                  <el-form-item label="分组名称" :rules="{ required:true , message:'名字不能为空' }">
                     <el-row>
                       <el-col :span="24">
                         <el-input v-model="groupName" style="width: 100%!important;" v-focus
@@ -93,11 +93,20 @@
     data() {
       return {
         radio: true,
+
         groupName: '',
         dashboardName: '',
         group: '',//this.groups[0].name
         dashboard: [],
       }
+    },
+    created() {
+      this.groups.some(group => {
+        if (group.name != '分享给我的概览') {
+          this.group = group.id
+          return true
+        }
+      })
     },
     methods: {
       insertSelect() {

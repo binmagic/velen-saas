@@ -52,3 +52,10 @@ export function deleteCommonDashboard(id) {
     method: 'delete'
   })
 }
+
+export function getDashboardList() {
+  return request({
+    url:'/dashboard',
+    method:'get'
+  })
+}

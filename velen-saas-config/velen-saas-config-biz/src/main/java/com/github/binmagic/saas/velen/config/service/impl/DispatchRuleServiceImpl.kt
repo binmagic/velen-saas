@@ -11,6 +11,7 @@ import com.github.binmagic.saas.velen.config.repository.AppRepository
 import com.github.binmagic.saas.velen.config.repository.DispatchRuleRepository
 import com.github.binmagic.saas.velen.config.service.DispatchRuleService
 import com.velen.etl.ResultCode
+import com.velen.etl.dispatcher.entity.JobSubmitTDO
 import com.velen.etl.dispatcher.restful.api.DispatchApi
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
@@ -64,6 +65,9 @@ class DispatchRuleServiceImpl : DispatchRuleService {
 //        val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
 
         val example = Example.of(DispatchRule.EMPTY, exampleMatcher)
+        example.probe.properties = null
+        example.probe.appParameters = null
+        example.probe.environmentVariables = null
 
         val total = dispatchRuleRepository.count(example).awaitSingle()
 
@@ -97,29 +101,52 @@ class DispatchRuleServiceImpl : DispatchRuleService {
         return dispatchRuleRepository.save(dispatchRule)
     }
 
-    override suspend fun fast(dispatchRule: DispatchRule): Mono<Void> {
+    override suspend fun fast(dispatchRule: DispatchRule): Mono<DispatchRule> {
+        val dispatchRuleDTO = DispatchRule()
+        BeanUtil.copyProperties(dispatchRule,dispatchRuleDTO)
         val app = appRepository.findById(dispatchRule.appId).awaitSingle()
 
         val map = BeanUtil.beanToMap(app)
         val name = DispatchApi.make(dispatchRule.appId, dispatchRule.businessName)
         map["pid"] = IdUtil.fastSimpleUUID()
-        for (entry in dispatchRule.properties) {
-            entry.setValue(StringFormat.format(entry.value, map))
-        }
-
         val propMap: MutableMap<String, String> = HashMap()
+        if (!dispatchRule.properties.isNullOrEmpty()) {
+            for (entry in dispatchRule.properties) {
+                entry.setValue(StringFormat.format(entry.value, map))
+            }
 
-        for (entry in dispatchRule.properties) {
-            val key = entry.key.replace("_", ".")
-            propMap[key] = entry.value
+            for (entry in dispatchRule.properties) {
+                val key = entry.key.replace("_", ".")
+                propMap[key] = entry.value
+            }
         }
 
+        val environmentMap: MutableMap<String, String> = HashMap()
+
+        if (!dispatchRule.environmentVariables.isNullOrEmpty()) {
+            for (entry in dispatchRule.environmentVariables) {
+                entry.setValue(StringFormat.format(entry.value, map))
+            }
+
+            for (entry in dispatchRule.environmentVariables) {
+                val key = entry.key.replace("_", ".")
+                environmentMap[key] = entry.value
+            }
+        }
+        val jobSubmitTDO = JobSubmitTDO()
+        jobSubmitTDO.appId = IdUtil.fastSimpleUUID()
+        jobSubmitTDO.appName = name
+        jobSubmitTDO.appResource = dispatchRule.dsl
+        jobSubmitTDO.appParameters = dispatchRule.appParameters
+        jobSubmitTDO.environmentVariables = dispatchRule.environmentVariables
+        jobSubmitTDO.platformProperties = dispatchRule.properties
         val resp = dispatchApi.deploy(dispatchRule.platform, dispatchRule.process, name, dispatchRule.dsl, propMap)
+        //val resp = dispatchApi.deploy(dispatchRule.platform,dispatchRule.process, jobSubmitTDO)
         if (EnumUtil.isInResultCode(resp.statusCodeValue)) {
             return Mono.error(RuntimeException(ResultCode.valueOf(resp.statusCodeValue).message()))
         }
-        dispatchRuleRepository.save(dispatchRule).awaitSingle()
-        return Mono.just(dispatchRule).then()
+
+        return dispatchRuleRepository.save(dispatchRuleDTO)
     }
 
 

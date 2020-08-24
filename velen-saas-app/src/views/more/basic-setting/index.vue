@@ -8,11 +8,21 @@
       </div>
       <div class="more-card-body">
         <el-table :data="tableData">
+          <el-table-column label="业务名" prop="businessName"/>
           <el-table-column label="平台" prop="platform"/>
           <el-table-column label="process" prop="process"/>
-          <el-table-column label="业务名" prop="businessName"/>
           <el-table-column label="DSL" prop="dsl"/>
-          <el-table-column label="配置" :show-overflow-tooltip="true">
+          <el-table-column label="启动参数" :show-overflow-tooltip="true">
+            <template v-if="row.appParameters!=null" slot-scope="{row}">
+              <span v-for="(r,key) in row.appParameters">{{ r + key == row.appParameters.length -1 ? '' : ',' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="环境变量" :show-overflow-tooltip="true">
+            <template v-if="row.environmentVariables!=null" slot-scope="{row}">
+              <span v-for="(r,key) in row.environmentVariables">{{ key }} : {{ r }};</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="平台属性" :show-overflow-tooltip="true">
             <template v-if="row.properties!=null" slot-scope="{row}">
               <span v-for="(r,key) in row.properties">{{ key }} : {{ r }};</span>
             </template>
@@ -69,13 +79,7 @@
           page: 1,
           limit: 10,
         },
-        tableData: [{
-          platform: '1',
-          process: '1',
-          businessName: '1',
-          dsl: '1',
-          properties: {id: 'appId', name: 'name'}
-        }]
+        tableData: []
       }
     },
     created() {

@@ -20,9 +20,9 @@
         </el-form-item>
         <el-form-item label="显示状态">
           <el-select @change="fetchData" v-model="visible">
-            <el-option label="全部" value=""/>
-            <el-option label="显示" :value="true"/>
-            <el-option label="隐藏" :value="false"/>
+            <el-option label="全部" :value="null"/>
+            <el-option label="显示" :value="false"/>
+            <el-option label="隐藏" :value="true"/>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -33,6 +33,7 @@
             v-model="query.search"
             placeholder="请输入内容"
             suffix-icon="el-icon-search"
+            @blur="fetchData"
           />
         </el-form-item>
       </el-form>

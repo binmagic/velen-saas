@@ -14,11 +14,11 @@ export function getProcess() {
   })
 }
 
-export function getPage(query) {
+export function getPage(params) {
   return request({
     url: '/dispatch',
     method: 'get',
-    query
+    params
   })
 }
 

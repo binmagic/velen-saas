@@ -71,30 +71,28 @@ class DispatchRuleController : BaseController() {
     suspend fun create(@Validated @RequestBody dispatchRuleSaveDTO: DispatchRuleSaveDTO): DispatchRule {
         val appId = currentAppId.awaitSingle()
         val dispatchRule = DispatchRule()
+        BeanUtils.copyProperties(dispatchRuleSaveDTO, dispatchRule)
         dispatchRule.appId = currentAppId.awaitSingle()
         dispatchRule.userId = currentUserId.awaitSingle()
-        BeanUtils.copyProperties(dispatchRuleSaveDTO, dispatchRule)
         return dispatchRuleService.create(dispatchRule, appId).awaitSingle()
     }
 
     @PutMapping
     suspend fun update(@Validated @RequestBody dispatchRuleListDTO: DispatchRuleListDTO) {
         val dispatchRule = DispatchRule()
+        BeanUtils.copyProperties(dispatchRuleListDTO, dispatchRule)
         dispatchRule.appId = currentAppId.awaitSingle()
         dispatchRule.userId = currentUserId.awaitSingle()
-        BeanUtils.copyProperties(dispatchRuleListDTO, dispatchRule)
         dispatchRuleService.update(dispatchRule).awaitSingle()
     }
 
     @PostMapping("/fast")
-    suspend fun fastDispatch(@Validated @RequestBody dispatchRuleSaveDTO: DispatchRuleSaveDTO) {
-        val appId = currentAppId.awaitSingle()
+    suspend fun fastDispatch(@Validated @RequestBody dispatchRuleSaveDTO: DispatchRuleSaveDTO): DispatchRule {
         val dispatchRule = DispatchRule()
+        BeanUtils.copyProperties(dispatchRuleSaveDTO, dispatchRule)
         dispatchRule.appId = currentAppId.awaitSingle()
         dispatchRule.userId = currentUserId.awaitSingle()
-        BeanUtils.copyProperties(dispatchRuleSaveDTO, dispatchRule)
-
-        dispatchRuleService.fast(dispatchRule)
+        return dispatchRuleService.fast(dispatchRule).awaitSingle()
     }
 
 }

@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -29,6 +31,10 @@ public class DispatchRule extends BaseEntity<DispatchRule> {
     private String businessName;
 
     private String dsl;
+
+    private List<String> appParameters = new ArrayList<>();
+
+    private Map<String,String> environmentVariables = new HashMap<>();
 
     private Map<String,String> properties = new HashMap<>();
 

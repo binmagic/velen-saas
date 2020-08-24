@@ -109,7 +109,7 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <i slot="reference" class="el-icon-plus"/>
+                <i slot="reference" class="el-icon-plus" style="cursor: pointer;"/>
               </el-popover>
             </el-col>
           </el-row>

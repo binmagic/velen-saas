@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -12,6 +15,8 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DispatchRuleSaveDTO {
+
+    private String id;
 
     private String platform;
 
@@ -24,6 +29,10 @@ public class DispatchRuleSaveDTO {
     private String businessName;
 
     private String dsl;
+
+    private List<String> appParameters;
+
+    private Map<String,String> environmentVariables;
 
     private Map<String,String> properties;
 }

@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -28,6 +30,10 @@ public class DispatchRuleListDTO {
     private String businessName;
 
     private String dsl;
+
+    private List<String> appParameters;
+
+    private Map<String,String> environmentVariables;
 
     private Map<String,String> properties;
 

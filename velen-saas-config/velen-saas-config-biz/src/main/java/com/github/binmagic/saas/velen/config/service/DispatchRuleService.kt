@@ -15,5 +15,5 @@ interface DispatchRuleService {
 
     suspend fun update(dispatchRule: DispatchRule): Mono<DispatchRule>
 
-    suspend fun fast(dispatchRule: DispatchRule): Mono<Void>
+    suspend fun fast(dispatchRule: DispatchRule): Mono<DispatchRule>
 }

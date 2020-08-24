@@ -1,9 +1,9 @@
 <template>
   <el-dialog :visible.sync="dialogVisible" :before-close="handleClose" center @open="openDialog">
     <div slot="title">
-      {{ title }}
+      修改
     </div>
-    <div style="overflow-y: auto;max-height: 400px;">
+    <div>
       <el-form :inline="true">
         <el-form-item label="平台">
           <el-select v-model="platform" value-key="key">
@@ -22,27 +22,74 @@
           <el-form-item label="业务名">
             <el-input v-model="formData.businessName" placeholder="业务名不可重复"/>
           </el-form-item>
-          <el-form-item label="DSL">
+          <el-form-item label="DSL" class="dsl-class">
             <el-input v-model="formData.dsl" placeholder="调度表达式"/>
           </el-form-item>
         </el-row>
+        <el-radio-group v-model="radio" style="margin-left: 20%;margin-bottom: 20px;">
+          <el-radio :label="1">启动参数</el-radio>
+          <el-radio :label="2">环境变量</el-radio>
+          <el-radio :label="3">平台属性</el-radio>
+        </el-radio-group>
       </el-form>
-      <el-form label-position="top">
-        <el-form-item v-for="(prop,key) in formData.properties" :label=" key ==0 ? 'properties' :''">
-          <el-row>
-            <el-col :span="8" style="margin-right: 20px;">
+      <el-form label-position="top" style="overflow-y: auto;max-height: 400px;">
+        <el-form-item v-if="radio == 1" label="properties">
+          <el-row v-for="(prop,index) in formData.appParameters" :key="index">
+            <el-col :span="8">
+              <el-input v-model="formData.appParameters[index]" size="small"/>
+            </el-col>
+            <el-col :span="1" style="text-align: right">
+              <i class="el-icon-remove-outline" @click="delRow(formData.appParameters[index])" style="cursor:pointer;  font-size: 18px;"/>
+            </el-col>
+            <el-col :span="1" style="text-align: right">
+              <i class="el-icon-circle-plus-outline" @click="addRow(index)" style="cursor: pointer;  font-size: 18px;"/>
+            </el-col>
+          </el-row>
+          <el-row v-if="formData.appParameters.length ==0">
+            <el-col>
+              <i class="el-icon-circle-plus-outline" @click="addRow(0)" style="cursor: pointer;  font-size: 18px;"/>
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item v-else-if="radio == 2" label="properties">
+          <el-row v-for="(prop,key) in formData.environmentVariables">
+            <el-col :span="10" style="margin-right: 20px;">
               <el-input v-model="prop.name" placeholder="名字" size="small"/>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="10">
               <el-input v-model="prop.prop" size="small"/>
             </el-col>
             <el-col :span="1" style="text-align: right">
-              <i v-if="formData.properties.length != 1" class="el-icon-remove-outline" @click="delRow(prop)"
-                 style="cursor:pointer; font-size: 18px;"/>
+              <i class="el-icon-remove-outline" @click="delRow(prop)" style="cursor:pointer;  font-size: 18px;"/>
             </el-col>
             <el-col :span="1" style="text-align: right">
-              <i v-if="key == formData.properties.length-1" class="el-icon-circle-plus-outline" @click="addRow"
-                 style="cursor: pointer; font-size: 18px;"/>
+              <i class="el-icon-circle-plus-outline" @click="addRow(key)" style="cursor: pointer;  font-size: 18px;"/>
+            </el-col>
+          </el-row>
+          <el-row v-if="formData.environmentVariables.length ==0">
+            <el-col>
+              <i class="el-icon-circle-plus-outline" @click="addRow(0)" style="cursor: pointer;  font-size: 18px;"/>
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item v-else-if="radio == 3" label="properties">
+          <el-row v-for="(prop,key) in formData.properties">
+            <el-col :span="10" style="margin-right: 20px;">
+              <el-input v-model="prop.name" placeholder="名字" size="small"/>
+            </el-col>
+            <el-col :span="10">
+              <el-input v-model="prop.prop" size="small"/>
+            </el-col>
+            <el-col :span="1" style="text-align: right">
+              <i class="el-icon-remove-outline" @click="delRow(prop)" style="cursor:pointer;  font-size: 18px;"/>
+            </el-col>
+            <el-col :span="1" style="text-align: right">
+              <i class="el-icon-circle-plus-outline" @click="addRow(key)" style="cursor: pointer;  font-size: 18px;"/>
+            </el-col>
+          </el-row>
+          <el-row v-if="formData.properties.length ==0">
+            <el-col>
+              <i class="el-icon-circle-plus-outline" @click="addRow(0)" style="cursor: pointer;  font-size: 18px;"/>
             </el-col>
           </el-row>
         </el-form-item>
@@ -56,7 +103,7 @@
 </template>
 
 <script>
-
+  import './index.scss'
   import {getPlatform, getProcess} from '@/api/dispatch'
   import {createDispatch, updateDispatch, fastDispatch} from '@/api/dispatch'
 
@@ -87,7 +134,8 @@
         processes: [],
         platform: {},
         process: {},
-        formData: {}
+        formData: {},
+        radio: 0
       }
     },
     created() {
@@ -104,6 +152,16 @@
           list.push({name: key, prop: this.formData.properties[key]})
         }
         this.formData.properties = list.length > 0 ? list : [{name: '', prop: ''}]
+        var list1 = []
+        for (let key in this.formData.environmentVariables) {
+          list1.push({name: key, prop: this.formData.environmentVariables[key]})
+        }
+        this.formData.environmentVariables = list1.length > 0 ? list1 : [{name: '', prop: ''}]
+        var list2 = []
+        for (let key in this.formData.appParameters) {
+          list2.push(this.formData.appParameters[key])
+        }
+        this.formData.appParameters = list2.length > 0 ? list2 : ['']
       },
       findPlatform() {
         getPlatform().then(resp => {
@@ -121,57 +179,56 @@
         this.formData = {
           businessName: '',
           dsl: '',
+          appParameters: [''],
+          environmentVariables: [{name: '', prop: ''}],
           properties: [{name: '', prop: ''}]
         }
         this.$emit("close-dialog")
       },
       handleSubmit() {
-        var properties = {}
-        this.formData.properties.some(item => {
-          if (item.name != '')
-            properties[item.name] = item.prop
-        })
-        var data = {
-          id: this.formData.id,
-          platform: this.platform.name,
-          platformType: this.platform.key,
-          process: this.process.name,
-          processType: this.process.key,
-          businessName: this.formData.businessName,
-          dsl: this.formData.dsl,
-          properties: properties
-        }
+        const data = this.formatData()
         updateDispatch(data).then(resp => {
-          console.log(resp)
           this.$emit('on-update-dispatch')
           this.$emit('close-dialog')
         })
       },
-      addRow() {
-        this.formData.properties.push({name: '', prop: ''})
+      addRow(index) {
+        switch (this.radio) {
+          case 1:
+            this.formData.appParameters.splice(index + 1, 0, '')
+            break
+          case 2:
+            this.formData.environmentVariables.splice(index + 1, 0, {name: '', prop: ''})
+            break
+          case 3:
+            this.formData.properties.splice(index + 1, 0, {name: '', prop: ''})
+            break
+        }
       },
       delRow(prop) {
-        var index = this.formData.properties.indexOf(prop)
-        if (index !== -1) {
-          this.formData.properties.splice(index, 1)
+        switch (this.radio) {
+          case 1:
+            var index = this.formData.appParameters.indexOf(prop)
+            if (index !== -1) {
+              this.formData.appParameters.splice(index, 1)
+            }
+            break
+          case 2:
+            var index = this.formData.environmentVariables.indexOf(prop)
+            if (index !== -1) {
+              this.formData.environmentVariables.splice(index, 1)
+            }
+            break
+          case 3:
+            var index = this.formData.properties.indexOf(prop)
+            if (index !== -1) {
+              this.formData.properties.splice(index, 1)
+            }
+            break
         }
       },
       fastDispatch() {
-        var properties = {}
-        this.formData.properties.some(item => {
-          if (item.name != '')
-            properties[item.name] = item.prop
-        })
-        const dispatch = {
-          id: this.formData.id,
-          platform: this.platform.name,
-          platformType: this.platform.key,
-          process: this.process.name,
-          processType: this.process.key,
-          businessName: this.formData.businessName,
-          dsl: this.formData.dsl,
-          properties: properties
-        }
+        const dispatch = this.formatData()
         fastDispatch(dispatch).then(resp => {
           this.$emit('on-update-dispatch')
           this.$notify({
@@ -186,6 +243,36 @@
             type: 'error'
           });
         })
+      },
+      formatData(){
+        var appParameters = []
+        this.formData.appParameters.some(item => {
+          if (item != '')
+            appParameters.push(item)
+        })
+        var environmentVariables = {}
+        this.formData.environmentVariables.some(item => {
+          if (item.name != '')
+            environmentVariables[item.name] = item.prop
+        })
+        var properties = {}
+        this.formData.properties.some(item => {
+          if (item.name != '')
+            properties[item.name] = item.prop
+        })
+        const dispatch = {
+          id: this.formData.id,
+          platform: this.platform.name,
+          platformType: this.platform.key,
+          process: this.process.name,
+          processType: this.process.key,
+          businessName: this.formData.businessName,
+          dsl: this.formData.dsl,
+          appParameters: appParameters,
+          environmentVariables: environmentVariables,
+          properties: properties
+        }
+        return dispatch
       }
     }
   }

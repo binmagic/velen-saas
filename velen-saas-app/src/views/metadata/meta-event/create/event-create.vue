@@ -86,6 +86,7 @@
                   fit
                   highlight-current-row
                   style="width: 100%;"
+                  height="600"
                 >
                   <el-table-column
                     type="selection"
@@ -107,7 +108,7 @@
                     </template>
                   </el-table-column>
                 </el-table>
-                <i slot="reference" class="el-icon-plus"/>
+                <i slot="reference" class="el-icon-plus" style="cursor: pointer;"/>
               </el-popover>
             </el-col>
           </el-row>

@@ -69,6 +69,7 @@ class BookmarksServiceImpl : BookmarksService {
 //        val pageRequest = PageRequest.of(query.page - 1, query.limit, Sort.by(orderList))
 
         val example = Example.of(Bookmarks.EMPTY, exampleMatcher)
+        example.probe.dashboards = null
 
         val total = bookmarksRepository.count(example).awaitSingle()
 

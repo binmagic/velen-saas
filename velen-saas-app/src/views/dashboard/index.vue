@@ -94,6 +94,7 @@ import { mapActions } from 'vuex'
 import MetaEventAnalytics from './bookmarks/meta-event-analytics'
 import { getDashboard, updateDashboard } from '@/api/dashboard'
 import { getMetaEvent, getMetaEventProp } from '@/api/metadata'
+import { update } from '@/api/bookmarks'
 
 export default {
   name: 'Dashboard',
@@ -226,7 +227,14 @@ export default {
       this.componentFlag.enableCreateFromBookmarks = false
       this.pre_data.dashboard.items[id] = '{}'
       updateDashboard(this.pre_data.dashboard).then(resp => {
-
+        _data.dashboards.push(resp.id)
+        update(_data).then(response =>{
+          this.$notify({
+            title:'成功',
+            message:'成功添加到概览',
+            type:'success'
+          })
+        })
       })
     }
   }
