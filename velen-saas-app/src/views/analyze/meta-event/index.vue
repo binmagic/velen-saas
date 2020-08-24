@@ -123,7 +123,7 @@ export default {
         measures: {
           props: [],
           filter: {
-            union: 'AND',
+            union: true,
             conditions: []
           },
           page: 1,
@@ -270,7 +270,7 @@ export default {
       for (const index in this.filterList) {
         const data = this.filterList[index]
         this.query.measures.filter.conditions
-          .push({ prop: data.switchProp.name, filter: data.filter, params: data.params })
+          .push({ prop: data.switchProp.name, op: data.filter, params: data.params })
       }
       this.fetchData()
     },
